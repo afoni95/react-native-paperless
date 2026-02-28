@@ -72,7 +72,7 @@ jobs:
         run: npx tsc --noEmit
 
       - name: Install CocoaPods
-        run: sudo gem install cocoapods
+        run: sudo gem install cocoapods -v 1.15.2
 
       - name: Generate native project
         run: npx expo prebuild --platform ios --clean
