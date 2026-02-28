@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Paperless",
+    "name": "Paperless Native",
     "slug": "react-native-paperless",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -13,7 +13,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.paperless.mobile"
+      "bundleIdentifier": "com.paperless.native.mobile"
     },
     "android": {
       "adaptiveIcon": {
@@ -22,7 +22,7 @@
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
-      "package": "com.paperless.mobile",
+      "package": "com.paperless.native.mobile",
       "predictiveBackGestureEnabled": false
     },
     "web": {
