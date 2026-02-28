@@ -1,0 +1,121 @@
+import { MD3LightTheme, MD3DarkTheme, configureFonts } from 'react-native-paper';
+import { DefaultTheme as NavLightTheme, DarkTheme as NavDarkTheme } from '@react-navigation/native';
+
+const paperlessGreen = '#17541f';
+const paperlessGreenLight = '#2e7d32';
+
+const fontConfig = {
+  displayLarge: { fontFamily: 'System', fontSize: 57, fontWeight: '400' as const, letterSpacing: 0, lineHeight: 64 },
+  displayMedium: { fontFamily: 'System', fontSize: 45, fontWeight: '400' as const, letterSpacing: 0, lineHeight: 52 },
+  displaySmall: { fontFamily: 'System', fontSize: 36, fontWeight: '400' as const, letterSpacing: 0, lineHeight: 44 },
+  headlineLarge: { fontFamily: 'System', fontSize: 32, fontWeight: '400' as const, letterSpacing: 0, lineHeight: 40 },
+  headlineMedium: { fontFamily: 'System', fontSize: 28, fontWeight: '400' as const, letterSpacing: 0, lineHeight: 36 },
+  headlineSmall: { fontFamily: 'System', fontSize: 24, fontWeight: '400' as const, letterSpacing: 0, lineHeight: 32 },
+  titleLarge: { fontFamily: 'System', fontSize: 22, fontWeight: '400' as const, letterSpacing: 0, lineHeight: 28 },
+  titleMedium: { fontFamily: 'System', fontSize: 16, fontWeight: '500' as const, letterSpacing: 0.15, lineHeight: 24 },
+  titleSmall: { fontFamily: 'System', fontSize: 14, fontWeight: '500' as const, letterSpacing: 0.1, lineHeight: 20 },
+  bodyLarge: { fontFamily: 'System', fontSize: 16, fontWeight: '400' as const, letterSpacing: 0.15, lineHeight: 24 },
+  bodyMedium: { fontFamily: 'System', fontSize: 14, fontWeight: '400' as const, letterSpacing: 0.25, lineHeight: 20 },
+  bodySmall: { fontFamily: 'System', fontSize: 12, fontWeight: '400' as const, letterSpacing: 0.4, lineHeight: 16 },
+  labelLarge: { fontFamily: 'System', fontSize: 14, fontWeight: '500' as const, letterSpacing: 0.1, lineHeight: 20 },
+  labelMedium: { fontFamily: 'System', fontSize: 12, fontWeight: '500' as const, letterSpacing: 0.5, lineHeight: 16 },
+  labelSmall: { fontFamily: 'System', fontSize: 11, fontWeight: '500' as const, letterSpacing: 0.5, lineHeight: 16 },
+};
+
+export const lightTheme = {
+  ...MD3LightTheme,
+  fonts: configureFonts({ config: fontConfig }),
+  colors: {
+    ...MD3LightTheme.colors,
+    primary: paperlessGreen,
+    primaryContainer: '#c8e6c9',
+    secondary: '#4caf50',
+    secondaryContainer: '#e8f5e9',
+    tertiary: '#00796b',
+    tertiaryContainer: '#b2dfdb',
+    surface: '#ffffff',
+    surfaceVariant: '#f5f5f5',
+    background: '#fafafa',
+    error: '#d32f2f',
+    errorContainer: '#ffcdd2',
+    onPrimary: '#ffffff',
+    onPrimaryContainer: '#002204',
+    onSecondary: '#ffffff',
+    onSecondaryContainer: '#1b5e20',
+    onSurface: '#1c1b1f',
+    onSurfaceVariant: '#49454f',
+    onBackground: '#1c1b1f',
+    onError: '#ffffff',
+    outline: '#79747e',
+    elevation: {
+      ...MD3LightTheme.colors.elevation,
+      level0: 'transparent',
+      level1: '#f5f5f5',
+      level2: '#eeeeee',
+      level3: '#e0e0e0',
+      level4: '#d6d6d6',
+      level5: '#cccccc',
+    },
+  },
+};
+
+export const darkTheme = {
+  ...MD3DarkTheme,
+  fonts: configureFonts({ config: fontConfig }),
+  colors: {
+    ...MD3DarkTheme.colors,
+    primary: paperlessGreenLight,
+    primaryContainer: '#1b5e20',
+    secondary: '#81c784',
+    secondaryContainer: '#2e7d32',
+    tertiary: '#4db6ac',
+    tertiaryContainer: '#00695c',
+    surface: '#1c1b1f',
+    surfaceVariant: '#2c2c2c',
+    background: '#121212',
+    error: '#ef5350',
+    errorContainer: '#93000a',
+    onPrimary: '#003910',
+    onPrimaryContainer: '#c8e6c9',
+    onSecondary: '#003910',
+    onSecondaryContainer: '#c8e6c9',
+    onSurface: '#e6e1e5',
+    onSurfaceVariant: '#cac4d0',
+    onBackground: '#e6e1e5',
+    onError: '#690005',
+    outline: '#938f99',
+    elevation: {
+      ...MD3DarkTheme.colors.elevation,
+      level0: 'transparent',
+      level1: '#2c2c2c',
+      level2: '#333333',
+      level3: '#3c3c3c',
+      level4: '#414141',
+      level5: '#484848',
+    },
+  },
+};
+
+export const navigationLightTheme = {
+  ...NavLightTheme,
+  colors: {
+    ...NavLightTheme.colors,
+    primary: paperlessGreen,
+    background: '#fafafa',
+    card: '#ffffff',
+    text: '#1c1b1f',
+    border: '#e0e0e0',
+  },
+};
+
+export const navigationDarkTheme = {
+  ...NavDarkTheme,
+  colors: {
+    ...NavDarkTheme.colors,
+    primary: paperlessGreenLight,
+    background: '#121212',
+    card: '#1c1b1f',
+    text: '#e6e1e5',
+    border: '#333333',
+  },
+};

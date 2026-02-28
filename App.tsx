@@ -1,0 +1,113 @@
+import React, { useEffect, useState } from 'react';
+import { useColorScheme, View, Text, StyleSheet } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { StatusBar } from 'expo-status-bar';
+import { PaperProvider, Banner } from 'react-native-paper';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import NetInfo from '@react-native-community/netinfo';
+
+import { useTranslation } from 'react-i18next';
+import { AppNavigator } from '@/navigation/AppNavigator';
+import { useAuthStore } from '@/store/authStore';
+import { useSettingsStore } from '@/store/settingsStore';
+import { lightTheme, darkTheme } from '@/theme';
+import i18n from '@/i18n';
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 2 * 60 * 1000,
+      retry: 2,
+    },
+  },
+});
+
+// Error boundary
+class ErrorBoundary extends React.Component<
+  { children: React.ReactNode },
+  { hasError: boolean }
+> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <View style={boundaryStyles.container}>
+          <MaterialCommunityIcons name="alert-circle-outline" size={48} color="#b00020" style={{ marginBottom: 16 }} />
+          <Text style={boundaryStyles.text}>{i18n.t('common.somethingWentWrong')}</Text>
+          <Text
+            style={boundaryStyles.retry}
+            onPress={() => this.setState({ hasError: false })}
+          >
+            {i18n.t('common.retry')}
+          </Text>
+        </View>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+const boundaryStyles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fafafa',
+  },
+  text: { fontSize: 18, fontWeight: '600', marginBottom: 12 },
+  retry: { fontSize: 16, color: '#17541f' },
+});
+
+export default function App() {
+  const { t } = useTranslation();
+  const systemScheme = useColorScheme();
+  const { restoreSession } = useAuthStore();
+  const { theme: themeMode, loadSettings } = useSettingsStore();
+  const [isOffline, setIsOffline] = useState(false);
+
+  const isDark =
+    themeMode === 'dark' || (themeMode === 'auto' && systemScheme === 'dark');
+  const paperTheme = isDark ? darkTheme : lightTheme;
+
+  useEffect(() => {
+    restoreSession();
+    loadSettings();
+  }, []);
+
+  useEffect(() => {
+    const unsubscribe = NetInfo.addEventListener((state) => {
+      setIsOffline(!(state.isConnected ?? true));
+    });
+    return () => unsubscribe();
+  }, []);
+
+  return (
+    <ErrorBoundary>
+      <SafeAreaProvider>
+        <QueryClientProvider client={queryClient}>
+          <PaperProvider theme={paperTheme}>
+            <Banner
+              visible={isOffline}
+              icon="wifi-off"
+              actions={[]}
+              style={{ backgroundColor: paperTheme.colors.errorContainer }}
+            >
+              <Text>{t('common.offline')}</Text>
+            </Banner>
+            <AppNavigator />
+            <StatusBar style={isDark ? 'light' : 'dark'} />
+          </PaperProvider>
+        </QueryClientProvider>
+      </SafeAreaProvider>
+    </ErrorBoundary>
+  );
+}
