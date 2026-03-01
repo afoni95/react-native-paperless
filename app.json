@@ -33,7 +33,10 @@
         "expo-build-properties",
         {
           "android": {
-            "usesCleartextTraffic": true
+            "usesCleartextTraffic": true,
+            "enableProguardInReleaseBuilds": true,
+            "enableShrinkResourcesInReleaseBuilds": true,
+            "abiFilters": ["arm64-v8a", "armeabi-v7a"]
           },
           "ios": {
             "infoPlist": {
