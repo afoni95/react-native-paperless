@@ -9,7 +9,7 @@ import { authApi } from '@/api';
 export const LoginScreen: React.FC = () => {
   const theme = useTheme();
   const { t } = useTranslation();
-  const { login, serverUrl, setServerUrl } = useAuthStore();
+  const { login, loginDemo, serverUrl, setServerUrl } = useAuthStore();
 
   const [url, setUrl] = useState(serverUrl);
   const [username, setUsername] = useState('');
@@ -20,6 +20,12 @@ export const LoginScreen: React.FC = () => {
 
   const handleLogin = async () => {
     if (!url || !username || !password) return;
+
+    // Magic demo credentials for UI testing without a server
+    if (url.trim() === '_demo_' && username === 'demo' && password === 'demo') {
+      loginDemo();
+      return;
+    }
 
     setError('');
     setLoading(true);
