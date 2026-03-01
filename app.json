@@ -33,27 +33,19 @@
         "expo-build-properties",
         {
           "android": {
-            "usesCleartextTraffic": true
-          },
-          "ios": {
-            "infoPlist": {
-              "NSAppTransportSecurity": {
-                "NSAllowsArbitraryLoads": true
-              }
-            }
+            "newArchEnabled": true,
+            "usesCleartextTraffic": true,
+            "enableProguardInReleaseBuilds": true,
+            "enableShrinkResourcesInReleaseBuilds": true,
+            "abiFilters": ["arm64-v8a"]
           }
-        }
-      ],
-      [
-        "expo-camera",
-        {
-          "cameraPermission": "Allow Paperless to access your camera to scan documents."
         }
       ],
       [
         "expo-image-picker",
         {
-          "photosPermission": "Allow Paperless to access your photos to upload documents."
+          "photosPermission": "Allow Paperless to access your photos to upload documents.",
+          "cameraPermission": "Allow Paperless to access your camera to scan documents."
         }
       ],
       "expo-secure-store"
