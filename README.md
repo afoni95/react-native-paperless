@@ -1,10 +1,21 @@
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://github.com/afoni95/react-native-paperless/blob/main/LICENCE)
+[![Build](https://github.com/afoni95/react-native-paperless/actions/workflows/build-android.yml/badge.svg)](https://github.com/afoni95/react-native-paperless/actions/workflows/build-android.yml)
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/afoni95/react-native-paperless)](https://github.com/afoni95/react-native-paperless/releases)
+[![Platform](https://img.shields.io/badge/Platform-Android-green.svg)](https://reactnative.dev/)
+[![Expo](https://img.shields.io/badge/Expo-SDK-000020?logo=expo&logoColor=white)](https://expo.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.9.2-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![React Native](https://img.shields.io/badge/React%20Native-0.81-61DAFB?logo=react&logoColor=white)](https://reactnative.dev/)
+[![Paperless-ngx](https://img.shields.io/badge/Paperless--ngx-API%20v9-17541f)](https://docs.paperless-ngx.com/api/)
+[![GitHub Issues](https://img.shields.io/github/issues/afoni95/react-native-paperless)](https://github.com/afoni95/react-native-paperless/issues)
+
+
 # React Native Paperless
 
 A React Native mobile application for [Paperless-ngx](https://docs.paperless-ngx.com/) document management system. Built with Expo, TypeScript, and React Navigation.
 
 ## About the Project
 
-React Native Paperless is an open-source mobile client for the Paperless-ngx document management system. It allows you to browse, search, upload, and manage your documents on the go from any Android or iOS device. The app communicates with your self-hosted Paperless-ngx server via its REST API, giving you full access to your document archive from anywhere.
+React Native Paperless is an open-source mobile client for the Paperless-ngx document management system. It allows you to browse, search, upload, and manage your documents on the go from any Android device. The app communicates with your self-hosted Paperless-ngx server via its REST API.
 
 ## Features
 
@@ -47,11 +58,10 @@ npm run ios
 npm run web
 ```
 
-## Roadmap
+## Roadmap (planned)
 
 - [ ] Bulk editing (multi-select documents)
 - [ ] Storage path management
-- [ ] Full offline mode with local caching & sync
 - [ ] Custom fields support
 
 See the [open issues](https://github.com/afoni95/react-native-paperless/issues) for a full list of proposed features and known bugs.
