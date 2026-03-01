@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useColorScheme, View, Text, StyleSheet } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { StatusBar } from 'expo-status-bar';
 import { PaperProvider, Banner } from 'react-native-paper';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';

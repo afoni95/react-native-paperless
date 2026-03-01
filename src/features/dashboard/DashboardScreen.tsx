@@ -1,7 +1,7 @@
 import React from 'react';
 import { ScrollView, View, StyleSheet, RefreshControl } from 'react-native';
 import { Card, Text, useTheme, Divider } from 'react-native-paper';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { statisticsApi } from '@/api';
