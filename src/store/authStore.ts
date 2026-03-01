@@ -10,7 +10,9 @@ interface AuthState {
   serverUrl: string;
   isAuthenticated: boolean;
   isLoading: boolean;
+  isDemo: boolean;
   login: (token: string, serverUrl: string) => Promise<void>;
+  loginDemo: () => void;
   logout: () => Promise<void>;
   restoreSession: () => Promise<void>;
   setServerUrl: (url: string) => Promise<void>;
@@ -21,16 +23,26 @@ export const useAuthStore = create<AuthState>((set) => ({
   serverUrl: '',
   isAuthenticated: false,
   isLoading: true,
+  isDemo: false,
 
   login: async (token: string, serverUrl: string) => {
     await SecureStore.setItemAsync(TOKEN_KEY, token);
     await AsyncStorage.setItem(SERVER_URL_KEY, serverUrl);
-    set({ token, serverUrl, isAuthenticated: true });
+    set({ token, serverUrl, isAuthenticated: true, isDemo: false });
+  },
+
+  loginDemo: () => {
+    set({
+      token: 'demo-token',
+      serverUrl: 'https://demo.paperless.example',
+      isAuthenticated: true,
+      isDemo: true,
+    });
   },
 
   logout: async () => {
     await SecureStore.deleteItemAsync(TOKEN_KEY);
-    set({ token: null, isAuthenticated: false });
+    set({ token: null, isAuthenticated: false, isDemo: false });
   },
 
   restoreSession: async () => {
