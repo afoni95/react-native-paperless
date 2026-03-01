@@ -2,9 +2,10 @@ import apiClient from './client';
 import { DocumentType, PaginatedResponse } from '@/types';
 
 export const documentTypesApi = {
-  getDocumentTypes: async (
-    params?: { page?: number; page_size?: number },
-  ): Promise<PaginatedResponse<DocumentType>> => {
+  getDocumentTypes: async (params?: {
+    page?: number;
+    page_size?: number;
+  }): Promise<PaginatedResponse<DocumentType>> => {
     const response = await apiClient.get<PaginatedResponse<DocumentType>>('/api/document_types/', {
       params,
     });

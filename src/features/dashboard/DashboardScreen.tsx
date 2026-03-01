@@ -40,10 +40,17 @@ export const DashboardScreen: React.FC = () => {
       style={[styles.container, { backgroundColor: theme.colors.background }]}
       contentContainerStyle={styles.content}
       refreshControl={
-        <RefreshControl refreshing={isRefetching} onRefresh={refetch} colors={[theme.colors.primary]} />
+        <RefreshControl
+          refreshing={isRefetching}
+          onRefresh={refetch}
+          colors={[theme.colors.primary]}
+        />
       }
     >
-      <Text variant="headlineSmall" style={[styles.sectionTitle, { color: theme.colors.onBackground }]}>
+      <Text
+        variant="headlineSmall"
+        style={[styles.sectionTitle, { color: theme.colors.onBackground }]}
+      >
         {t('dashboard.title')}
       </Text>
 
@@ -110,11 +117,16 @@ export const DashboardScreen: React.FC = () => {
                   <Text variant="bodyMedium" style={{ flex: 1, color: theme.colors.onSurface }}>
                     {ft.mime_type}
                   </Text>
-                  <Text variant="bodyMedium" style={{ color: theme.colors.primary, fontWeight: '600' }}>
+                  <Text
+                    variant="bodyMedium"
+                    style={{ color: theme.colors.primary, fontWeight: '600' }}
+                  >
                     {ft.mime_type_count}
                   </Text>
                 </View>
-                {index < stats.document_file_type_counts.length - 1 && <Divider style={{ marginVertical: 4 }} />}
+                {index < stats.document_file_type_counts.length - 1 && (
+                  <Divider style={{ marginVertical: 4 }} />
+                )}
               </View>
             ))}
           </Card.Content>
@@ -124,10 +136,12 @@ export const DashboardScreen: React.FC = () => {
   );
 };
 
+type IconName = React.ComponentProps<typeof MaterialCommunityIcons>['name'];
+
 interface StatCardProps {
   title: string;
   value: number | string;
-  icon: string;
+  icon: IconName;
   color: string;
   textColor: string;
 }
@@ -136,7 +150,12 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, icon, color, textColo
   return (
     <Card style={[styles.statCard, { backgroundColor: color }]}>
       <Card.Content style={styles.statCardContent}>
-        <MaterialCommunityIcons name={icon as any} size={28} color={textColor} style={{ marginBottom: 8 }} />
+        <MaterialCommunityIcons
+          name={icon}
+          size={28}
+          color={textColor}
+          style={{ marginBottom: 8 }}
+        />
         <Text variant="headlineMedium" style={[styles.statValue, { color: textColor }]}>
           {value}
         </Text>

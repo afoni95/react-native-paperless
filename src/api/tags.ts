@@ -2,7 +2,10 @@ import apiClient from './client';
 import { Tag, PaginatedResponse } from '@/types';
 
 export const tagsApi = {
-  getTags: async (params?: { page?: number; page_size?: number }): Promise<PaginatedResponse<Tag>> => {
+  getTags: async (params?: {
+    page?: number;
+    page_size?: number;
+  }): Promise<PaginatedResponse<Tag>> => {
     const response = await apiClient.get<PaginatedResponse<Tag>>('/api/tags/', { params });
     return response.data;
   },

@@ -32,10 +32,10 @@ export const LoginScreen: React.FC = () => {
       await setServerUrl(cleanUrl);
       const response = await authApi.login(username, password);
       await login(response.token, cleanUrl);
-    } catch (err: any) {
-      const status = err?.response?.status;
-      if (__DEV__)
-        console.warn('login failed', status, err?.message);
+    } catch (err: unknown) {
+      const error = err as { response?: { status?: number }; message?: string };
+      const status = error?.response?.status;
+      if (__DEV__) console.warn('login failed', status, error?.message);
       setError(t('auth.loginError'));
     } finally {
       setLoading(false);
@@ -50,7 +50,11 @@ export const LoginScreen: React.FC = () => {
       <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
         <View style={styles.header}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-            <MaterialCommunityIcons name="file-document-outline" size={32} color={theme.colors.primary} />
+            <MaterialCommunityIcons
+              name="file-document-outline"
+              size={32}
+              color={theme.colors.primary}
+            />
             <Text variant="headlineLarge" style={[styles.title, { color: theme.colors.primary }]}>
               Paperless
             </Text>

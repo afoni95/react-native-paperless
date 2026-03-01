@@ -23,11 +23,7 @@ export const DocumentsStack: React.FC = () => {
         component={DocumentDetailScreen}
         options={{ title: t('documents.detail') }}
       />
-      <Stack.Screen
-        name="PdfViewer"
-        component={PdfViewerScreen}
-        options={{ title: 'PDF' }}
-      />
+      <Stack.Screen name="PdfViewer" component={PdfViewerScreen} options={{ title: 'PDF' }} />
     </Stack.Navigator>
   );
 };

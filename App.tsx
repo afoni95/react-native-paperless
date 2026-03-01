@@ -24,10 +24,7 @@ const queryClient = new QueryClient({
 });
 
 // Error boundary
-class ErrorBoundary extends React.Component<
-  { children: React.ReactNode },
-  { hasError: boolean }
-> {
+class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean }> {
   constructor(props: { children: React.ReactNode }) {
     super(props);
     this.state = { hasError: false };
@@ -41,12 +38,14 @@ class ErrorBoundary extends React.Component<
     if (this.state.hasError) {
       return (
         <View style={boundaryStyles.container}>
-          <MaterialCommunityIcons name="alert-circle-outline" size={48} color="#b00020" style={{ marginBottom: 16 }} />
+          <MaterialCommunityIcons
+            name="alert-circle-outline"
+            size={48}
+            color="#b00020"
+            style={{ marginBottom: 16 }}
+          />
           <Text style={boundaryStyles.text}>{i18n.t('common.somethingWentWrong')}</Text>
-          <Text
-            style={boundaryStyles.retry}
-            onPress={() => this.setState({ hasError: false })}
-          >
+          <Text style={boundaryStyles.retry} onPress={() => this.setState({ hasError: false })}>
             {i18n.t('common.retry')}
           </Text>
         </View>
@@ -74,14 +73,13 @@ export default function App() {
   const { theme: themeMode, loadSettings } = useSettingsStore();
   const [isOffline, setIsOffline] = useState(false);
 
-  const isDark =
-    themeMode === 'dark' || (themeMode === 'auto' && systemScheme === 'dark');
+  const isDark = themeMode === 'dark' || (themeMode === 'auto' && systemScheme === 'dark');
   const paperTheme = isDark ? darkTheme : lightTheme;
 
   useEffect(() => {
     restoreSession();
     loadSettings();
-  }, []);
+  }, [restoreSession, loadSettings]);
 
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener((state) => {

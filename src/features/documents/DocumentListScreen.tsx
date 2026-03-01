@@ -1,12 +1,6 @@
 import React, { useState, useCallback, useMemo } from 'react';
-import {
-  View,
-  FlatList,
-  StyleSheet,
-  RefreshControl,
-  TouchableOpacity,
-} from 'react-native';
-import { Searchbar, Text, Chip, useTheme, Card, IconButton, Badge } from 'react-native-paper';
+import { View, FlatList, StyleSheet, RefreshControl, TouchableOpacity } from 'react-native';
+import { Searchbar, Text, Chip, useTheme, Card } from 'react-native-paper';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -14,9 +8,15 @@ import { useNavigation } from '@react-navigation/native';
 
 import { documentsApi } from '@/api';
 import { useDebounce, useLookupMaps } from '@/hooks';
-import { useAuthStore } from '@/store/authStore';
-import { Document, DocumentListParams, Tag, Correspondent, DocumentType } from '@/types';
-import { LoadingScreen, EmptyState, ErrorBanner, TagChip, FilterSheet, AuthenticatedImage } from '@/components';
+import { Document, DocumentListParams, Tag } from '@/types';
+import {
+  LoadingScreen,
+  EmptyState,
+  ErrorBanner,
+  TagChip,
+  FilterSheet,
+  AuthenticatedImage,
+} from '@/components';
 import type { FilterState } from '@/components';
 import { formatDate } from '@/utils';
 import { DocumentsStackParamList } from '@/navigation/types';
@@ -40,8 +40,8 @@ export const DocumentListScreen: React.FC = () => {
   const theme = useTheme();
   const { t } = useTranslation();
   const navigation = useNavigation<NavigationProp>();
-  const { serverUrl, token } = useAuthStore();
-  const { allTags, allCorrespondents, allDocTypes, tagsMap, correspondentsMap, docTypesMap } = useLookupMaps();
+  const { allTags, allCorrespondents, allDocTypes, tagsMap, correspondentsMap, docTypesMap } =
+    useLookupMaps();
 
   const [searchText, setSearchText] = useState('');
   const [ordering, setOrdering] = useState('-created');
@@ -100,29 +100,19 @@ export const DocumentListScreen: React.FC = () => {
     initialPageParam: 1,
   });
 
-  const documents = useMemo(
-    () => data?.pages.flatMap((page) => page.results) ?? [],
-    [data],
-  );
+  const documents = useMemo(() => data?.pages.flatMap((page) => page.results) ?? [], [data]);
 
   const totalCount = data?.pages[0]?.count ?? 0;
 
-  const getThumbUri = useCallback(
-    (docId: number) => {
-      return `/api/documents/${docId}/thumb/`;
-    },
-    [],
-  );
+  const getThumbUri = useCallback((docId: number) => {
+    return `/api/documents/${docId}/thumb/`;
+  }, []);
 
   const renderItem = useCallback(
     ({ item }: { item: Document }) => {
-      const correspondent = item.correspondent
-        ? correspondentsMap.get(item.correspondent)
-        : null;
+      const correspondent = item.correspondent ? correspondentsMap.get(item.correspondent) : null;
       const docType = item.document_type ? docTypesMap.get(item.document_type) : null;
-      const docTags = item.tags
-        .map((tagId) => tagsMap.get(tagId))
-        .filter(Boolean) as Tag[];
+      const docTags = item.tags.map((tagId) => tagsMap.get(tagId)).filter(Boolean) as Tag[];
 
       return (
         <TouchableOpacity
@@ -137,7 +127,11 @@ export const DocumentListScreen: React.FC = () => {
                 resizeMode="cover"
               />
               <View style={styles.cardInfo}>
-                <Text variant="titleSmall" numberOfLines={2} style={{ color: theme.colors.onSurface }}>
+                <Text
+                  variant="titleSmall"
+                  numberOfLines={2}
+                  style={{ color: theme.colors.onSurface }}
+                >
                   {item.title}
                 </Text>
                 {correspondent && (
@@ -208,7 +202,10 @@ export const DocumentListScreen: React.FC = () => {
         >
           {t('documents.sortBy')}
         </Chip>
-        <Text variant="labelSmall" style={{ color: theme.colors.onSurfaceVariant, marginLeft: 'auto' }}>
+        <Text
+          variant="labelSmall"
+          style={{ color: theme.colors.onSurfaceVariant, marginLeft: 'auto' }}
+        >
           {totalCount} docs
         </Text>
       </View>
@@ -233,7 +230,9 @@ export const DocumentListScreen: React.FC = () => {
         </View>
       )}
 
-      {isError && <ErrorBanner message={error?.message ?? t('common.somethingWentWrong')} onRetry={refetch} />}
+      {isError && (
+        <ErrorBanner message={error?.message ?? t('common.somethingWentWrong')} onRetry={refetch} />
+      )}
 
       <FlatList
         data={documents}
@@ -242,7 +241,11 @@ export const DocumentListScreen: React.FC = () => {
         contentContainerStyle={documents.length === 0 ? styles.emptyContainer : styles.listContent}
         ListEmptyComponent={<EmptyState message={t('documents.noDocuments')} />}
         refreshControl={
-          <RefreshControl refreshing={isRefetching} onRefresh={refetch} colors={[theme.colors.primary]} />
+          <RefreshControl
+            refreshing={isRefetching}
+            onRefresh={refetch}
+            colors={[theme.colors.primary]}
+          />
         }
         onEndReached={() => {
           if (hasNextPage && !isFetchingNextPage) {

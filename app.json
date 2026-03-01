@@ -30,6 +30,21 @@
     },
     "plugins": [
       [
+        "expo-build-properties",
+        {
+          "android": {
+            "usesCleartextTraffic": true
+          },
+          "ios": {
+            "infoPlist": {
+              "NSAppTransportSecurity": {
+                "NSAllowsArbitraryLoads": true
+              }
+            }
+          }
+        }
+      ],
+      [
         "expo-camera",
         {
           "cameraPermission": "Allow Paperless to access your camera to scan documents."

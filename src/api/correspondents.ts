@@ -2,9 +2,10 @@ import apiClient from './client';
 import { Correspondent, PaginatedResponse } from '@/types';
 
 export const correspondentsApi = {
-  getCorrespondents: async (
-    params?: { page?: number; page_size?: number },
-  ): Promise<PaginatedResponse<Correspondent>> => {
+  getCorrespondents: async (params?: {
+    page?: number;
+    page_size?: number;
+  }): Promise<PaginatedResponse<Correspondent>> => {
     const response = await apiClient.get<PaginatedResponse<Correspondent>>('/api/correspondents/', {
       params,
     });
@@ -36,10 +37,7 @@ export const correspondentsApi = {
     return response.data;
   },
 
-  updateCorrespondent: async (
-    id: number,
-    data: Partial<Correspondent>,
-  ): Promise<Correspondent> => {
+  updateCorrespondent: async (id: number, data: Partial<Correspondent>): Promise<Correspondent> => {
     const response = await apiClient.patch<Correspondent>(`/api/correspondents/${id}/`, data);
     return response.data;
   },

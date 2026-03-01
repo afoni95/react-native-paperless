@@ -7,18 +7,14 @@ import { useSettingsStore } from '@/store/settingsStore';
 import { LoadingScreen } from '@/components';
 import { AuthStack } from './AuthStack';
 import { MainTabs } from './MainTabs';
-import {
-  navigationLightTheme,
-  navigationDarkTheme,
-} from '@/theme';
+import { navigationLightTheme, navigationDarkTheme } from '@/theme';
 
 export const AppNavigator: React.FC = () => {
   const { isAuthenticated, isLoading } = useAuthStore();
   const { theme: themeMode } = useSettingsStore();
   const systemScheme = useColorScheme();
 
-  const isDark =
-    themeMode === 'dark' || (themeMode === 'auto' && systemScheme === 'dark');
+  const isDark = themeMode === 'dark' || (themeMode === 'auto' && systemScheme === 'dark');
 
   if (isLoading) {
     return <LoadingScreen />;

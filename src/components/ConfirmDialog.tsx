@@ -34,10 +34,7 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
         </Dialog.Content>
         <Dialog.Actions>
           <Button onPress={onCancel}>{cancelLabel || t('common.cancel')}</Button>
-          <Button
-            onPress={onConfirm}
-            textColor={destructive ? '#d32f2f' : undefined}
-          >
+          <Button onPress={onConfirm} textColor={destructive ? '#d32f2f' : undefined}>
             {confirmLabel || t('common.confirm')}
           </Button>
         </Dialog.Actions>

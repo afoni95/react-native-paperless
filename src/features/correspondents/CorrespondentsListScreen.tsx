@@ -22,7 +22,14 @@ export const CorrespondentsListScreen: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [deleteTarget, setDeleteTarget] = useState<Correspondent | null>(null);
 
-  const { data: correspondents, isLoading, isError, error, refetch, isRefetching } = useQuery({
+  const {
+    data: correspondents,
+    isLoading,
+    isError,
+    error,
+    refetch,
+    isRefetching,
+  } = useQuery({
     queryKey: ['correspondents-all'],
     queryFn: correspondentsApi.getAllCorrespondents,
   });
@@ -38,9 +45,7 @@ export const CorrespondentsListScreen: React.FC = () => {
   const filteredItems = useMemo(() => {
     if (!correspondents) return [];
     if (!searchQuery) return correspondents;
-    return correspondents.filter((c) =>
-      c.name.toLowerCase().includes(searchQuery.toLowerCase()),
-    );
+    return correspondents.filter((c) => c.name.toLowerCase().includes(searchQuery.toLowerCase()));
   }, [correspondents, searchQuery]);
 
   if (isLoading) {
@@ -56,7 +61,9 @@ export const CorrespondentsListScreen: React.FC = () => {
         style={styles.searchBar}
       />
 
-      {isError && <ErrorBanner message={error?.message ?? t('common.somethingWentWrong')} onRetry={refetch} />}
+      {isError && (
+        <ErrorBanner message={error?.message ?? t('common.somethingWentWrong')} onRetry={refetch} />
+      )}
 
       <FlatList
         data={filteredItems}
@@ -79,7 +86,11 @@ export const CorrespondentsListScreen: React.FC = () => {
         contentContainerStyle={filteredItems.length === 0 ? styles.emptyContainer : undefined}
         ListEmptyComponent={<EmptyState message={t('common.noResults')} />}
         refreshControl={
-          <RefreshControl refreshing={isRefetching} onRefresh={refetch} colors={[theme.colors.primary]} />
+          <RefreshControl
+            refreshing={isRefetching}
+            onRefresh={refetch}
+            colors={[theme.colors.primary]}
+          />
         }
         keyboardShouldPersistTaps="handled"
       />

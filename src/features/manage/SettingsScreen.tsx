@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, ScrollView, StyleSheet } from 'react-native';
-import { List, Divider, useTheme, Button, RadioButton, Text } from 'react-native-paper';
+import { List, Divider, useTheme, Button, RadioButton } from 'react-native-paper';
 import { useTranslation } from 'react-i18next';
 import { useSettingsStore, ThemeMode, Language } from '@/store/settingsStore';
 import { useAuthStore } from '@/store/authStore';

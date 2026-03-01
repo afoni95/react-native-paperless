@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { View, FlatList, StyleSheet, RefreshControl } from 'react-native';
-import { Searchbar, FAB, List, Text, useTheme } from 'react-native-paper';
+import { Searchbar, FAB, List, useTheme } from 'react-native-paper';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -22,7 +22,14 @@ export const DocumentTypesListScreen: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [deleteTarget, setDeleteTarget] = useState<DocumentType | null>(null);
 
-  const { data: types, isLoading, isError, error, refetch, isRefetching } = useQuery({
+  const {
+    data: types,
+    isLoading,
+    isError,
+    error,
+    refetch,
+    isRefetching,
+  } = useQuery({
     queryKey: ['document-types-all'],
     queryFn: documentTypesApi.getAllDocumentTypes,
   });
@@ -38,9 +45,7 @@ export const DocumentTypesListScreen: React.FC = () => {
   const filteredItems = useMemo(() => {
     if (!types) return [];
     if (!searchQuery) return types;
-    return types.filter((dt) =>
-      dt.name.toLowerCase().includes(searchQuery.toLowerCase()),
-    );
+    return types.filter((dt) => dt.name.toLowerCase().includes(searchQuery.toLowerCase()));
   }, [types, searchQuery]);
 
   if (isLoading) {
@@ -58,7 +63,9 @@ export const DocumentTypesListScreen: React.FC = () => {
         style={styles.searchBar}
       />
 
-      {isError && <ErrorBanner message={(error?.message ?? t('common.somethingWentWrong'))} onRetry={refetch} />}
+      {isError && (
+        <ErrorBanner message={error?.message ?? t('common.somethingWentWrong')} onRetry={refetch} />
+      )}
 
       <FlatList
         data={filteredItems}
@@ -76,7 +83,11 @@ export const DocumentTypesListScreen: React.FC = () => {
         contentContainerStyle={isEmpty ? styles.emptyContainer : undefined}
         ListEmptyComponent={<EmptyState message={t('common.noResults')} />}
         refreshControl={
-          <RefreshControl refreshing={isRefetching} onRefresh={refetch} colors={[theme.colors.primary]} />
+          <RefreshControl
+            refreshing={isRefetching}
+            onRefresh={refetch}
+            colors={[theme.colors.primary]}
+          />
         }
         keyboardShouldPersistTaps="handled"
       />

@@ -119,7 +119,9 @@ export const PdfViewerScreen: React.FC<Props> = ({ route }) => {
     };
 
     loadPdf();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [documentId, serverUrl, token, t]);
 
   if (loading) {

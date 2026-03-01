@@ -77,9 +77,11 @@ export const UploadScreen: React.FC = () => {
 
     if (newSuccess) {
       queryClient.invalidateQueries({ queryKey: ['documents'] });
-      setSnackbar({ visible: true, message: t('documents.taskSuccess'), type: 'success' });
+      const message = t('documents.taskSuccess');
+      setSnackbar({ visible: true, message, type: 'success' });
     } else if (newFailure) {
-      setSnackbar({ visible: true, message: t('documents.taskFailed'), type: 'error' });
+      const message = t('documents.taskFailed');
+      setSnackbar({ visible: true, message, type: 'error' });
     }
   }, [allServerTasks, queryClient, t]);
 
@@ -186,7 +188,10 @@ export const UploadScreen: React.FC = () => {
         contentContainerStyle={styles.content}
         keyboardShouldPersistTaps="handled"
       >
-        <Text variant="headlineSmall" style={[styles.heading, { color: theme.colors.onBackground }]}>
+        <Text
+          variant="headlineSmall"
+          style={[styles.heading, { color: theme.colors.onBackground }]}
+        >
           {t('upload.title')}
         </Text>
 
@@ -214,7 +219,10 @@ export const UploadScreen: React.FC = () => {
             )}
 
             {!selectedFile && (
-              <Text variant="bodyMedium" style={[styles.noFile, { color: theme.colors.onSurfaceVariant }]}>
+              <Text
+                variant="bodyMedium"
+                style={[styles.noFile, { color: theme.colors.onSurfaceVariant }]}
+              >
                 {t('upload.noFileSelected')}
               </Text>
             )}
@@ -279,11 +287,18 @@ export const UploadScreen: React.FC = () => {
       {processingTasks.length > 0 && (
         <View style={[styles.bottomBar, { backgroundColor: theme.colors.secondaryContainer }]}>
           <View style={styles.bottomBarContent}>
-            <Text variant="bodyMedium" style={{ color: theme.colors.onSecondaryContainer, flex: 1 }}>
+            <Text
+              variant="bodyMedium"
+              style={{ color: theme.colors.onSecondaryContainer, flex: 1 }}
+            >
               {t('upload.processingCount', { count: processingTasks.length })}
             </Text>
           </View>
-          <ProgressBar indeterminate color={theme.colors.secondary} style={styles.bottomBarProgress} />
+          <ProgressBar
+            indeterminate
+            color={theme.colors.secondary}
+            style={styles.bottomBarProgress}
+          />
         </View>
       )}
 

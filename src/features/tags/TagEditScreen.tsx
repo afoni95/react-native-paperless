@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, ScrollView, StyleSheet, Alert } from 'react-native';
-import { TextInput, Button, Switch, Text, useTheme, SegmentedButtons } from 'react-native-paper';
+import { TextInput, Button, Switch, Text, useTheme } from 'react-native-paper';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -13,10 +13,26 @@ import { ManageStackParamList } from '@/navigation/types';
 type Props = NativeStackScreenProps<ManageStackParamList, 'TagEdit'>;
 
 const PRESET_COLORS = [
-  '#e53935', '#d81b60', '#8e24aa', '#5e35b1', '#3949ab',
-  '#1e88e5', '#039be5', '#00acc1', '#00897b', '#43a047',
-  '#7cb342', '#c0ca33', '#fdd835', '#ffb300', '#fb8c00',
-  '#f4511e', '#6d4c41', '#757575', '#546e7a', '#17541f',
+  '#e53935',
+  '#d81b60',
+  '#8e24aa',
+  '#5e35b1',
+  '#3949ab',
+  '#1e88e5',
+  '#039be5',
+  '#00acc1',
+  '#00897b',
+  '#43a047',
+  '#7cb342',
+  '#c0ca33',
+  '#fdd835',
+  '#ffb300',
+  '#fb8c00',
+  '#f4511e',
+  '#6d4c41',
+  '#757575',
+  '#546e7a',
+  '#17541f',
 ];
 
 export const TagEditScreen: React.FC<Props> = ({ route, navigation }) => {
@@ -127,12 +143,7 @@ export const TagEditScreen: React.FC<Props> = ({ route, navigation }) => {
         onChangeText={setColor}
         mode="outlined"
         style={styles.input}
-        left={
-          <TextInput.Icon
-            icon="circle"
-            color={color}
-          />
-        }
+        left={<TextInput.Icon icon="circle" color={color} />}
       />
 
       <TextInput

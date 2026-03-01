@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { View, FlatList, StyleSheet, RefreshControl } from 'react-native';
-import { Searchbar, FAB, List, Text, useTheme } from 'react-native-paper';
+import { Searchbar, FAB, List, useTheme } from 'react-native-paper';
 import { useTranslation } from 'react-i18next';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigation } from '@react-navigation/native';
@@ -9,7 +9,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { tagsApi } from '@/api';
 import { ManageStackParamList } from '@/navigation/types';
 import { Tag } from '@/types';
-import { LoadingScreen, EmptyState, ErrorBanner, ConfirmDialog, TagChip } from '@/components';
+import { LoadingScreen, EmptyState, ErrorBanner, ConfirmDialog } from '@/components';
 
 type NavigationProp = NativeStackNavigationProp<ManageStackParamList, 'TagsList'>;
 
@@ -22,7 +22,14 @@ export const TagsListScreen: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [deleteTarget, setDeleteTarget] = useState<Tag | null>(null);
 
-  const { data: tags, isLoading, isError, error, refetch, isRefetching } = useQuery({
+  const {
+    data: tags,
+    isLoading,
+    isError,
+    error,
+    refetch,
+    isRefetching,
+  } = useQuery({
     queryKey: ['tags-all'],
     queryFn: tagsApi.getAllTags,
   });
@@ -38,9 +45,7 @@ export const TagsListScreen: React.FC = () => {
   const filteredTags = useMemo(() => {
     if (!tags) return [];
     if (!searchQuery) return tags;
-    return tags.filter((tag) =>
-      tag.name.toLowerCase().includes(searchQuery.toLowerCase()),
-    );
+    return tags.filter((tag) => tag.name.toLowerCase().includes(searchQuery.toLowerCase()));
   }, [tags, searchQuery]);
 
   if (isLoading) {
@@ -56,7 +61,9 @@ export const TagsListScreen: React.FC = () => {
         style={styles.searchBar}
       />
 
-      {isError && <ErrorBanner message={error?.message ?? t('common.somethingWentWrong')} onRetry={refetch} />}
+      {isError && (
+        <ErrorBanner message={error?.message ?? t('common.somethingWentWrong')} onRetry={refetch} />
+      )}
 
       <FlatList
         data={filteredTags}
@@ -81,7 +88,11 @@ export const TagsListScreen: React.FC = () => {
         contentContainerStyle={filteredTags.length === 0 ? styles.emptyContainer : undefined}
         ListEmptyComponent={<EmptyState message={t('common.noResults')} />}
         refreshControl={
-          <RefreshControl refreshing={isRefetching} onRefresh={refetch} colors={[theme.colors.primary]} />
+          <RefreshControl
+            refreshing={isRefetching}
+            onRefresh={refetch}
+            colors={[theme.colors.primary]}
+          />
         }
         keyboardShouldPersistTaps="handled"
       />

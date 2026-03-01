@@ -1,11 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import {
-  View,
-  ScrollView,
-  StyleSheet,
-  RefreshControl,
-  Alert,
-} from 'react-native';
+import { View, ScrollView, StyleSheet, RefreshControl, Alert } from 'react-native';
 import * as FileSystem from 'expo-file-system/legacy';
 import * as Sharing from 'expo-sharing';
 import {
@@ -25,7 +19,14 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { documentsApi, tagsApi, correspondentsApi, documentTypesApi } from '@/api';
 import { Tag, Correspondent, DocumentType, Document } from '@/types';
 import { useAuthStore } from '@/store/authStore';
-import { LoadingScreen, ErrorBanner, TagChip, ConfirmDialog, SearchableDropdown, MultiSelectChips } from '@/components';
+import {
+  LoadingScreen,
+  ErrorBanner,
+  TagChip,
+  ConfirmDialog,
+  SearchableDropdown,
+  MultiSelectChips,
+} from '@/components';
 import { formatDate, formatDateTime } from '@/utils';
 import { DocumentsStackParamList } from '@/navigation/types';
 
@@ -49,7 +50,14 @@ export const DocumentDetailScreen: React.FC<Props> = ({ route, navigation }) => 
 
   const { serverUrl, token } = useAuthStore();
 
-  const { data: doc, isLoading, isError, error, refetch, isRefetching } = useQuery({
+  const {
+    data: doc,
+    isLoading,
+    isError,
+    error,
+    refetch,
+    isRefetching,
+  } = useQuery({
     queryKey: ['document', documentId],
     queryFn: () => documentsApi.getDocument(documentId),
   });
@@ -158,7 +166,11 @@ export const DocumentDetailScreen: React.FC<Props> = ({ route, navigation }) => 
       <ScrollView
         contentContainerStyle={styles.content}
         refreshControl={
-          <RefreshControl refreshing={isRefetching} onRefresh={refetch} colors={[theme.colors.primary]} />
+          <RefreshControl
+            refreshing={isRefetching}
+            onRefresh={refetch}
+            colors={[theme.colors.primary]}
+          />
         }
         nestedScrollEnabled
       >
@@ -168,11 +180,7 @@ export const DocumentDetailScreen: React.FC<Props> = ({ route, navigation }) => 
               <Button mode="outlined" onPress={() => setIsEditing(false)}>
                 {t('common.cancel')}
               </Button>
-              <Button
-                mode="contained"
-                onPress={handleSave}
-                loading={updateMutation.isPending}
-              >
+              <Button mode="contained" onPress={handleSave} loading={updateMutation.isPending}>
                 {t('common.save')}
               </Button>
             </>
@@ -197,7 +205,7 @@ export const DocumentDetailScreen: React.FC<Props> = ({ route, navigation }) => 
                     const downloadUrl = `${baseUrl}/api/documents/${documentId}/download/`;
                     const filename = `${doc?.title || 'document'}.pdf`;
                     const fileUri = `${FileSystem.documentDirectory}${filename}`;
-                    
+
                     const result = await FileSystem.downloadAsync(downloadUrl, fileUri, {
                       headers: { Authorization: `Token ${token}` },
                     });
@@ -237,7 +245,10 @@ export const DocumentDetailScreen: React.FC<Props> = ({ route, navigation }) => 
             style={styles.input}
           />
         ) : (
-          <Text variant="headlineSmall" style={[styles.title, { color: theme.colors.onBackground }]}>
+          <Text
+            variant="headlineSmall"
+            style={[styles.title, { color: theme.colors.onBackground }]}
+          >
             {doc.title}
           </Text>
         )}
@@ -336,7 +347,9 @@ export const DocumentDetailScreen: React.FC<Props> = ({ route, navigation }) => 
         {/* Tags */}
         <Card style={[styles.metaCard, { backgroundColor: theme.colors.surface }]}>
           <Card.Content>
-            <Text variant="titleMedium" style={{ marginBottom: 8 }}>{t('documents.tags')}</Text>
+            <Text variant="titleMedium" style={{ marginBottom: 8 }}>
+              {t('documents.tags')}
+            </Text>
             {isEditing ? (
               <MultiSelectChips
                 tags={allTags || []}
@@ -362,8 +375,11 @@ export const DocumentDetailScreen: React.FC<Props> = ({ route, navigation }) => 
         {/* Notes */}
         <Card style={[styles.metaCard, { backgroundColor: theme.colors.surface }]}>
           <Card.Content>
-            <Text variant="titleMedium" style={{ marginBottom: 8 }}>{t('documents.notes')}</Text>
-            {doc.notes && doc.notes.length > 0 && (
+            <Text variant="titleMedium" style={{ marginBottom: 8 }}>
+              {t('documents.notes')}
+            </Text>
+            {doc.notes &&
+              doc.notes.length > 0 &&
               doc.notes.map((note) => (
                 <View key={note.id} style={styles.noteItem}>
                   <Text variant="bodyMedium">{note.note}</Text>
@@ -371,8 +387,7 @@ export const DocumentDetailScreen: React.FC<Props> = ({ route, navigation }) => 
                     {formatDateTime(note.created)}
                   </Text>
                 </View>
-              ))
-            )}
+              ))}
             <View style={styles.addNoteRow}>
               <TextInput
                 placeholder={t('documents.addNote')}

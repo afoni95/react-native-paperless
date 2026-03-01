@@ -15,7 +15,12 @@ export const EmptyState: React.FC<EmptyStateProps> = ({ message }) => {
 
   return (
     <View style={styles.container}>
-      <MaterialCommunityIcons name="file-document-outline" size={64} color={theme.colors.onSurfaceVariant} style={{ marginBottom: 16 }} />
+      <MaterialCommunityIcons
+        name="file-document-outline"
+        size={64}
+        color={theme.colors.onSurfaceVariant}
+        style={{ marginBottom: 16 }}
+      />
       <Text style={[styles.message, { color: theme.colors.onSurfaceVariant }]}>
         {message || t('common.noResults')}
       </Text>

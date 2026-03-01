@@ -72,7 +72,6 @@ export const FilterSheet: React.FC<FilterSheetProps> = ({
     <Modal visible={visible} animationType="slide" transparent onRequestClose={onDismiss}>
       <Pressable style={styles.overlay} onPress={onDismiss} />
       <View style={[styles.sheet, { backgroundColor: theme.colors.surface }]}>
-
         {/* Header */}
 
         <View style={styles.header}>
@@ -82,11 +81,17 @@ export const FilterSheet: React.FC<FilterSheetProps> = ({
 
         <Divider />
 
-        <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled" nestedScrollEnabled>
-
+        <ScrollView
+          contentContainerStyle={styles.content}
+          keyboardShouldPersistTaps="handled"
+          nestedScrollEnabled
+        >
           {/* Inbox filter */}
 
-          <Text variant="labelLarge" style={[styles.sectionLabel, { color: theme.colors.onBackground }]}>
+          <Text
+            variant="labelLarge"
+            style={[styles.sectionLabel, { color: theme.colors.onBackground }]}
+          >
             {t('documents.inbox')}
           </Text>
           <View style={styles.chipRow}>
@@ -112,7 +117,10 @@ export const FilterSheet: React.FC<FilterSheetProps> = ({
 
           {/* Correspondent filter */}
 
-          <Text variant="labelLarge" style={[styles.sectionLabel, { color: theme.colors.onBackground }]}>
+          <Text
+            variant="labelLarge"
+            style={[styles.sectionLabel, { color: theme.colors.onBackground }]}
+          >
             {t('documents.correspondent')}
           </Text>
           <SearchableDropdown
@@ -127,7 +135,10 @@ export const FilterSheet: React.FC<FilterSheetProps> = ({
 
           {/* Document Type filter */}
 
-          <Text variant="labelLarge" style={[styles.sectionLabel, { color: theme.colors.onBackground }]}>
+          <Text
+            variant="labelLarge"
+            style={[styles.sectionLabel, { color: theme.colors.onBackground }]}
+          >
             {t('documents.documentType')}
           </Text>
           <SearchableDropdown
@@ -142,7 +153,10 @@ export const FilterSheet: React.FC<FilterSheetProps> = ({
 
           {/* Tags filter */}
 
-          <Text variant="labelLarge" style={[styles.sectionLabel, { color: theme.colors.onBackground }]}>
+          <Text
+            variant="labelLarge"
+            style={[styles.sectionLabel, { color: theme.colors.onBackground }]}
+          >
             {t('documents.tags')}
           </Text>
           <MultiSelectChips
@@ -155,7 +169,7 @@ export const FilterSheet: React.FC<FilterSheetProps> = ({
         <Divider />
 
         {/* Actions */}
-        
+
         <View style={styles.actions}>
           <Button mode="outlined" onPress={handleReset}>
             {t('documents.clearFilters')}

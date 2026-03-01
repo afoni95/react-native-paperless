@@ -34,13 +34,13 @@ export const AuthenticatedImage: React.FC<AuthenticatedImageProps> = ({
           const base64 = btoa(
             new Uint8Array(response.data).reduce(
               (data, byte) => data + String.fromCharCode(byte),
-              ''
-            )
+              '',
+            ),
           );
-          
+
           const contentType = response.headers['content-type'] || 'image/png';
           const dataUri = `data:${contentType};base64,${base64}`;
-          
+
           setImageData(dataUri);
           setLoading(false);
         }
@@ -62,23 +62,20 @@ export const AuthenticatedImage: React.FC<AuthenticatedImageProps> = ({
 
   if (loading) {
     return (
-      <View style={[style, { justifyContent: 'center', alignItems: 'center', backgroundColor: '#e0e0e0' }]}>
+      <View
+        style={[
+          style,
+          { justifyContent: 'center', alignItems: 'center', backgroundColor: '#e0e0e0' },
+        ]}
+      >
         <ActivityIndicator size="small" color="#666" />
       </View>
     );
   }
 
   if (error || !imageData) {
-    return (
-      <View style={[style, { backgroundColor: '#e0e0e0' }]} />
-    );
+    return <View style={[style, { backgroundColor: '#e0e0e0' }]} />;
   }
 
-  return (
-    <Image
-      source={{ uri: imageData }}
-      style={style}
-      resizeMode={resizeMode}
-    />
-  );
+  return <Image source={{ uri: imageData }} style={style} resizeMode={resizeMode} />;
 };

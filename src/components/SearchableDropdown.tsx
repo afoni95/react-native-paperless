@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { View, ScrollView, StyleSheet, Keyboard } from 'react-native';
+import { View, ScrollView, StyleSheet } from 'react-native';
 import { Searchbar, List, useTheme } from 'react-native-paper';
 import { useTranslation } from 'react-i18next';
 
@@ -34,9 +34,7 @@ export const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
 
   const filteredItems = useMemo(() => {
     if (!searchQuery) return items;
-    return items.filter((item) =>
-      item.name.toLowerCase().includes(searchQuery.toLowerCase()),
-    );
+    return items.filter((item) => item.name.toLowerCase().includes(searchQuery.toLowerCase()));
   }, [items, searchQuery]);
 
   const handleSelect = (id: number | null) => {
@@ -57,7 +55,12 @@ export const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
       />
 
       {isOpen && (
-        <View style={[styles.dropdown, { backgroundColor: theme.colors.surface, borderColor: theme.colors.outline }]}>
+        <View
+          style={[
+            styles.dropdown,
+            { backgroundColor: theme.colors.surface, borderColor: theme.colors.outline },
+          ]}
+        >
           <Searchbar
             placeholder={t('common.search')}
             value={searchQuery}
@@ -74,17 +77,17 @@ export const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
             />
           )}
 
-          <ScrollView
-            style={styles.list}
-            keyboardShouldPersistTaps="handled"
-            nestedScrollEnabled
-          >
+          <ScrollView style={styles.list} keyboardShouldPersistTaps="handled" nestedScrollEnabled>
             {filteredItems.map((item) => (
               <List.Item
                 key={String(item.id)}
                 title={item.name}
                 onPress={() => handleSelect(item.id)}
-                style={item.id === selectedId ? { backgroundColor: theme.colors.primaryContainer } : undefined}
+                style={
+                  item.id === selectedId
+                    ? { backgroundColor: theme.colors.primaryContainer }
+                    : undefined
+                }
               />
             ))}
           </ScrollView>

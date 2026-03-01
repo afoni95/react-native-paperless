@@ -24,9 +24,7 @@ export const MultiSelectChips: React.FC<MultiSelectChipsProps> = ({
 
   const filteredTags = useMemo(() => {
     if (!searchQuery) return tags;
-    return tags.filter((tag) =>
-      tag.name.toLowerCase().includes(searchQuery.toLowerCase()),
-    );
+    return tags.filter((tag) => tag.name.toLowerCase().includes(searchQuery.toLowerCase()));
   }, [tags, searchQuery]);
 
   const handleToggle = (id: number) => {
@@ -64,13 +62,15 @@ export const MultiSelectChips: React.FC<MultiSelectChipsProps> = ({
                 selected={isSelected}
                 onPress={() => handleToggle(tag.id)}
                 style={{
-                  backgroundColor: isSelected ? tag.color || theme.colors.primaryContainer : theme.colors.surfaceVariant,
+                  backgroundColor: isSelected
+                    ? tag.color || theme.colors.primaryContainer
+                    : theme.colors.surfaceVariant,
                   marginRight: 4,
                   marginBottom: 4,
                 }}
                 textStyle={{
                   color: isSelected
-                    ? (tag.text_color || getContrastTextColor(tag.color))
+                    ? tag.text_color || getContrastTextColor(tag.color)
                     : theme.colors.onSurfaceVariant,
                   fontSize: 12,
                 }}
