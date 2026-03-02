@@ -6,6 +6,8 @@
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
+    "android:build": "expo run:android",
+    "ios:build": "expo run:ios",
     "web": "expo start --web",
     "lint": "npx eslint .",
     "lint:fix": "npx eslint . --fix"
@@ -22,6 +24,7 @@
     "babel-preset-expo": "~54.0.10",
     "expo": "~54.0.0",
     "expo-build-properties": "~1.0.10",
+    "expo-clipboard": "~8.0.8",
     "expo-constants": "~18.0.13",
     "expo-document-picker": "~14.0.8",
     "expo-file-system": "~19.0.21",

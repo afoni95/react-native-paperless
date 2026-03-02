@@ -9,6 +9,11 @@ export interface TokenResponse {
   token: string;
 }
 
+export interface PaperlessApiError {
+  non_field_errors?: string[];
+  detail?: string;
+}
+
 export interface Document {
   id: number;
   correspondent: number | null;

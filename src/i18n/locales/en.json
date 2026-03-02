@@ -37,7 +37,11 @@
     "loggingIn": "Logging in...",
     "loginError": "Login failed. Please check your credentials and server URL.",
     "logout": "Logout",
-    "logoutConfirm": "Are you sure you want to logout?"
+    "logoutConfirm": "Are you sure you want to logout?",
+    "mfaCode": "Verification Code",
+    "mfaPrompt": "Enter the code from your authenticator app",
+    "mfaVerify": "Verify",
+    "mfaInvalid": "Invalid code. Please try again."
   },
   "dashboard": {
     "title": "Dashboard",
