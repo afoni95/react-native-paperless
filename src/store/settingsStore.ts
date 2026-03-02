@@ -1,7 +1,6 @@
 import { create } from 'zustand';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-const SETTINGS_KEY = 'paperless_settings';
+import { SETTINGS_KEY } from './constants';
 
 export type ThemeMode = 'light' | 'dark' | 'auto';
 export type Language = 'en' | 'de';

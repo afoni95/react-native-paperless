@@ -29,7 +29,7 @@
   },
   "auth": {
     "serverUrl": "Server-URL",
-    "serverUrlPlaceholder": "https://dein-server.de",
+    "serverUrlPlaceholder": "https://dein-server:8000",
     "subtitle": "Dokumentenverwaltung",
     "username": "Benutzername",
     "password": "Passwort",
@@ -41,7 +41,14 @@
     "mfaCode": "Bestätigungscode",
     "mfaPrompt": "Gib den Code aus deiner Authenticator-App ein",
     "mfaVerify": "Verifizieren",
-    "mfaInvalid": "Ungültiger Code. Bitte erneut versuchen."
+    "mfaInvalid": "Ungültiger Code. Bitte erneut versuchen.",
+    "biometricCheckbox": "Biometrische Anmeldung verwenden",
+    "biometricTitle": "Gesperrt",
+    "biometricSubtitle": "Bestätige deine Identität, um auf Paperless Companion zuzugreifen",
+    "biometricPrompt": "Authentifiziere dich, um Paperless Companion zu entsperren",
+    "biometricFallback": "Passcode verwenden",
+    "biometricFailed": "Authentifizierung fehlgeschlagen. Bitte erneut versuchen.",
+    "biometricRetry": "Erneut versuchen"
   },
   "dashboard": {
     "title": "Übersicht",
@@ -102,7 +109,7 @@
     "downloadError": "Das Dokument konnte nicht heruntergeladen werden."
   },
   "upload": {
-    "title": "Hochladen",
+    "title": "Dokument Hochladen",
     "chooseFile": "Datei wählen",
     "takePhoto": "Foto aufnehmen",
     "orTakePhoto": "oder ein Foto aufnehmen",

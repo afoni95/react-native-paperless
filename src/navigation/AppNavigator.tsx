@@ -7,18 +7,19 @@ import { useSettingsStore } from '@/store/settingsStore';
 import { LoadingScreen } from '@/components';
 import { AuthStack } from './AuthStack';
 import { MainTabs } from './MainTabs';
+import { BiometricLockScreen } from '@/features/auth/BiometricLockScreen';
 import { navigationLightTheme, navigationDarkTheme } from '@/theme';
 
 export const AppNavigator: React.FC = () => {
-  const { isAuthenticated, isLoading } = useAuthStore();
+  const { isAuthenticated, isLoading, biometricLocked } = useAuthStore();
   const { theme: themeMode } = useSettingsStore();
   const systemScheme = useColorScheme();
 
   const isDark = themeMode === 'dark' || (themeMode === 'auto' && systemScheme === 'dark');
 
-  if (isLoading) {
-    return <LoadingScreen />;
-  }
+  if (isLoading) return <LoadingScreen />;
+
+  if (biometricLocked) return <BiometricLockScreen />;
 
   return (
     <NavigationContainer theme={isDark ? navigationDarkTheme : navigationLightTheme}>

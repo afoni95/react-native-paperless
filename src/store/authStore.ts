@@ -1,9 +1,7 @@
 import { create } from 'zustand';
 import * as SecureStore from 'expo-secure-store';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-const TOKEN_KEY = 'paperless_token';
-const SERVER_URL_KEY = 'paperless_server_url';
+import { TOKEN_KEY, SERVER_URL_KEY, BIOMETRIC_ENABLED_KEY } from './constants';
 
 interface AuthState {
   token: string | null;
@@ -11,11 +9,15 @@ interface AuthState {
   isAuthenticated: boolean;
   isLoading: boolean;
   isDemo: boolean;
+  biometricEnabled: boolean;
+  biometricLocked: boolean;
   login: (token: string, serverUrl: string) => Promise<void>;
   loginDemo: () => void;
   logout: () => Promise<void>;
   restoreSession: () => Promise<void>;
   setServerUrl: (url: string) => Promise<void>;
+  setBiometricEnabled: (enabled: boolean) => Promise<void>;
+  unlockBiometric: () => void;
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
@@ -24,6 +26,8 @@ export const useAuthStore = create<AuthState>((set) => ({
   isAuthenticated: false,
   isLoading: true,
   isDemo: false,
+  biometricEnabled: false,
+  biometricLocked: false,
 
   login: async (token: string, serverUrl: string) => {
     await SecureStore.setItemAsync(TOKEN_KEY, token);
@@ -49,10 +53,23 @@ export const useAuthStore = create<AuthState>((set) => ({
     try {
       const token = await SecureStore.getItemAsync(TOKEN_KEY);
       const serverUrl = (await AsyncStorage.getItem(SERVER_URL_KEY)) || '';
+      const biometricRaw = await AsyncStorage.getItem(BIOMETRIC_ENABLED_KEY);
+      const biometricEnabled = biometricRaw === 'true';
+
       if (token && serverUrl) {
-        set({ token, serverUrl, isAuthenticated: true, isLoading: false });
+        if (biometricEnabled) {
+          // Credentials exist but biometric gate is active – stay locked
+          set({
+            serverUrl,
+            biometricEnabled,
+            biometricLocked: true,
+            isLoading: false,
+          });
+        } else {
+          set({ token, serverUrl, isAuthenticated: true, biometricEnabled, isLoading: false });
+        }
       } else {
-        set({ isLoading: false, serverUrl });
+        set({ isLoading: false, serverUrl, biometricEnabled });
       }
     } catch {
       set({ isLoading: false });
@@ -62,5 +79,26 @@ export const useAuthStore = create<AuthState>((set) => ({
   setServerUrl: async (url: string) => {
     await AsyncStorage.setItem(SERVER_URL_KEY, url);
     set({ serverUrl: url });
+  },
+
+  setBiometricEnabled: async (enabled: boolean) => {
+    await AsyncStorage.setItem(BIOMETRIC_ENABLED_KEY, enabled ? 'true' : 'false');
+    set({ biometricEnabled: enabled });
+  },
+
+  unlockBiometric: async () => {
+    // Called after successful biometric authentication – restore the saved token
+    try {
+      const token = await SecureStore.getItemAsync(TOKEN_KEY);
+      const serverUrl = (await AsyncStorage.getItem(SERVER_URL_KEY)) || '';
+      if (token && serverUrl) {
+        set({ token, serverUrl, isAuthenticated: true, biometricLocked: false });
+      } else {
+        // Token was removed externally – drop to login
+        set({ biometricLocked: false });
+      }
+    } catch {
+      set({ biometricLocked: false });
+    }
   },
 }));

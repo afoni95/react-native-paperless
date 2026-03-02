@@ -9,9 +9,11 @@ import {
   Animated,
   Easing,
   AppState,
+  TouchableOpacity,
 } from 'react-native';
 import * as Clipboard from 'expo-clipboard';
-import { TextInput, Button, Text, useTheme, HelperText } from 'react-native-paper';
+import { hasHardwareAsync, isEnrolledAsync, authenticateAsync } from 'expo-local-authentication';
+import { TextInput, Button, Text, useTheme, HelperText, Checkbox } from 'react-native-paper';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '@/store/authStore';
@@ -21,9 +23,12 @@ import { PaperlessApiError } from '@/types';
 export const LoginScreen: React.FC = () => {
   const theme = useTheme();
   const { t } = useTranslation();
-  const { login, loginDemo, serverUrl, setServerUrl } = useAuthStore();
+  const { login, loginDemo, serverUrl, setServerUrl, biometricEnabled, setBiometricEnabled } =
+    useAuthStore();
 
   const [url, setUrl] = useState(serverUrl);
+  const [biometricAvailable, setBiometricAvailable] = useState(false);
+  const [biometricChecked, setBiometricChecked] = useState(biometricEnabled);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -36,6 +41,15 @@ export const LoginScreen: React.FC = () => {
   const mfaInputRef = useRef<RNTextInput>(null);
   const mfaOpacity = useRef(new Animated.Value(0)).current;
   const mfaTranslate = useRef(new Animated.Value(40)).current;
+
+  // Check if biometric hardware is available
+  useEffect(() => {
+    (async () => {
+      const hasHardware = await hasHardwareAsync();
+      const isEnrolled = await isEnrolledAsync();
+      setBiometricAvailable(hasHardware && isEnrolled);
+    })();
+  }, []);
 
   // Animate MFA section in + auto-focus
   useEffect(() => {
@@ -131,6 +145,21 @@ export const LoginScreen: React.FC = () => {
       }
       await setServerUrl(cleanUrl);
       const response = await authApi.login(username, password, mfaRequired ? mfaCode : undefined);
+
+      if (biometricChecked) {
+        const bioResult = await authenticateAsync({
+          promptMessage: t('auth.biometricPrompt'),
+          cancelLabel: t('common.cancel'),
+          disableDeviceFallback: false,
+        });
+        if (!bioResult.success) {
+          setError(t('auth.biometricFailed'));
+          setLoading(false);
+          return;
+        }
+      }
+
+      await setBiometricEnabled(biometricChecked);
       await login(response.token, cleanUrl);
     } catch (err: unknown) {
       if (err instanceof MfaRequiredError) {
@@ -271,6 +300,22 @@ export const LoginScreen: React.FC = () => {
             </HelperText>
           ) : null}
 
+          {biometricAvailable && (
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={() => setBiometricChecked((v) => !v)}
+              style={styles.biometricRow}
+            >
+              <Checkbox
+                status={biometricChecked ? 'checked' : 'unchecked'}
+                onPress={() => setBiometricChecked((v) => !v)}
+              />
+              <Text variant="bodyMedium" style={{ color: theme.colors.onSurface, flex: 1 }}>
+                {t('auth.biometricCheckbox')}
+              </Text>
+            </TouchableOpacity>
+          )}
+
           <Button
             mode="contained"
             onPress={handleLogin}
@@ -311,6 +356,12 @@ const styles = StyleSheet.create({
   },
   input: {
     marginBottom: 12,
+  },
+  biometricRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 4,
+    marginBottom: 4,
   },
   button: {
     marginTop: 16,
