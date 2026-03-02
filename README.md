@@ -27,14 +27,16 @@ React Native Paperless is an open-source mobile client for the Paperless-ngx doc
 - **Tag management** — create, edit, delete tags with color and matching-algorithm support
 - **Correspondent management** — create, edit, delete correspondents with matching rules
 - **Document type management** — create, edit, delete document types with matching rules
+- **Biometric login** — optional biometric app lock via device fingerprint or face recognition
+- **TOTP** — two-factor authentication support with auto-paste and auto-submit
+- **Task monitoring** — background polling of processing tasks with live status updates
 - **Internationalization** — English and German translations (easily extendable)
 - **Theming** — light, dark, and system-auto themes
 
 ## Prerequisites
 
 - Node.js and npm
-- Expo CLI (`npm install -g expo-cli`)
-- Running Paperless server instance
+- Running Paperless-ngx server instance
 
 ## Installation
 
@@ -45,24 +47,59 @@ npm install
 ## Running the App
 
 ```bash
-# Start development server
-npm start
+# Start Metro bundler
+npm run start
 
-# Run on Android
+# Run on Android (via Expo)
 npm run android
 
-# Run on iOS
-npm run ios
+# Build Android locally
+npm run android:build
 
-# Run on Web
-npm run web
+# Run linter with auto fix
+npm run lint:fix
 ```
 
-## Roadmap (planned)
+## Roadmap
 
-- [ ] Bulk editing (multi-select documents)
-- [ ] Storage path management
-- [ ] Custom fields support
+### Resource APIs
+- [x] Documents CRUD (list, detail, edit, delete)
+- [x] Tags CRUD
+- [x] Correspondents CRUD
+- [x] Document Types CRUD
+- [x] Statistics / Dashboard
+- [x] Tasks (polling)
+- [ ] Storage Paths CRUD
+- [ ] Custom Fields CRUD
+- [ ] Mail Accounts CRUD
+- [ ] Mail Rules CRUD
+- [ ] Processed Mail view
+- [ ] Share Links CRUD
+- [ ] Workflows
+- [ ] Users/Groups management
+- [ ] Logs viewer
+- [ ] App Configuration CRUD
+
+### Special Endpoints
+- [x] Search autocomplete
+- [x] Document upload (file & camera)
+- [x] PDF preview & download/share
+- [ ] Global Search
+- [ ] Bulk Edit Documents
+- [ ] Bulk Download Documents
+- [ ] Bulk Edit Objects
+- [ ] Trash view & restore
+- [ ] User Profile
+
+### Enhancements
+- [x] Internationalization
+- [x] Theme support (light/dark/system)
+- [x] Biometric lock screen
+- [ ] Object-level Permissions
+- [ ] Custom Field query filtering
+- [ ] More Like This search
+- [ ] WebSocket status updates
+- [ ] Upload: add storage_path & custom_fields support
 
 See the [open issues](https://github.com/afoni95/react-native-paperless/issues) for a full list of proposed features and known bugs.
 

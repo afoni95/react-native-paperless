@@ -5,10 +5,7 @@
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
-    "ios": "expo start --ios",
     "android:build": "expo run:android",
-    "ios:build": "expo run:ios",
-    "web": "expo start --web",
     "lint": "npx eslint .",
     "lint:fix": "npx eslint . --fix"
   },
