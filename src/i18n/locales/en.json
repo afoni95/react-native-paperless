@@ -29,7 +29,7 @@
   },
   "auth": {
     "serverUrl": "Server URL",
-    "serverUrlPlaceholder": "https://your-server.com",
+    "serverUrlPlaceholder": "https://your-server:8000",
     "subtitle": "Document Management",
     "username": "Username",
     "password": "Password",
@@ -41,7 +41,14 @@
     "mfaCode": "Verification Code",
     "mfaPrompt": "Enter the code from your authenticator app",
     "mfaVerify": "Verify",
-    "mfaInvalid": "Invalid code. Please try again."
+    "mfaInvalid": "Invalid code. Please try again.",
+    "biometricCheckbox": "Use biometric login",
+    "biometricTitle": "Locked",
+    "biometricSubtitle": "Verify your identity to access Paperless",
+    "biometricPrompt": "Authenticate to unlock Paperless",
+    "biometricFallback": "Use passcode",
+    "biometricFailed": "Authentication failed. Please try again.",
+    "biometricRetry": "Try Again"
   },
   "dashboard": {
     "title": "Dashboard",
