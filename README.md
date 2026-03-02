@@ -1,5 +1,5 @@
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://github.com/afoni95/react-native-paperless/blob/main/LICENCE)
-[![Build](https://github.com/afoni95/react-native-paperless/actions/workflows/build-android.yml/badge.svg)](https://github.com/afoni95/react-native-paperless/actions/workflows/build-android.yml)
+[![Build](https://github.com/afoni95/react-native-paperless/actions/workflows/build-appbundle.yml/badge.svg)](https://github.com/afoni95/react-native-paperless/actions/workflows/build-appbundle.yml)
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/afoni95/react-native-paperless)](https://github.com/afoni95/react-native-paperless/releases)
 [![Platform](https://img.shields.io/badge/Platform-Android-green.svg)](https://reactnative.dev/)
 [![Expo](https://img.shields.io/badge/Expo-SDK-000020?logo=expo&logoColor=white)](https://expo.dev/)
