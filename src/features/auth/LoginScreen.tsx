@@ -131,6 +131,18 @@ export const LoginScreen: React.FC = () => {
 
     // Magic demo credentials for UI testing without a server
     if (url.trim() === '_demo_' && username === 'demo' && password === 'demo') {
+      if (biometricChecked) {
+        const bioResult = await authenticateAsync({
+          promptMessage: t('auth.biometricPrompt'),
+          cancelLabel: t('common.cancel'),
+          disableDeviceFallback: false,
+        });
+        if (!bioResult.success) {
+          setError(t('auth.biometricFailed'));
+          return;
+        }
+      }
+      await setBiometricEnabled(biometricChecked);
       loginDemo();
       return;
     }
