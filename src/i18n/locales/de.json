@@ -37,7 +37,11 @@
     "loggingIn": "Anmeldung...",
     "loginError": "Anmeldung fehlgeschlagen. Bitte überprüfen Sie Ihre Zugangsdaten und Server-URL.",
     "logout": "Abmelden",
-    "logoutConfirm": "Möchten Sie sich wirklich abmelden?"
+    "logoutConfirm": "Möchten Sie sich wirklich abmelden?",
+    "mfaCode": "Bestätigungscode",
+    "mfaPrompt": "Gib den Code aus deiner Authenticator-App ein",
+    "mfaVerify": "Verifizieren",
+    "mfaInvalid": "Ungültiger Code. Bitte erneut versuchen."
   },
   "dashboard": {
     "title": "Übersicht",
