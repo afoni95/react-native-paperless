@@ -34,10 +34,15 @@ export const TagChip: React.FC<TagChipProps> = ({
         backgroundColor: color || '#e0e0e0',
         marginRight: 4,
         marginBottom: 4,
+        height: 21,
+        paddingVertical: 0,
+        paddingHorizontal: 1,
       }}
       textStyle={{
         color: computedTextColor,
         fontSize: compact ? 11 : 13,
+        marginVertical: 0,
+        marginHorizontal: 0,
       }}
     >
       {name}

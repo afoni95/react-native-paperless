@@ -136,4 +136,8 @@ export const documentsApi = {
     if (documentIds) payload.documents = documentIds;
     await apiClient.post('/api/trash/', payload);
   },
+
+  reprocessDocument: async (id: number): Promise<void> => {
+    await apiClient.post(`/api/documents/${id}/reprocess/`);
+  },
 };
