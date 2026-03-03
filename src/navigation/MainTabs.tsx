@@ -65,6 +65,7 @@ export const MainTabs: React.FC = () => {
         component={ManageStack}
         options={{
           title: t('manage.title'),
+          popToTopOnBlur: true,
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="application-cog" color={color} size={size} />
           ),
