@@ -26,4 +26,5 @@ export type ManageStackParamList = {
   DocumentTypesList: undefined;
   DocumentTypeEdit: { documentTypeId?: number };
   Settings: undefined;
+  TrashBin: undefined;
 };

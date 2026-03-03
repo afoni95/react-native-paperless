@@ -1,0 +1,23 @@
+name: i18n validator
+
+on:
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  check-translations:
+    name: Check for Unused Translation Keys
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Check for unused translations
+        continue-on-error: true
+        run: node helpers/check-unused-translations.js

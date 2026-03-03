@@ -31,6 +31,7 @@ export interface Document {
   archived_file_name: string | null;
   owner: number | null;
   notes: DocumentNote[];
+  deleted_at: string | null;
   __search_hit__?: SearchHit;
 }
 

@@ -195,6 +195,7 @@ const baseDocs: Document[] = [
     archived_file_name: 'acme_invoice_1042_archived.pdf',
     owner: 1,
     notes: [],
+    deleted_at: null,
   },
   {
     id: 2,
@@ -214,6 +215,7 @@ const baseDocs: Document[] = [
     archived_file_name: null,
     owner: 1,
     notes: [],
+    deleted_at: null,
   },
   {
     id: 3,
@@ -233,6 +235,7 @@ const baseDocs: Document[] = [
     archived_file_name: 'insurance_renewal_2026_archived.pdf',
     owner: 1,
     notes: [],
+    deleted_at: null,
   },
   {
     id: 4,
@@ -252,6 +255,7 @@ const baseDocs: Document[] = [
     archived_file_name: null,
     owner: 1,
     notes: [],
+    deleted_at: null,
   },
   {
     id: 5,
@@ -271,6 +275,7 @@ const baseDocs: Document[] = [
     archived_file_name: null,
     owner: 1,
     notes: [],
+    deleted_at: null,
   },
   {
     id: 6,
@@ -289,6 +294,7 @@ const baseDocs: Document[] = [
     archived_file_name: null,
     owner: 1,
     notes: [],
+    deleted_at: null,
   },
   {
     id: 7,
@@ -308,6 +314,7 @@ const baseDocs: Document[] = [
     archived_file_name: null,
     owner: 1,
     notes: [],
+    deleted_at: null,
   },
   {
     id: 8,
@@ -327,6 +334,7 @@ const baseDocs: Document[] = [
     archived_file_name: null,
     owner: 1,
     notes: [],
+    deleted_at: null,
   },
   {
     id: 9,
@@ -346,6 +354,7 @@ const baseDocs: Document[] = [
     archived_file_name: null,
     owner: 1,
     notes: [],
+    deleted_at: null,
   },
   {
     id: 10,
@@ -364,6 +373,7 @@ const baseDocs: Document[] = [
     archived_file_name: null,
     owner: 1,
     notes: [],
+    deleted_at: '2026-01-01T09:00:00Z',
   },
 ];
 
