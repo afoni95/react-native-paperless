@@ -1,14 +1,6 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { View, FlatList, StyleSheet, RefreshControl, TouchableOpacity } from 'react-native';
-import {
-  Searchbar,
-  Text,
-  Chip,
-  useTheme,
-  Card,
-  Checkbox,
-  Button,
-} from 'react-native-paper';
+import { Searchbar, Text, Chip, useTheme, Card, Checkbox, Button } from 'react-native-paper';
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
