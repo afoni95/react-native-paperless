@@ -1,5 +1,5 @@
 import React, { useState, useLayoutEffect } from 'react';
-import { View, FlatList, StyleSheet, RefreshControl } from 'react-native';
+import { View, FlatList, StyleSheet, RefreshControl, ViewStyle } from 'react-native';
 import { List, useTheme, Button, Snackbar, IconButton, Text, Divider } from 'react-native-paper';
 import { useTranslation } from 'react-i18next';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -20,6 +20,7 @@ export const TrashBinScreen: React.FC = () => {
   const queryClient = useQueryClient();
 
   const [restoreTarget, setRestoreTarget] = useState<Document | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<Document | null>(null);
   const [emptyConfirmVisible, setEmptyConfirmVisible] = useState(false);
   const [snackbar, setSnackbar] = useState<{ visible: boolean; message: string }>({
     visible: false,
@@ -42,7 +43,10 @@ export const TrashBinScreen: React.FC = () => {
 
   const restoreMutation = useMutation({
     mutationFn: (ids: number[]) => documentsApi.restoreDocuments(ids),
-    onSuccess: () => {
+    onSuccess: async (_, ids) => {
+      // Reprocess each restored document to regenerate thumbnails
+      await Promise.allSettled(ids.map((id) => documentsApi.reprocessDocument(id)));
+      
       queryClient.invalidateQueries({ queryKey: ['trash'] });
       queryClient.invalidateQueries({ queryKey: ['documents'] });
       setRestoreTarget(null);
@@ -51,6 +55,20 @@ export const TrashBinScreen: React.FC = () => {
     onError: () => {
       setRestoreTarget(null);
       setSnackbar({ visible: true, message: t('trash.restoreError') });
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (ids: number[]) => documentsApi.emptyTrash(ids),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['trash'] });
+      queryClient.invalidateQueries({ queryKey: ['documents'] });
+      setDeleteTarget(null);
+      setSnackbar({ visible: true, message: t('trash.deleteSuccess') });
+    },
+    onError: () => {
+      setDeleteTarget(null);
+      setSnackbar({ visible: true, message: t('trash.deleteError') });
     },
   });
 
@@ -131,14 +149,25 @@ export const TrashBinScreen: React.FC = () => {
             }
             left={(props) => <List.Icon {...props} icon="file-document-outline" />}
             right={() => (
-              <Button
-                mode="text"
-                compact
-                onPress={() => setRestoreTarget(item)}
-                disabled={restoreMutation.isPending}
-              >
-                {t('trash.restore')}
-              </Button>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                <Button
+                  mode="text"
+                  compact
+                  onPress={() => setRestoreTarget(item)}
+                  disabled={restoreMutation.isPending || deleteMutation.isPending}
+                >
+                  {t('trash.restore')}
+                </Button>
+                <Button
+                  mode="text"
+                  textColor={theme.colors.error}
+                  compact
+                  onPress={() => setDeleteTarget(item)}
+                  disabled={restoreMutation.isPending || deleteMutation.isPending}
+                >
+                  {t('trash.deletePermanently')}
+                </Button>
+              </View>
             )}
             style={styles.listItem}
           />
@@ -165,6 +194,19 @@ export const TrashBinScreen: React.FC = () => {
           if (restoreTarget) restoreMutation.mutate([restoreTarget.id]);
         }}
         onCancel={() => setRestoreTarget(null)}
+      />
+
+      {/* Delete single document permanently */}
+      <ConfirmDialog
+        visible={!!deleteTarget}
+        title={t('trash.deletePermanently')}
+        message={t('trash.deleteConfirm', { title: deleteTarget?.title ?? '' })}
+        confirmLabel={t('trash.deletePermanently')}
+        destructive
+        onConfirm={() => {
+          if (deleteTarget) deleteMutation.mutate([deleteTarget.id]);
+        }}
+        onCancel={() => setDeleteTarget(null)}
       />
 
       {/* Empty entire trash */}

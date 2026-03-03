@@ -73,7 +73,9 @@
     "addNote": "Notiz hinzufügen",
     "viewPdf": "PDF anzeigen",
     "download": "Herunterladen",
-    "deleteConfirm": "Möchten Sie dieses Dokument wirklich löschen?",
+    "delete": "Löschen",
+    "deleteConfirm": "Möchten Sie \"{{title}}\" wirklich löschen? Sie können es aus dem Papierkorb wiederherstellen.",
+    "deleteBulkConfirm": "{{count}} Dokument löschen? Sie können sie aus dem Papierkorb wiederherstellen.",
     "noCorrespondent": "Kein Korrespondent",
     "noDocumentType": "Kein Dokumenttyp",
     "noTags": "Keine Tags",
@@ -107,7 +109,6 @@
     "cameraPermission": "Kamerazugriff wird benötigt."
   },
   "tags": {
-    "unusedboy":"Yup",
     "title": "Tags",
     "createTag": "Tag erstellen",
     "editTag": "Tag bearbeiten",
@@ -158,10 +159,14 @@
     "emptyTrashConfirm": "{{count}} Dokument(e) im Papierkorb dauerhaft löschen? Dies kann nicht rückgängig gemacht werden.",
     "restore": "Wiederherstellen",
     "restoreConfirm": "\"{{title}}\" aus dem Papierkorb wiederherstellen?",
+    "deletePermanently": "Löschen",
+    "deleteConfirm": "\"{{title}}\" dauerhaft löschen? Dies kann nicht rückgängig gemacht werden.",
     "deletedOn": "Gelöscht am {{date}}",
     "loadError": "Papierkorb konnte nicht geladen werden",
     "restoreSuccess": "Dokument wiederhergestellt",
     "restoreError": "Dokument konnte nicht wiederhergestellt werden",
+    "deleteSuccess": "Dokument gelöscht",
+    "deleteError": "Dokument konnte nicht gelöscht werden",
     "emptySuccess": "Papierkorb geleert",
     "emptyError": "Papierkorb konnte nicht geleert werden"
   }

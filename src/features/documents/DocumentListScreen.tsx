@@ -1,7 +1,13 @@
 import React, { useState, useCallback, useMemo } from 'react';
-import { View, FlatList, StyleSheet, RefreshControl, TouchableOpacity } from 'react-native';
-import { Searchbar, Text, Chip, useTheme, Card } from 'react-native-paper';
-import { useInfiniteQuery } from '@tanstack/react-query';
+import {
+  View,
+  FlatList,
+  StyleSheet,
+  RefreshControl,
+  TouchableOpacity,
+} from 'react-native';
+import { Searchbar, Text, Chip, useTheme, Card, Checkbox, IconButton, Button } from 'react-native-paper';
+import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
@@ -16,6 +22,7 @@ import {
   TagChip,
   FilterSheet,
   AuthenticatedImage,
+  ConfirmDialog,
 } from '@/components';
 import type { FilterState } from '@/components';
 import { formatDate } from '@/utils';
@@ -40,6 +47,7 @@ export const DocumentListScreen: React.FC = () => {
   const theme = useTheme();
   const { t } = useTranslation();
   const navigation = useNavigation<NavigationProp>();
+  const queryClient = useQueryClient();
   const { allTags, allCorrespondents, allDocTypes, tagsMap, correspondentsMap, docTypesMap } =
     useLookupMaps();
 
@@ -53,8 +61,21 @@ export const DocumentListScreen: React.FC = () => {
     tags: [],
     inbox: undefined,
   });
+  const [deleteTarget, setDeleteTarget] = useState<Document | null>(null);
+  const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
 
   const debouncedSearch = useDebounce(searchText, 400);
+
+  const deleteMutation = useMutation({
+    mutationFn: (ids: number[]) => {
+      return Promise.allSettled(ids.map((id) => documentsApi.deleteDocument(id)));
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['documents'] });
+      setDeleteTarget(null);
+      setSelectedIds(new Set());
+    },
+  });
 
   const queryParams: DocumentListParams = useMemo(
     () => ({
@@ -108,66 +129,119 @@ export const DocumentListScreen: React.FC = () => {
     return `/api/documents/${docId}/thumb/`;
   }, []);
 
+  const handleDelete = useCallback((doc: Document) => {
+    setDeleteTarget(doc);
+  }, []);
+
+  const toggleSelection = useCallback((docId: number) => {
+    setSelectedIds((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(docId)) {
+        newSet.delete(docId);
+      } else {
+        newSet.add(docId);
+      }
+      return newSet;
+    });
+  }, []);
+
+  const hasSelections = selectedIds.size > 0;
+
   const renderItem = useCallback(
     ({ item }: { item: Document }) => {
       const correspondent = item.correspondent ? correspondentsMap.get(item.correspondent) : null;
       const docType = item.document_type ? docTypesMap.get(item.document_type) : null;
       const docTags = item.tags.map((tagId) => tagsMap.get(tagId)).filter(Boolean) as Tag[];
+      const isSelected = selectedIds.has(item.id);
 
       return (
         <TouchableOpacity
-          onPress={() => navigation.navigate('DocumentDetail', { documentId: item.id })}
+          onPress={() => {
+            if (hasSelections) {
+              toggleSelection(item.id);
+            } else {
+              navigation.navigate('DocumentDetail', { documentId: item.id });
+            }
+          }}
+          onLongPress={() => toggleSelection(item.id)}
           activeOpacity={0.7}
         >
-          <Card style={[styles.card, { backgroundColor: theme.colors.surface }]}>
-            <View style={styles.cardContent}>
-              <AuthenticatedImage
-                uri={getThumbUri(item.id)}
-                style={styles.thumbnail}
-                resizeMode="cover"
-              />
-              <View style={styles.cardInfo}>
-                <Text
-                  variant="titleSmall"
-                  numberOfLines={2}
-                  style={{ color: theme.colors.onSurface }}
-                >
-                  {item.title}
-                </Text>
-                {correspondent && (
-                  <Text variant="bodySmall" style={{ color: theme.colors.primary }}>
-                    {correspondent.name}
+          <View style={styles.rowContainer}>
+            {hasSelections && (
+              <View style={styles.checkboxContainer}>
+                <Checkbox
+                  status={isSelected ? 'checked' : 'unchecked'}
+                  onPress={() => toggleSelection(item.id)}
+                />
+              </View>
+            )}
+            <Card
+              style={[
+                styles.card,
+                {
+                  backgroundColor: isSelected ? theme.colors.secondaryContainer : theme.colors.surface,
+                },
+              ]}
+            >
+              <View style={styles.cardContent}>
+                <AuthenticatedImage
+                  uri={getThumbUri(item.id)}
+                  style={styles.thumbnail}
+                  resizeMode="cover"
+                />
+                <View style={styles.cardInfo}>
+                  <Text
+                    variant="titleSmall"
+                    numberOfLines={2}
+                    style={{ color: theme.colors.onSurface }}
+                  >
+                    {item.title}
                   </Text>
-                )}
-                <View style={styles.metaRow}>
-                  {docType && (
-                    <Text variant="labelSmall" style={{ color: theme.colors.onSurfaceVariant }}>
-                      {docType.name}
+                  {correspondent && (
+                    <Text variant="bodySmall" style={{ color: theme.colors.primary }}>
+                      {correspondent.name}
                     </Text>
                   )}
-                  <Text variant="labelSmall" style={{ color: theme.colors.onSurfaceVariant }}>
-                    {formatDate(item.created)}
-                  </Text>
-                </View>
-                {docTags.length > 0 && (
-                  <View style={styles.tagsRow}>
-                    {docTags.slice(0, 3).map((tag) => (
-                      <TagChip key={tag.id} name={tag.name} color={tag.color} />
-                    ))}
-                    {docTags.length > 3 && (
+                  <View style={styles.metaRow}>
+                    {docType && (
                       <Text variant="labelSmall" style={{ color: theme.colors.onSurfaceVariant }}>
-                        +{docTags.length - 3}
+                        {docType.name}
                       </Text>
                     )}
+                    <Text variant="labelSmall" style={{ color: theme.colors.onSurfaceVariant }}>
+                      {formatDate(item.created)}
+                    </Text>
                   </View>
-                )}
+                  {docTags.length > 0 && (
+                    <View style={styles.tagsRow}>
+                      {docTags.slice(0, 3).map((tag) => (
+                        <TagChip key={tag.id} name={tag.name} color={tag.color} />
+                      ))}
+                      {docTags.length > 3 && (
+                        <Text variant="labelSmall" style={{ color: theme.colors.onSurfaceVariant }}>
+                          +{docTags.length - 3}
+                        </Text>
+                      )}
+                    </View>
+                  )}
+                </View>
               </View>
-            </View>
-          </Card>
+            </Card>
+          </View>
         </TouchableOpacity>
       );
     },
-    [correspondentsMap, docTypesMap, tagsMap, theme, navigation, getThumbUri],
+    [
+      correspondentsMap,
+      docTypesMap,
+      tagsMap,
+      theme,
+      navigation,
+      getThumbUri,
+      hasSelections,
+      selectedIds,
+      toggleSelection,
+    ],
   );
 
   if (isLoading) {
@@ -230,6 +304,34 @@ export const DocumentListScreen: React.FC = () => {
         </View>
       )}
 
+      {hasSelections && (
+        <View style={[styles.selectionBar, { backgroundColor: theme.colors.surfaceVariant }]}>
+          <Text variant="labelLarge" style={{ color: theme.colors.onSurfaceVariant }}>
+            {selectedIds.size} {selectedIds.size === 1 ? 'selected' : 'selected'}
+          </Text>
+          <View style={styles.selectionActions}>
+            <Button
+              mode="text"
+              onPress={() => setSelectedIds(new Set())}
+              compact
+            >
+              Unselect All
+            </Button>
+            <Button
+              mode="contained"
+              buttonColor={theme.colors.error}
+              textColor={theme.colors.onError}
+              onPress={() => {
+                setDeleteTarget({ id: -1 } as Document);
+              }}
+              compact
+            >
+              {t('documents.delete')}
+            </Button>
+          </View>
+        </View>
+      )}
+
       {isError && (
         <ErrorBanner message={error?.message ?? t('common.somethingWentWrong')} onRetry={refetch} />
       )}
@@ -264,6 +366,31 @@ export const DocumentListScreen: React.FC = () => {
         correspondents={allCorrespondents || []}
         documentTypes={allDocTypes || []}
         tags={allTags || []}
+      />
+
+      {/* Delete confirmation dialog */}
+      <ConfirmDialog
+        visible={!!deleteTarget}
+        title={t('documents.delete')}
+        message={
+          deleteTarget?.id === -1
+            ? t('documents.deleteBulkConfirm', { count: selectedIds.size })
+            : t('documents.deleteConfirm', { title: deleteTarget?.title ?? '' })
+        }
+        confirmLabel={t('documents.delete')}
+        destructive
+        onConfirm={() => {
+          if (deleteTarget) {
+            if (deleteTarget.id === -1) {
+              // Bulk delete
+              deleteMutation.mutate(Array.from(selectedIds));
+            } else {
+              // Single delete
+              deleteMutation.mutate([deleteTarget.id]);
+            }
+          }
+        }}
+        onCancel={() => setDeleteTarget(null)}
       />
     </View>
   );
@@ -300,13 +427,22 @@ const styles = StyleSheet.create({
   emptyContainer: {
     flexGrow: 1,
   },
-  card: {
+  rowContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
     marginBottom: 8,
+  },
+  checkboxContainer: {
+    paddingRight: 4,
+  },
+  card: {
     borderRadius: 12,
+    flex: 1,
   },
   cardContent: {
     flexDirection: 'row',
     padding: 12,
+    height: 110,
   },
   thumbnail: {
     width: 60,
@@ -317,7 +453,7 @@ const styles = StyleSheet.create({
   cardInfo: {
     flex: 1,
     marginLeft: 12,
-    justifyContent: 'space-between',
+    justifyContent: 'flex-start',
   },
   metaRow: {
     flexDirection: 'row',
@@ -329,5 +465,18 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     marginTop: 4,
     alignItems: 'center',
+  },
+  selectionBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    marginBottom: 8,
+    borderRadius: 8,
+  },
+  selectionActions: {
+    flexDirection: 'row',
+    gap: 8,
   },
 });
