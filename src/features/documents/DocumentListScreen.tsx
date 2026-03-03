@@ -1,12 +1,15 @@
 import React, { useState, useCallback, useMemo } from 'react';
+import { View, FlatList, StyleSheet, RefreshControl, TouchableOpacity } from 'react-native';
 import {
-  View,
-  FlatList,
-  StyleSheet,
-  RefreshControl,
-  TouchableOpacity,
-} from 'react-native';
-import { Searchbar, Text, Chip, useTheme, Card, Checkbox, IconButton, Button } from 'react-native-paper';
+  Searchbar,
+  Text,
+  Chip,
+  useTheme,
+  Card,
+  Checkbox,
+  IconButton,
+  Button,
+} from 'react-native-paper';
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -179,7 +182,9 @@ export const DocumentListScreen: React.FC = () => {
               style={[
                 styles.card,
                 {
-                  backgroundColor: isSelected ? theme.colors.secondaryContainer : theme.colors.surface,
+                  backgroundColor: isSelected
+                    ? theme.colors.secondaryContainer
+                    : theme.colors.surface,
                 },
               ]}
             >
@@ -310,11 +315,7 @@ export const DocumentListScreen: React.FC = () => {
             {selectedIds.size} {selectedIds.size === 1 ? 'selected' : 'selected'}
           </Text>
           <View style={styles.selectionActions}>
-            <Button
-              mode="text"
-              onPress={() => setSelectedIds(new Set())}
-              compact
-            >
+            <Button mode="text" onPress={() => setSelectedIds(new Set())} compact>
               Unselect All
             </Button>
             <Button

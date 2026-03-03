@@ -46,7 +46,7 @@ export const TrashBinScreen: React.FC = () => {
     onSuccess: async (_, ids) => {
       // Reprocess each restored document to regenerate thumbnails
       await Promise.allSettled(ids.map((id) => documentsApi.reprocessDocument(id)));
-      
+
       queryClient.invalidateQueries({ queryKey: ['trash'] });
       queryClient.invalidateQueries({ queryKey: ['documents'] });
       setRestoreTarget(null);
