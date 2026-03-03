@@ -1,12 +1,14 @@
+import { NavigatorScreenParams } from '@react-navigation/native';
+
 export type AuthStackParamList = {
   Login: undefined;
 };
 
 export type MainTabsParamList = {
   DashboardTab: undefined;
-  DocumentsTab: undefined;
+  DocumentsTab: NavigatorScreenParams<DocumentsStackParamList>;
   UploadTab: undefined;
-  ManageTab: undefined;
+  ManageTab: NavigatorScreenParams<ManageStackParamList>;
 };
 
 export type DocumentsStackParamList = {

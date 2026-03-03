@@ -188,13 +188,6 @@ export const UploadScreen: React.FC = () => {
         contentContainerStyle={styles.content}
         keyboardShouldPersistTaps="handled"
       >
-        <Text
-          variant="headlineSmall"
-          style={[styles.heading, { color: theme.colors.onBackground }]}
-        >
-          {t('upload.title')}
-        </Text>
-
         {/* File selection */}
         <Card style={[styles.card, { backgroundColor: theme.colors.surface }]}>
           <Card.Content>

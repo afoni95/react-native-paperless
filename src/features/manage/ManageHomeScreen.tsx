@@ -16,7 +16,6 @@ export const ManageHomeScreen: React.FC = () => {
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <List.Section>
-        <List.Subheader>{t('manage.title')}</List.Subheader>
         <List.Item
           title={t('manage.tags')}
           left={(props) => <List.Icon {...props} icon="tag-multiple" />}
