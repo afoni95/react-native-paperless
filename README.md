@@ -88,7 +88,7 @@ npm run lint:fix
 - [ ] Bulk Edit Documents
 - [ ] Bulk Download Documents
 - [ ] Bulk Edit Objects
-- [ ] Trash view & restore
+- [X] Trash view & restore
 - [ ] User Profile
 
 ### Enhancements

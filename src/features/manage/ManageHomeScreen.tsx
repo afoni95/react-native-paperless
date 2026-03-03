@@ -38,6 +38,13 @@ export const ManageHomeScreen: React.FC = () => {
         />
         <Divider />
         <List.Item
+          title={t('manage.trashBin')}
+          left={(props) => <List.Icon {...props} icon="trash-can" />}
+          right={(props) => <List.Icon {...props} icon="chevron-right" />}
+          onPress={() => navigation.navigate('TrashBin')}
+        />
+        <Divider />
+        <List.Item
           title={t('manage.settings')}
           left={(props) => <List.Icon {...props} icon="cog" />}
           right={(props) => <List.Icon {...props} icon="chevron-right" />}

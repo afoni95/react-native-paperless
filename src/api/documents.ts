@@ -116,4 +116,24 @@ export const documentsApi = {
     });
     return response.data;
   },
+
+  getTrash: async (): Promise<PaginatedResponse<Document>> => {
+    const response = await apiClient.get<PaginatedResponse<Document>>('/api/trash/', {
+      params: { page_size: 100 },
+    });
+    return response.data;
+  },
+
+  restoreDocuments: async (documentIds: number[]): Promise<void> => {
+    await apiClient.post('/api/trash/', {
+      action: 'restore',
+      documents: documentIds,
+    });
+  },
+
+  emptyTrash: async (documentIds?: number[]): Promise<void> => {
+    const payload: { action: string; documents?: number[] } = { action: 'empty' };
+    if (documentIds) payload.documents = documentIds;
+    await apiClient.post('/api/trash/', payload);
+  },
 };
