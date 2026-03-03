@@ -1,5 +1,5 @@
 import React, { useState, useLayoutEffect } from 'react';
-import { View, FlatList, StyleSheet, RefreshControl, ViewStyle } from 'react-native';
+import { View, FlatList, StyleSheet, RefreshControl } from 'react-native';
 import { List, useTheme, Button, Snackbar, IconButton, Text, Divider } from 'react-native-paper';
 import { useTranslation } from 'react-i18next';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';

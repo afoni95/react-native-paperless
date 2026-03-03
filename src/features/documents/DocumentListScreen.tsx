@@ -7,7 +7,6 @@ import {
   useTheme,
   Card,
   Checkbox,
-  IconButton,
   Button,
 } from 'react-native-paper';
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -130,10 +129,6 @@ export const DocumentListScreen: React.FC = () => {
 
   const getThumbUri = useCallback((docId: number) => {
     return `/api/documents/${docId}/thumb/`;
-  }, []);
-
-  const handleDelete = useCallback((doc: Document) => {
-    setDeleteTarget(doc);
   }, []);
 
   const toggleSelection = useCallback((docId: number) => {
