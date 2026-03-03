@@ -1,4 +1,4 @@
-name: Check Unused Translations
+name: i18n validator
 
 on:
   pull_request:
