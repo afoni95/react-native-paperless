@@ -75,11 +75,7 @@ export const ManageStack: React.FC = () => {
         component={TrashBinScreen}
         options={{ title: t('trash.title') }}
       />
-      <Stack.Screen
-        name="LogsView"
-        component={LogsScreen}
-        options={{ title: t('manage.logs') }}
-      />
+      <Stack.Screen name="LogsView" component={LogsScreen} options={{ title: t('manage.logs') }} />
     </Stack.Navigator>
   );
 };

@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, ActivityIndicator } from 'react-native';
 import { getLog, listLogs } from '../../api/logs';
@@ -13,9 +12,7 @@ export const LogsScreen: React.FC = () => {
   useEffect(() => {
     listLogs()
       .then(async (availableLogs) => {
-        const preferredLog = availableLogs.includes('paperless')
-          ? 'paperless'
-          : availableLogs[0];
+        const preferredLog = availableLogs.includes('paperless') ? 'paperless' : availableLogs[0];
 
         if (!preferredLog) {
           setLogs([]);
