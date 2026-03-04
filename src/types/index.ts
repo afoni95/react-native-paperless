@@ -108,6 +108,7 @@ export interface TaskStatus {
   result: string | null;
   date_created: string;
   date_done: string | null;
+  acknowledged: boolean;
 }
 
 export interface DocumentUploadParams {

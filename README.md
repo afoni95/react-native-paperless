@@ -69,6 +69,7 @@ npm run lint:fix
 - [x] Document Types CRUD
 - [x] Statistics / Dashboard
 - [x] Tasks (polling)
+- [X] Logs viewer
 - [ ] Storage Paths CRUD
 - [ ] Custom Fields CRUD
 - [ ] Mail Accounts CRUD
@@ -77,18 +78,16 @@ npm run lint:fix
 - [ ] Share Links CRUD
 - [ ] Workflows
 - [ ] Users/Groups management
-- [ ] Logs viewer
-- [ ] App Configuration CRUD
 
 ### Special Endpoints
 - [x] Search autocomplete
 - [x] Document upload (file & camera)
 - [x] PDF preview & download/share
+- [X] Trash view & restore
 - [ ] Global Search
 - [ ] Bulk Edit Documents
 - [ ] Bulk Download Documents
 - [ ] Bulk Edit Objects
-- [X] Trash view & restore
 - [ ] User Profile
 
 ### Enhancements

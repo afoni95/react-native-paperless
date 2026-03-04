@@ -11,7 +11,8 @@ export const tasksApi = {
 
   getAllTasks: async (): Promise<TaskStatus[]> => {
     const response = await apiClient.get<TaskStatus[]>('/api/tasks/');
-    return response.data;
+
+    return response.data.filter((x) => x.acknowledged === false);
   },
 
   acknowledgeTasks: async (taskIds: number[]): Promise<void> => {

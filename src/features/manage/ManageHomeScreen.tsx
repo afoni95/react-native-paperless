@@ -52,6 +52,13 @@ export const ManageHomeScreen: React.FC = () => {
         />
         <Divider />
         <List.Item
+          title={t('manage.tasks')}
+          left={(props) => <List.Icon {...props} icon="clipboard-list" />}
+          right={(props) => <List.Icon {...props} icon="chevron-right" />}
+          onPress={() => navigation.navigate('TasksList')}
+        />
+        <Divider />
+        <List.Item
           title={t('manage.settings')}
           left={(props) => <List.Icon {...props} icon="cog" />}
           right={(props) => <List.Icon {...props} icon="chevron-right" />}

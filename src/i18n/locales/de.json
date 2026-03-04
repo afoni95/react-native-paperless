@@ -159,7 +159,17 @@
     "documentTypes": "Dokumenttypen",
     "settings": "Einstellungen",
     "trashBin": "Papierkorb",
-    "logs": "Protokolle"
+    "logs": "Protokolle",
+    "tasks": "Aufgaben"
+  },
+  "tasks": {
+    "title": "Hintergrundaufgaben",
+    "recentTasks": "Letzte Aufgaben",
+    "empty": "Keine Hintergrundaufgaben",
+    "loaded": "Geladen",
+    "acknowledgeAll": "Alle bestätigen",
+    "acknowledged": "Aufgabe bestätigt",
+    "loadError": "Aufgaben konnten nicht geladen werden"
   },
   "trash": {
     "title": "Papierkorb",
