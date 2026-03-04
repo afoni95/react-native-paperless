@@ -11,6 +11,7 @@ import { CorrespondentEditScreen } from '@/features/correspondents/Correspondent
 import { DocumentTypesListScreen } from '@/features/document-types/DocumentTypesListScreen';
 import { DocumentTypeEditScreen } from '@/features/document-types/DocumentTypeEditScreen';
 import { TrashBinScreen } from '@/features/manage/TrashBinScreen';
+import { LogsScreen } from '@/features/manage/LogsScreen';
 import { ManageStackParamList } from './types';
 
 const Stack = createNativeStackNavigator<ManageStackParamList>();
@@ -75,6 +76,7 @@ export const ManageStack: React.FC = () => {
         component={TrashBinScreen}
         options={{ title: t('trash.title') }}
       />
+      <Stack.Screen name="LogsView" component={LogsScreen} options={{ title: t('manage.logs') }} />
       <Stack.Screen
         name="TasksList"
         component={TasksListScreen}

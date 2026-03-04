@@ -28,4 +28,5 @@ export type ManageStackParamList = {
   Settings: undefined;
   TrashBin: undefined;
   TasksList: undefined;
+  LogsView: undefined;
 };
