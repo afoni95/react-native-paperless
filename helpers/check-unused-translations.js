@@ -55,6 +55,16 @@ function extractUsedKeys(code) {
     if (key && !key.includes('${')) used.add(key);
   }
 
+  // More generically, match any string value that looks like a translation key (e.g., documents.*) in arrays or objects
+  const genericKeyRegex = /['"]([a-zA-Z0-9_.]+\.[a-zA-Z0-9_.]+)['"]/g;
+  for (const match of code.matchAll(genericKeyRegex)) {
+    const key = match[1];
+    // Only add if it looks like a translation key (e.g., has a dot and no spaces)
+    if (key.includes('.') && !key.includes(' ')) {
+      used.add(key);
+    }
+  }
+
   return used;
 }
 
