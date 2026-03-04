@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useTranslation } from 'react-i18next';
 import { ManageHomeScreen } from '@/features/manage/ManageHomeScreen';
 import { SettingsScreen } from '@/features/manage/SettingsScreen';
+import { TasksListScreen } from '@/features/manage/TasksListScreen';
 import { TagsListScreen } from '@/features/tags/TagsListScreen';
 import { TagEditScreen } from '@/features/tags/TagEditScreen';
 import { CorrespondentsListScreen } from '@/features/correspondents/CorrespondentsListScreen';
@@ -73,6 +74,11 @@ export const ManageStack: React.FC = () => {
         name="TrashBin"
         component={TrashBinScreen}
         options={{ title: t('trash.title') }}
+      />
+      <Stack.Screen
+        name="TasksList"
+        component={TasksListScreen}
+        options={{ title: t('tasks.title') }}
       />
     </Stack.Navigator>
   );

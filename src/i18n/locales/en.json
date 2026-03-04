@@ -158,7 +158,17 @@
     "correspondents": "Correspondents",
     "documentTypes": "Document Types",
     "settings": "Settings",
-    "trashBin": "Trash Bin"
+    "trashBin": "Trash Bin",
+    "tasks": "Tasks"
+  },
+  "tasks": {
+    "title": "Background Tasks",
+    "recentTasks": "Recent Tasks",
+    "empty": "No background tasks",
+    "loaded": "Loaded",
+    "acknowledgeAll": "Acknowledge All",
+    "acknowledged": "Task acknowledged",
+    "loadError": "Failed to load tasks"
   },
   "trash": {
     "title": "Trash Bin",

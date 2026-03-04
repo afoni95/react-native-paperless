@@ -158,7 +158,17 @@
     "correspondents": "Korrespondenten",
     "documentTypes": "Dokumenttypen",
     "settings": "Einstellungen",
-    "trashBin": "Papierkorb"
+    "trashBin": "Papierkorb",
+    "tasks": "Aufgaben"
+  },
+  "tasks": {
+    "title": "Hintergrundaufgaben",
+    "recentTasks": "Letzte Aufgaben",
+    "empty": "Keine Hintergrundaufgaben",
+    "loaded": "Geladen",
+    "acknowledgeAll": "Alle bestätigen",
+    "acknowledged": "Aufgabe bestätigt",
+    "loadError": "Aufgaben konnten nicht geladen werden"
   },
   "trash": {
     "title": "Papierkorb",
