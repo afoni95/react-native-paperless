@@ -54,15 +54,37 @@ jobs:
       - name: Generate native project
         run: npx expo prebuild --platform android --clean
 
-      - name: Build Android APK
+      # Enable ABI splits (arm64-v8a + armeabi-v7a)
+      - name: Enable ABI splits
+        run: |
+          echo '
+          android {
+              splits {
+                  abi {
+                      enable true
+                      reset()
+                      include "arm64-v8a", "armeabi-v7a"
+                      universalApk false
+                  }
+              }
+          }
+          ' >> android/app/build.gradle
+
+      - name: Build Release APKs
         working-directory: android
         run: ./gradlew assembleRelease
 
-      - name: Upload APK artifact
+      - name: Upload modern-devices APK (arm64-v8a)
         uses: actions/upload-artifact@v4
         with:
-          name: android-apk
-          path: android/app/build/outputs/apk/release/*.apk
+          name: android-modern-devices-apk
+          path: android/app/build/outputs/apk/release/*arm64-v8a*.apk
+
+      - name: Upload legacy-devices APK (armeabi-v7a)
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-legacy-devices-apk
+          path: android/app/build/outputs/apk/release/*armeabi-v7a*.apk
 
   create-release:
     name: Create GitHub Release
@@ -73,16 +95,28 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Download Android artifact
+      - name: Download modern-devices artifact
         uses: actions/download-artifact@v4
         with:
-          name: android-apk
+          name: android-modern-devices-apk
           path: artifacts/android
 
-      - name: Rename APK with version
+      - name: Download legacy-devices artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: android-legacy-devices-apk
+          path: artifacts/android
+
+      - name: Rename APKs with version
         run: |
           VERSION="${{ github.event.inputs.version }}"
-          mv artifacts/android/*.apk "artifacts/android/PaperlessNative-${VERSION}.apk"
+          cd artifacts/android
+          for file in *arm64-v8a*.apk; do
+            mv "$file" "PaperlessNative-${VERSION}-modern-devices.apk"
+          done
+          for file in *armeabi-v7a*.apk; do
+            mv "$file" "PaperlessNative-${VERSION}-legacy-devices.apk"
+          done
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
