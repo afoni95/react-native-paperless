@@ -158,7 +158,8 @@
     "correspondents": "Korrespondenten",
     "documentTypes": "Dokumenttypen",
     "settings": "Einstellungen",
-    "trashBin": "Papierkorb"
+    "trashBin": "Papierkorb",
+    "logs": "Protokolle"
   },
   "trash": {
     "title": "Papierkorb",
