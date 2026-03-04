@@ -5,4 +5,5 @@ export { correspondentsApi } from './correspondents';
 export { documentTypesApi } from './documentTypes';
 export { statisticsApi } from './statistics';
 export { tasksApi } from './tasks';
+export { listLogs, getLog } from './logs';
 export { default as apiClient } from './client';

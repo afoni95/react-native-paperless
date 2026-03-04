@@ -158,7 +158,8 @@
     "correspondents": "Correspondents",
     "documentTypes": "Document Types",
     "settings": "Settings",
-    "trashBin": "Trash Bin"
+    "trashBin": "Trash Bin",
+    "logs": "Logs"
   },
   "trash": {
     "title": "Trash Bin",
