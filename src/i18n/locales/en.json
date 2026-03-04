@@ -55,6 +55,12 @@
     "fileTypes": "File Types",
     "characters": "Characters"
   },
+  "search": {
+    "placeholder": "Search documents, tags, and more...",
+    "results": "Search Results",
+    "noResults": "No results found",
+    "error": "Search failed. Please try again."
+  },
   "documents": {
     "title": "Documents",
     "detail": "Document Detail",

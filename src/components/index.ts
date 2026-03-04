@@ -7,4 +7,5 @@ export { FilterSheet } from './FilterSheet';
 export { AuthenticatedImage } from './AuthenticatedImage';
 export { SearchableDropdown } from './SearchableDropdown';
 export { MultiSelectChips } from './MultiSelectChips';
+export { GlobalSearchBar } from './GlobalSearchBar';
 export type { FilterState } from './FilterSheet';

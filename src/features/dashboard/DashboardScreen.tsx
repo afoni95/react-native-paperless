@@ -7,7 +7,7 @@ import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { statisticsApi } from '@/api';
-import { LoadingScreen, ErrorBanner } from '@/components';
+import { LoadingScreen, ErrorBanner, GlobalSearchBar } from '@/components';
 import { MainTabsParamList } from '@/navigation/types';
 
 export const DashboardScreen: React.FC = () => {
@@ -51,6 +51,10 @@ export const DashboardScreen: React.FC = () => {
         />
       }
     >
+      <View style={styles.searchContainer}>
+        <GlobalSearchBar />
+      </View>
+
       <View style={styles.cardRow}>
         <StatCard
           title={t('dashboard.totalDocuments')}
@@ -183,6 +187,9 @@ const styles = StyleSheet.create({
   content: {
     padding: 16,
     paddingBottom: 32,
+  },
+  searchContainer: {
+    marginBottom: 16,
   },
   sectionTitle: {
     fontWeight: 'bold',

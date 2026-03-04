@@ -32,6 +32,11 @@ export interface Document {
   owner: number | null;
   notes: DocumentNote[];
   deleted_at: string | null;
+  // custom_fields: any[];
+  is_shared_by_requester: boolean;
+  mime_type: string;
+  page_count: number | null;
+  user_can_change: boolean;
   __search_hit__?: SearchHit;
 }
 
@@ -60,6 +65,24 @@ export interface Tag {
   is_inbox_tag: boolean;
   document_count: number;
   owner: number | null;
+  user_can_change: boolean;
+  slug: string;
+  parent: number | null;
+}
+
+export interface TagSearchResult {
+  id: number;
+  name: string;
+  color: string;
+  text_color: string;
+  match: string;
+  matching_algorithm: number;
+  is_insensitive: boolean;
+  is_inbox_tag: boolean;
+  owner: number | null;
+  user_can_change: boolean;
+  slug: string;
+  parent: number | null;
 }
 
 export interface Correspondent {
@@ -69,8 +92,20 @@ export interface Correspondent {
   matching_algorithm: number;
   is_insensitive: boolean;
   document_count: number;
-  last_correspondence: string | null;
   owner: number | null;
+  user_can_change: boolean;
+  slug: string;
+}
+
+export interface CorrespondentSearchResult {
+  id: number;
+  name: string;
+  match: string;
+  matching_algorithm: number;
+  is_insensitive: boolean;
+  owner: number | null;
+  user_can_change: boolean;
+  slug: string;
 }
 
 export interface DocumentType {
@@ -80,6 +115,17 @@ export interface DocumentType {
   matching_algorithm: number;
   is_insensitive: boolean;
   document_count: number;
+  owner: number | null;
+}
+
+export interface DocumentTypeSearchResult {
+  id: number;
+  name: string;
+  match: string;
+  matching_algorithm: number;
+  is_insensitive: boolean;
+  slug: string;
+  user_can_change: boolean;
   owner: number | null;
 }
 
@@ -145,6 +191,22 @@ export interface DocumentListParams {
 
 export interface AutocompleteResponse {
   suggestions: string[];
+}
+
+export interface GlobalSearchResult {
+  correspondents: CorrespondentSearchResult[];
+  // custom_fields: any[];
+  document_types: DocumentTypeSearchResult[];
+  documents: Document[];
+  // groups: any[];
+  // mail_accounts: any[];
+  // mail_rules: any[];
+  // saved_views: any[];
+  // storage_paths: any[];
+  tags: TagSearchResult[];
+  total: number;
+  // users: any[];
+  // workflows: any[];
 }
 
 export type MatchingAlgorithm = 0 | 1 | 2 | 3 | 4 | 5 | 6;

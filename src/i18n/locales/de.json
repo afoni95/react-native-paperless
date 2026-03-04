@@ -55,6 +55,12 @@
     "fileTypes": "Dateitypen",
     "characters": "Zeichen"
   },
+  "search": {
+    "placeholder": "Dokumente, Tags und mehr durchsuchen...",
+    "results": "Suchergebnisse",
+    "noResults": "Keine Ergebnisse gefunden",
+    "error": "Suche fehlgeschlagen. Bitte versuchen Sie es erneut."
+  },
   "documents": {
     "title": "Dokumente",
     "detail": "Dokumentdetails",
