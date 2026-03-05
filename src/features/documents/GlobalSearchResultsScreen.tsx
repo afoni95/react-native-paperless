@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import { documentsApi } from '@/api';
+import { documentsApi, tagsApi } from '@/api';
 import {
   GlobalSearchResult,
   Document,
@@ -14,6 +14,7 @@ import {
   DocumentTypeSearchResult,
 } from '@/types';
 import { DocumentsStackParamList } from '@/navigation/types';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 type NavigationProp = NativeStackNavigationProp<DocumentsStackParamList, 'GlobalSearchResults'>;
 
@@ -30,11 +31,37 @@ interface SearchResultItem {
 }
 
 export const GlobalSearchResultsScreen: React.FC = () => {
+  // Returns the translation key for item.type
+  const getTypeTranslationKey = (type: SearchResultItem['type']) => {
+    switch (type) {
+      case 'document':
+        return 'search.type.document';
+      case 'tag':
+        return 'search.type.tag';
+      case 'correspondent':
+        return 'search.type.correspondent';
+      case 'document_type':
+        return 'search.type.document_type';
+      default:
+        return '';
+    }
+  };
   const theme = useTheme();
   const { t } = useTranslation();
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute();
   const params = route.params as RouteParams;
+  const queryClient = useQueryClient();
+
+  const {
+    data: tags,
+    isError,
+    refetch,
+    isRefetching,
+  } = useQuery({
+    queryKey: ['tags-all'],
+    queryFn: tagsApi.getAllTags,
+  });
 
   useEffect(() => {
     navigation.setOptions({
@@ -66,6 +93,12 @@ export const GlobalSearchResultsScreen: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params.query]);
 
+  const getParentName = (parent: number | null): string => {
+    const found = tags?.filter((x) => x.id === parent).at(0);
+    if (found != null) return found.name;
+    return '';
+  };
+
   const compileSearchResults = (results: GlobalSearchResult): SearchResultItem[] => {
     const items: SearchResultItem[] = [];
 
@@ -88,7 +121,7 @@ export const GlobalSearchResultsScreen: React.FC = () => {
         items.push({
           id: tag.id,
           name: tag.name,
-          subtitle: tag.slug,
+          subtitle: getParentName(tag.parent),
           type: 'tag',
           data: tag,
         });
@@ -193,7 +226,7 @@ export const GlobalSearchResultsScreen: React.FC = () => {
             </Text>
           )}
           <Text style={[styles.itemType, { color: theme.colors.onSurfaceVariant }]}>
-            {t(`search.type.${item.type}`) || item.type}
+            {t(getTypeTranslationKey(item.type)) || item.type}
           </Text>
         </View>
         <MaterialCommunityIcons

@@ -59,7 +59,13 @@
     "placeholder": "Search documents, tags, and more...",
     "results": "Search Results",
     "noResults": "No results found",
-    "error": "Search failed. Please try again."
+    "error": "Search failed. Please try again.",
+    "type": {
+      "document": "Document",
+      "correspondent": "Correspondent",
+      "document_type": "Document Type",
+      "tag": "Tag"
+    }
   },
   "documents": {
     "title": "Documents",
@@ -144,8 +150,7 @@
     "match": "Match Pattern",
     "caseInsensitive": "Case Insensitive",
     "deleteConfirm": "Are you sure you want to delete this correspondent?",
-    "documents": "{{count}} documents",
-    "lastCorrespondence": "Last: {{date}}"
+    "documents": "{{count}} documents"
   },
   "documentTypes": {
     "title": "Document Types",
