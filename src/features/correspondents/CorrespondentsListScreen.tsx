@@ -8,7 +8,6 @@ import { useNavigation } from '@react-navigation/native';
 import { correspondentsApi } from '@/api';
 import { Correspondent } from '@/types';
 import { LoadingScreen, EmptyState, ErrorBanner, ConfirmDialog } from '@/components';
-import { formatDate } from '@/utils';
 import { ManageStackParamList } from '@/navigation/types';
 
 type NavigationProp = NativeStackNavigationProp<ManageStackParamList, 'CorrespondentsList'>;
@@ -71,12 +70,7 @@ export const CorrespondentsListScreen: React.FC = () => {
         renderItem={({ item }) => (
           <List.Item
             title={item.name}
-            description={
-              `${t('correspondents.documents', { count: item.document_count })}` +
-              (item.last_correspondence
-                ? ` · ${t('correspondents.lastCorrespondence', { date: formatDate(item.last_correspondence) })}`
-                : '')
-            }
+            description={`${t('correspondents.documents', { count: item.document_count })}`}
             left={(props) => <List.Icon {...props} icon="account" />}
             right={(props) => <List.Icon {...props} icon="pencil" />}
             onPress={() => navigation.navigate('CorrespondentEdit', { correspondentId: item.id })}
