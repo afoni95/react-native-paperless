@@ -4,28 +4,17 @@ import { Card, Text, useTheme, Divider } from 'react-native-paper';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useNavigation } from '@react-navigation/native';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
-import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { statisticsApi } from '@/api';
 import { LoadingScreen, ErrorBanner, GlobalSearchBar } from '@/components';
 import { MainTabsParamList } from '@/navigation/types';
+import { useStatistics } from '@/reactQuery';
 
 export const DashboardScreen: React.FC = () => {
   const theme = useTheme();
   const { t } = useTranslation();
   const navigation = useNavigation<BottomTabNavigationProp<MainTabsParamList, 'DashboardTab'>>();
 
-  const {
-    data: stats,
-    isLoading,
-    isError,
-    error,
-    refetch,
-    isRefetching,
-  } = useQuery({
-    queryKey: ['statistics'],
-    queryFn: statisticsApi.getStatistics,
-  });
+  const { data: stats, isLoading, isError, error, refetch, isRefetching } = useStatistics();
 
   if (isLoading) {
     return <LoadingScreen message={t('common.loading')} />;
@@ -34,7 +23,10 @@ export const DashboardScreen: React.FC = () => {
   if (isError) {
     return (
       <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
-        <ErrorBanner message={error?.message ?? t('common.somethingWentWrong')} onRetry={refetch} />
+        <ErrorBanner
+          message={(error as Error)?.message ?? t('common.somethingWentWrong')}
+          onRetry={refetch}
+        />
       </View>
     );
   }

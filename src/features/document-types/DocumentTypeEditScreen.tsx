@@ -1,20 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { View, ScrollView, StyleSheet, Alert } from 'react-native';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { TextInput, Button, Switch, Text, useTheme } from 'react-native-paper';
 import { useTranslation } from 'react-i18next';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { documentTypesApi } from '@/api';
 import { MATCHING_ALGORITHMS, MatchingAlgorithm } from '@/types';
 import { LoadingScreen, ConfirmDialog } from '@/components';
 import { ManageStackParamList } from '@/navigation/types';
+import { useDocumentType, useUpsertDocumentType, useDeleteDocumentType } from '@/reactQuery';
 
 type Props = NativeStackScreenProps<ManageStackParamList, 'DocumentTypeEdit'>;
 
 export const DocumentTypeEditScreen: React.FC<Props> = ({ route, navigation }) => {
   const theme = useTheme();
   const { t } = useTranslation();
-  const queryClient = useQueryClient();
   const documentTypeId = route.params?.documentTypeId;
   const isNew = !documentTypeId;
 
@@ -24,11 +22,7 @@ export const DocumentTypeEditScreen: React.FC<Props> = ({ route, navigation }) =
   const [isInsensitive, setIsInsensitive] = useState(true);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
-  const { data: docType, isLoading } = useQuery({
-    queryKey: ['document-type', documentTypeId],
-    queryFn: () => documentTypesApi.getDocumentType(documentTypeId!),
-    enabled: !!documentTypeId,
-  });
+  const { data: docType, isLoading } = useDocumentType(documentTypeId!, !!documentTypeId);
 
   useEffect(() => {
     if (docType) {
@@ -39,21 +33,8 @@ export const DocumentTypeEditScreen: React.FC<Props> = ({ route, navigation }) =
     }
   }, [docType]);
 
-  const saveMutation = useMutation({
-    mutationFn: async () => {
-      const data = {
-        name,
-        match,
-        matching_algorithm: matchingAlgorithm,
-        is_insensitive: isInsensitive,
-      };
-      if (isNew) {
-        return documentTypesApi.createDocumentType(data);
-      }
-      return documentTypesApi.updateDocumentType(documentTypeId!, data);
-    },
+  const saveMutation = useUpsertDocumentType({
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['document-types-all'] });
       navigation.goBack();
     },
     onError: () => {
@@ -61,10 +42,8 @@ export const DocumentTypeEditScreen: React.FC<Props> = ({ route, navigation }) =
     },
   });
 
-  const deleteMutation = useMutation({
-    mutationFn: () => documentTypesApi.deleteDocumentType(documentTypeId!),
+  const deleteMutation = useDeleteDocumentType({
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['document-types-all'] });
       navigation.goBack();
     },
     onError: () => {
@@ -122,7 +101,15 @@ export const DocumentTypeEditScreen: React.FC<Props> = ({ route, navigation }) =
 
       <Button
         mode="contained"
-        onPress={() => saveMutation.mutate()}
+        onPress={() =>
+          saveMutation.mutate({
+            id: documentTypeId,
+            name,
+            match,
+            matching_algorithm: matchingAlgorithm,
+            is_insensitive: isInsensitive,
+          })
+        }
         loading={saveMutation.isPending}
         disabled={!name.trim() || saveMutation.isPending}
         style={styles.saveButton}
@@ -151,7 +138,7 @@ export const DocumentTypeEditScreen: React.FC<Props> = ({ route, navigation }) =
         destructive
         onConfirm={() => {
           setShowDeleteDialog(false);
-          deleteMutation.mutate();
+          deleteMutation.mutate(documentTypeId!);
         }}
         onCancel={() => setShowDeleteDialog(false)}
       />

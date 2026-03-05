@@ -1,14 +1,13 @@
 import React, { useState, useMemo } from 'react';
 import { View, FlatList, StyleSheet, RefreshControl } from 'react-native';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Searchbar, FAB, List, useTheme } from 'react-native-paper';
 import { useTranslation } from 'react-i18next';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
-import { correspondentsApi } from '@/api';
 import { Correspondent } from '@/types';
 import { LoadingScreen, EmptyState, ErrorBanner, ConfirmDialog } from '@/components';
 import { ManageStackParamList } from '@/navigation/types';
+import { useAllCorrespondents, useDeleteCorrespondent } from '@/reactQuery';
 
 type NavigationProp = NativeStackNavigationProp<ManageStackParamList, 'CorrespondentsList'>;
 
@@ -16,7 +15,6 @@ export const CorrespondentsListScreen: React.FC = () => {
   const theme = useTheme();
   const { t } = useTranslation();
   const navigation = useNavigation<NavigationProp>();
-  const queryClient = useQueryClient();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [deleteTarget, setDeleteTarget] = useState<Correspondent | null>(null);
@@ -28,15 +26,10 @@ export const CorrespondentsListScreen: React.FC = () => {
     error,
     refetch,
     isRefetching,
-  } = useQuery({
-    queryKey: ['correspondents-all'],
-    queryFn: correspondentsApi.getAllCorrespondents,
-  });
+  } = useAllCorrespondents();
 
-  const deleteMutation = useMutation({
-    mutationFn: (id: number) => correspondentsApi.deleteCorrespondent(id),
+  const deleteMutation = useDeleteCorrespondent({
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['correspondents-all'] });
       setDeleteTarget(null);
     },
   });
@@ -61,7 +54,10 @@ export const CorrespondentsListScreen: React.FC = () => {
       />
 
       {isError && (
-        <ErrorBanner message={error?.message ?? t('common.somethingWentWrong')} onRetry={refetch} />
+        <ErrorBanner
+          message={(error as Error)?.message ?? t('common.somethingWentWrong')}
+          onRetry={refetch}
+        />
       )}
 
       <FlatList

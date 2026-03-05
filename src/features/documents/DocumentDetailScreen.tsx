@@ -12,12 +12,10 @@ import {
   IconButton,
   List,
 } from 'react-native-paper';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { documentsApi, tagsApi, correspondentsApi, documentTypesApi } from '@/api';
-import { Tag, Correspondent, DocumentType, Document } from '@/types';
+import { Tag, Correspondent, DocumentType } from '@/types';
 import { useAuthStore } from '@/store/authStore';
 import {
   LoadingScreen,
@@ -29,13 +27,21 @@ import {
 } from '@/components';
 import { formatDate, formatDateTime } from '@/utils';
 import { DocumentsStackParamList } from '@/navigation/types';
+import {
+  useDocument,
+  useAllTags,
+  useAllCorrespondents,
+  useAllDocumentTypes,
+  useUpdateDocument,
+  useDeleteDocument,
+  useAddDocumentNote,
+} from '@/reactQuery';
 
 type Props = NativeStackScreenProps<DocumentsStackParamList, 'DocumentDetail'>;
 
 export const DocumentDetailScreen: React.FC<Props> = ({ route, navigation }) => {
   const theme = useTheme();
   const { t } = useTranslation();
-  const queryClient = useQueryClient();
   const { documentId } = route.params;
 
   const [isEditing, setIsEditing] = useState(false);
@@ -50,35 +56,11 @@ export const DocumentDetailScreen: React.FC<Props> = ({ route, navigation }) => 
 
   const { serverUrl, token } = useAuthStore();
 
-  const {
-    data: doc,
-    isLoading,
-    isError,
-    error,
-    refetch,
-    isRefetching,
-  } = useQuery({
-    queryKey: ['document', documentId],
-    queryFn: () => documentsApi.getDocument(documentId),
-  });
+  const { data: doc, isLoading, isError, refetch, isRefetching } = useDocument(documentId);
 
-  const { data: allTags } = useQuery({
-    queryKey: ['tags-all'],
-    queryFn: tagsApi.getAllTags,
-    staleTime: 5 * 60 * 1000,
-  });
-
-  const { data: allCorrespondents } = useQuery({
-    queryKey: ['correspondents-all'],
-    queryFn: correspondentsApi.getAllCorrespondents,
-    staleTime: 5 * 60 * 1000,
-  });
-
-  const { data: allDocTypes } = useQuery({
-    queryKey: ['document-types-all'],
-    queryFn: documentTypesApi.getAllDocumentTypes,
-    staleTime: 5 * 60 * 1000,
-  });
+  const { data: allTags } = useAllTags(true, { staleTime: 5 * 60 * 1000 });
+  const { data: allCorrespondents } = useAllCorrespondents(true, { staleTime: 5 * 60 * 1000 });
+  const { data: allDocTypes } = useAllDocumentTypes(true, { staleTime: 5 * 60 * 1000 });
 
   const tagsMap = useMemo(() => {
     const map = new Map<number, Tag>();
@@ -98,27 +80,20 @@ export const DocumentDetailScreen: React.FC<Props> = ({ route, navigation }) => 
     return map;
   }, [allDocTypes]);
 
-  const updateMutation = useMutation({
-    mutationFn: (data: Partial<Document>) => documentsApi.updateDocument(documentId, data),
+  const updateMutation = useUpdateDocument({
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['document', documentId] });
-      queryClient.invalidateQueries({ queryKey: ['documents'] });
       setIsEditing(false);
     },
   });
 
-  const deleteMutation = useMutation({
-    mutationFn: () => documentsApi.deleteDocument(documentId),
+  const deleteMutation = useDeleteDocument({
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['documents'] });
       navigation.goBack();
     },
   });
 
-  const addNoteMutation = useMutation({
-    mutationFn: (note: string) => documentsApi.addNote(documentId, note),
+  const addNoteMutation = useAddDocumentNote(documentId, {
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['document', documentId] });
       setNewNote('');
     },
   });
@@ -136,12 +111,15 @@ export const DocumentDetailScreen: React.FC<Props> = ({ route, navigation }) => 
 
   const handleSave = () => {
     updateMutation.mutate({
-      title: editTitle,
-      correspondent: editCorrespondent,
-      document_type: editDocType,
-      tags: editTags,
-      archive_serial_number: editAsn ? parseInt(editAsn, 10) : null,
-      created_date: editCreated || undefined,
+      id: documentId,
+      data: {
+        title: editTitle,
+        correspondent: editCorrespondent,
+        document_type: editDocType,
+        tags: editTags,
+        archive_serial_number: editAsn ? parseInt(editAsn, 10) : null,
+        created_date: editCreated || undefined,
+      },
     });
   };
 
@@ -152,7 +130,7 @@ export const DocumentDetailScreen: React.FC<Props> = ({ route, navigation }) => 
   if (isError || !doc) {
     return (
       <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
-        <ErrorBanner message={error?.message ?? t('common.somethingWentWrong')} onRetry={refetch} />
+        <ErrorBanner message={t('common.somethingWentWrong')} onRetry={refetch} />
       </View>
     );
   }
@@ -416,7 +394,7 @@ export const DocumentDetailScreen: React.FC<Props> = ({ route, navigation }) => 
         destructive
         onConfirm={() => {
           setShowDeleteDialog(false);
-          deleteMutation.mutate();
+          deleteMutation.mutate(documentId);
         }}
         onCancel={() => setShowDeleteDialog(false)}
       />
