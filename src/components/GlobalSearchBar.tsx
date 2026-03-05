@@ -51,7 +51,7 @@ export const GlobalSearchBar: React.FC = () => {
       setShowSuggestions(false);
 
       // Navigate to search results screen
-      navigation.navigate('DocumentsTab', {
+      navigation.getParent()?.navigate('DashboardTab', {
         screen: 'GlobalSearchResults',
         params: { query: query.trim() },
       });

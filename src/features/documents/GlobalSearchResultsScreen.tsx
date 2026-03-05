@@ -15,7 +15,7 @@ import {
 import { DocumentsStackParamList } from '@/navigation/types';
 import { useGlobalSearch, useAllTags } from '@/reactQuery';
 
-type NavigationProp = NativeStackNavigationProp<DocumentsStackParamList, 'GlobalSearchResults'>;
+type NavigationProp = NativeStackNavigationProp<DocumentsStackParamList, 'DocumentDetail'>;
 
 interface RouteParams {
   query: string;

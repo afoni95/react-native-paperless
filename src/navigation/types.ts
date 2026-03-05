@@ -15,7 +15,6 @@ export type DocumentsStackParamList = {
   DocumentList: undefined;
   DocumentDetail: { documentId: number };
   PdfViewer: { documentId: number };
-  GlobalSearchResults: { query: string };
 };
 
 export type ManageStackParamList = {
@@ -30,4 +29,9 @@ export type ManageStackParamList = {
   TrashBin: undefined;
   TasksList: undefined;
   LogsView: undefined;
+};
+
+export type DashboardStackParamList = {
+  Dashboard: undefined;
+  GlobalSearchResults: { query: string };
 };

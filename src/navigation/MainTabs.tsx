@@ -9,6 +9,7 @@ import { UploadScreen } from '@/features/documents/UploadScreen';
 import { DocumentsStack } from './DocumentsStack';
 import { ManageStack } from './ManageStack';
 import { MainTabsParamList } from './types';
+import { DashboardStack } from './DashboardStack';
 
 const Tab = createBottomTabNavigator<MainTabsParamList>();
 
@@ -30,10 +31,9 @@ export const MainTabs: React.FC = () => {
     >
       <Tab.Screen
         name="DashboardTab"
-        component={DashboardScreen}
+        component={DashboardStack}
         options={{
           title: t('dashboard.title'),
-          headerShown: true,
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="view-dashboard" color={color} size={size} />
           ),
