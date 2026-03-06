@@ -2,36 +2,22 @@ import React, { useState } from 'react';
 import { View, FlatList, StyleSheet, RefreshControl } from 'react-native';
 import { List, useTheme, Snackbar, IconButton, Button } from 'react-native-paper';
 import { useTranslation } from 'react-i18next';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { tasksApi } from '@/api';
 import { TaskStatus } from '@/types';
 import { LoadingScreen, EmptyState, ErrorBanner } from '@/components';
+import { useAllTasks, useAcknowledgeTasks } from '@/reactQuery';
 
 export const TasksListScreen: React.FC = () => {
   const theme = useTheme();
   const { t } = useTranslation();
-  const queryClient = useQueryClient();
 
   const [snackbarVisible, setSnackbarVisible] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
 
-  const {
-    data: tasks,
-    isLoading,
-    isError,
-    error,
-    refetch,
-    isRefetching,
-  } = useQuery({
-    queryKey: ['tasks-all'],
-    queryFn: tasksApi.getAllTasks,
-  });
+  const { data: tasks, isLoading, isError, error, refetch, isRefetching } = useAllTasks();
 
-  const acknowledgeMutation = useMutation({
-    mutationFn: (taskIds: number[]) => tasksApi.acknowledgeTasks(taskIds),
+  const acknowledgeMutation = useAcknowledgeTasks({
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['tasks-all'] });
       setSnackbarMessage(t('tasks.acknowledged'));
       setSnackbarVisible(true);
     },
@@ -127,7 +113,10 @@ export const TasksListScreen: React.FC = () => {
         contentContainerStyle={tasks && tasks.length === 0 ? styles.emptyContainer : undefined}
         ListEmptyComponent={
           isError ? (
-            <ErrorBanner message={error?.message ?? t('tasks.loadError')} onRetry={refetch} />
+            <ErrorBanner
+              message={(error as Error)?.message ?? t('tasks.loadError')}
+              onRetry={refetch}
+            />
           ) : (
             <EmptyState message={t('tasks.empty')} />
           )

@@ -4,6 +4,7 @@ import {
   DocumentListParams,
   DocumentNote,
   DocumentUploadParams,
+  GlobalSearchResult,
   PaginatedResponse,
 } from '@/types';
 
@@ -113,6 +114,13 @@ export const documentsApi = {
   searchAutocomplete: async (term: string, limit = 10): Promise<string[]> => {
     const response = await apiClient.get('/api/search/autocomplete/', {
       params: { term, limit },
+    });
+    return response.data;
+  },
+
+  globalSearch: async (query: string): Promise<GlobalSearchResult> => {
+    const response = await apiClient.get<GlobalSearchResult>('/api/search/', {
+      params: { query },
     });
     return response.data;
   },

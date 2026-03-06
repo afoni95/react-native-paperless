@@ -1,21 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { View, ScrollView, StyleSheet, Alert } from 'react-native';
 import { TextInput, Button, Switch, Text, useTheme } from 'react-native-paper';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { correspondentsApi } from '@/api';
 import { MATCHING_ALGORITHMS, MatchingAlgorithm } from '@/types';
 import { LoadingScreen, ConfirmDialog } from '@/components';
 import { ManageStackParamList } from '@/navigation/types';
+import { useCorrespondent, useUpsertCorrespondent, useDeleteCorrespondent } from '@/reactQuery';
 
 type Props = NativeStackScreenProps<ManageStackParamList, 'CorrespondentEdit'>;
 
 export const CorrespondentEditScreen: React.FC<Props> = ({ route, navigation }) => {
   const theme = useTheme();
   const { t } = useTranslation();
-  const queryClient = useQueryClient();
   const correspondentId = route.params?.correspondentId;
   const isNew = !correspondentId;
 
@@ -25,11 +23,7 @@ export const CorrespondentEditScreen: React.FC<Props> = ({ route, navigation }) 
   const [isInsensitive, setIsInsensitive] = useState(true);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
-  const { data: correspondent, isLoading } = useQuery({
-    queryKey: ['correspondent', correspondentId],
-    queryFn: () => correspondentsApi.getCorrespondent(correspondentId!),
-    enabled: !!correspondentId,
-  });
+  const { data: correspondent, isLoading } = useCorrespondent(correspondentId!, !!correspondentId);
 
   useEffect(() => {
     if (correspondent) {
@@ -40,32 +34,17 @@ export const CorrespondentEditScreen: React.FC<Props> = ({ route, navigation }) 
     }
   }, [correspondent]);
 
-  const saveMutation = useMutation({
-    mutationFn: async () => {
-      const data = {
-        name,
-        match,
-        matching_algorithm: matchingAlgorithm,
-        is_insensitive: isInsensitive,
-      };
-      if (isNew) {
-        return correspondentsApi.createCorrespondent(data);
-      }
-      return correspondentsApi.updateCorrespondent(correspondentId!, data);
-    },
+  const saveMutation = useUpsertCorrespondent({
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['correspondents-all'] });
       navigation.goBack();
     },
-    onError: (err) => {
-      Alert.alert(t('common.error'), err?.message ?? t('common.somethingWentWrong'));
+    onError: (_err) => {
+      Alert.alert(t('common.error'), t('common.somethingWentWrong'));
     },
   });
 
-  const deleteMutation = useMutation({
-    mutationFn: () => correspondentsApi.deleteCorrespondent(correspondentId!),
+  const deleteMutation = useDeleteCorrespondent({
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['correspondents-all'] });
       navigation.goBack();
     },
     onError: () => {
@@ -123,7 +102,15 @@ export const CorrespondentEditScreen: React.FC<Props> = ({ route, navigation }) 
 
       <Button
         mode="contained"
-        onPress={() => saveMutation.mutate()}
+        onPress={() =>
+          saveMutation.mutate({
+            id: correspondentId,
+            name,
+            match,
+            matching_algorithm: matchingAlgorithm,
+            is_insensitive: isInsensitive,
+          })
+        }
         loading={saveMutation.isPending}
         disabled={!name.trim() || saveMutation.isPending}
         style={styles.saveButton}
@@ -152,7 +139,9 @@ export const CorrespondentEditScreen: React.FC<Props> = ({ route, navigation }) 
         destructive
         onConfirm={() => {
           setShowDeleteDialog(false);
-          deleteMutation.mutate();
+          if (correspondentId) {
+            deleteMutation.mutate(correspondentId);
+          }
         }}
         onCancel={() => setShowDeleteDialog(false)}
       />

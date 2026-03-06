@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { View, ScrollView, StyleSheet, Alert } from 'react-native';
 import { TextInput, Button, Switch, Text, useTheme } from 'react-native-paper';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { tagsApi } from '@/api';
 import { MATCHING_ALGORITHMS, MatchingAlgorithm } from '@/types';
 import { LoadingScreen, ConfirmDialog } from '@/components';
 import { ManageStackParamList } from '@/navigation/types';
+import { useTag, useUpsertTag, useDeleteTag } from '@/reactQuery';
 
 type Props = NativeStackScreenProps<ManageStackParamList, 'TagEdit'>;
 
@@ -38,7 +37,6 @@ const PRESET_COLORS = [
 export const TagEditScreen: React.FC<Props> = ({ route, navigation }) => {
   const theme = useTheme();
   const { t } = useTranslation();
-  const queryClient = useQueryClient();
   const tagId = route.params?.tagId;
   const isNew = !tagId;
 
@@ -50,11 +48,7 @@ export const TagEditScreen: React.FC<Props> = ({ route, navigation }) => {
   const [isInboxTag, setIsInboxTag] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
-  const { data: tag, isLoading } = useQuery({
-    queryKey: ['tag', tagId],
-    queryFn: () => tagsApi.getTag(tagId!),
-    enabled: !!tagId,
-  });
+  const { data: tag, isLoading } = useTag(tagId!, !!tagId);
 
   useEffect(() => {
     if (tag) {
@@ -67,23 +61,8 @@ export const TagEditScreen: React.FC<Props> = ({ route, navigation }) => {
     }
   }, [tag]);
 
-  const saveMutation = useMutation({
-    mutationFn: async () => {
-      const data = {
-        name,
-        color,
-        match,
-        matching_algorithm: matchingAlgorithm,
-        is_insensitive: isInsensitive,
-        is_inbox_tag: isInboxTag,
-      };
-      if (isNew) {
-        return tagsApi.createTag(data);
-      }
-      return tagsApi.updateTag(tagId!, data);
-    },
+  const saveMutation = useUpsertTag({
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['tags-all'] });
       navigation.goBack();
     },
     onError: () => {
@@ -91,10 +70,8 @@ export const TagEditScreen: React.FC<Props> = ({ route, navigation }) => {
     },
   });
 
-  const deleteMutation = useMutation({
-    mutationFn: () => tagsApi.deleteTag(tagId!),
+  const deleteMutation = useDeleteTag({
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['tags-all'] });
       navigation.goBack();
     },
     onError: () => {
@@ -183,7 +160,17 @@ export const TagEditScreen: React.FC<Props> = ({ route, navigation }) => {
 
       <Button
         mode="contained"
-        onPress={() => saveMutation.mutate()}
+        onPress={() =>
+          saveMutation.mutate({
+            id: tagId,
+            name,
+            color,
+            match,
+            matching_algorithm: matchingAlgorithm,
+            is_insensitive: isInsensitive,
+            is_inbox_tag: isInboxTag,
+          })
+        }
         loading={saveMutation.isPending}
         disabled={!name.trim() || saveMutation.isPending}
         style={styles.saveButton}
@@ -212,7 +199,7 @@ export const TagEditScreen: React.FC<Props> = ({ route, navigation }) => {
         destructive
         onConfirm={() => {
           setShowDeleteDialog(false);
-          deleteMutation.mutate();
+          deleteMutation.mutate(tagId!);
         }}
         onCancel={() => setShowDeleteDialog(false)}
       />

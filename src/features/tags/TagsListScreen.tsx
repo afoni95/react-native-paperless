@@ -2,14 +2,13 @@ import React, { useState, useMemo } from 'react';
 import { View, FlatList, StyleSheet, RefreshControl } from 'react-native';
 import { Searchbar, FAB, List, useTheme } from 'react-native-paper';
 import { useTranslation } from 'react-i18next';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-import { tagsApi } from '@/api';
 import { ManageStackParamList } from '@/navigation/types';
 import { Tag } from '@/types';
 import { LoadingScreen, EmptyState, ErrorBanner, ConfirmDialog } from '@/components';
+import { useAllTags, useDeleteTag } from '@/reactQuery';
 
 type NavigationProp = NativeStackNavigationProp<ManageStackParamList, 'TagsList'>;
 
@@ -17,27 +16,14 @@ export const TagsListScreen: React.FC = () => {
   const theme = useTheme();
   const { t } = useTranslation();
   const navigation = useNavigation<NavigationProp>();
-  const queryClient = useQueryClient();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [deleteTarget, setDeleteTarget] = useState<Tag | null>(null);
 
-  const {
-    data: tags,
-    isLoading,
-    isError,
-    error,
-    refetch,
-    isRefetching,
-  } = useQuery({
-    queryKey: ['tags-all'],
-    queryFn: tagsApi.getAllTags,
-  });
+  const { data: tags, isLoading, isError, error, refetch, isRefetching } = useAllTags();
 
-  const deleteMutation = useMutation({
-    mutationFn: (id: number) => tagsApi.deleteTag(id),
+  const deleteMutation = useDeleteTag({
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['tags-all'] });
       setDeleteTarget(null);
     },
   });
@@ -62,7 +48,10 @@ export const TagsListScreen: React.FC = () => {
       />
 
       {isError && (
-        <ErrorBanner message={error?.message ?? t('common.somethingWentWrong')} onRetry={refetch} />
+        <ErrorBanner
+          message={(error as Error)?.message ?? t('common.somethingWentWrong')}
+          onRetry={refetch}
+        />
       )}
 
       <FlatList

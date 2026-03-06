@@ -31,6 +31,9 @@ export const demoTags: Tag[] = [
     is_inbox_tag: false,
     document_count: 5,
     owner: 1,
+    user_can_change: true,
+    slug: 'invoice',
+    parent: null,
   },
   {
     id: 2,
@@ -43,6 +46,9 @@ export const demoTags: Tag[] = [
     is_inbox_tag: false,
     document_count: 3,
     owner: 1,
+    user_can_change: true,
+    slug: 'receipt',
+    parent: null,
   },
   {
     id: 3,
@@ -55,6 +61,9 @@ export const demoTags: Tag[] = [
     is_inbox_tag: false,
     document_count: 2,
     owner: 1,
+    user_can_change: true,
+    slug: 'contract',
+    parent: null,
   },
   {
     id: 4,
@@ -67,6 +76,9 @@ export const demoTags: Tag[] = [
     is_inbox_tag: false,
     document_count: 4,
     owner: 1,
+    user_can_change: true,
+    slug: 'tax',
+    parent: null,
   },
   {
     id: 5,
@@ -79,6 +91,9 @@ export const demoTags: Tag[] = [
     is_inbox_tag: true,
     document_count: 2,
     owner: 1,
+    user_can_change: true,
+    slug: 'inbox',
+    parent: null,
   },
 ];
 
@@ -94,8 +109,9 @@ export const demoCorrespondents: Correspondent[] = [
     matching_algorithm: 3,
     is_insensitive: true,
     document_count: 4,
-    last_correspondence: '2025-12-15T10:00:00Z',
     owner: 1,
+    user_can_change: true,
+    slug: 'acme-corp',
   },
   {
     id: 2,
@@ -104,8 +120,9 @@ export const demoCorrespondents: Correspondent[] = [
     matching_algorithm: 3,
     is_insensitive: true,
     document_count: 2,
-    last_correspondence: '2025-11-20T14:30:00Z',
     owner: 1,
+    user_can_change: true,
+    slug: 'city-power-gas',
   },
   {
     id: 3,
@@ -114,8 +131,9 @@ export const demoCorrespondents: Correspondent[] = [
     matching_algorithm: 3,
     is_insensitive: true,
     document_count: 3,
-    last_correspondence: '2025-10-05T09:15:00Z',
     owner: 1,
+    user_can_change: true,
+    slug: 'insurance-co',
   },
   {
     id: 4,
@@ -124,8 +142,9 @@ export const demoCorrespondents: Correspondent[] = [
     matching_algorithm: 3,
     is_insensitive: true,
     document_count: 2,
-    last_correspondence: '2025-09-01T08:00:00Z',
     owner: 1,
+    user_can_change: true,
+    slug: 'tax-office',
   },
 ];
 
@@ -142,6 +161,8 @@ export const demoDocumentTypes: DocumentType[] = [
     is_insensitive: true,
     document_count: 5,
     owner: 1,
+    slug: 'demo',
+    user_can_change: false,
   },
   {
     id: 2,
@@ -151,6 +172,8 @@ export const demoDocumentTypes: DocumentType[] = [
     is_insensitive: true,
     document_count: 3,
     owner: 1,
+    slug: 'demo',
+    user_can_change: false,
   },
   {
     id: 3,
@@ -160,6 +183,8 @@ export const demoDocumentTypes: DocumentType[] = [
     is_insensitive: true,
     document_count: 2,
     owner: 1,
+    slug: 'demo',
+    user_can_change: false,
   },
   {
     id: 4,
@@ -169,6 +194,8 @@ export const demoDocumentTypes: DocumentType[] = [
     is_insensitive: true,
     document_count: 2,
     owner: 1,
+    slug: 'demo',
+    user_can_change: false,
   },
 ];
 
@@ -196,6 +223,10 @@ const baseDocs: Document[] = [
     owner: 1,
     notes: [],
     deleted_at: null,
+    is_shared_by_requester: false,
+    mime_type: 'application/pdf',
+    page_count: 1,
+    user_can_change: true,
   },
   {
     id: 2,
@@ -216,6 +247,10 @@ const baseDocs: Document[] = [
     owner: 1,
     notes: [],
     deleted_at: null,
+    is_shared_by_requester: false,
+    mime_type: 'application/pdf',
+    page_count: 1,
+    user_can_change: true,
   },
   {
     id: 3,
@@ -236,6 +271,10 @@ const baseDocs: Document[] = [
     owner: 1,
     notes: [],
     deleted_at: null,
+    is_shared_by_requester: false,
+    mime_type: 'application/pdf',
+    page_count: 2,
+    user_can_change: true,
   },
   {
     id: 4,
@@ -256,6 +295,10 @@ const baseDocs: Document[] = [
     owner: 1,
     notes: [],
     deleted_at: null,
+    is_shared_by_requester: false,
+    mime_type: 'application/pdf',
+    page_count: 3,
+    user_can_change: true,
   },
   {
     id: 5,
@@ -276,6 +319,10 @@ const baseDocs: Document[] = [
     owner: 1,
     notes: [],
     deleted_at: null,
+    is_shared_by_requester: false,
+    mime_type: 'application/pdf',
+    page_count: 2,
+    user_can_change: true,
   },
   {
     id: 6,
@@ -295,6 +342,10 @@ const baseDocs: Document[] = [
     owner: 1,
     notes: [],
     deleted_at: null,
+    is_shared_by_requester: false,
+    mime_type: 'image/jpeg',
+    page_count: 1,
+    user_can_change: true,
   },
   {
     id: 7,
@@ -315,6 +366,10 @@ const baseDocs: Document[] = [
     owner: 1,
     notes: [],
     deleted_at: null,
+    is_shared_by_requester: false,
+    mime_type: 'application/pdf',
+    page_count: 1,
+    user_can_change: true,
   },
   {
     id: 8,
@@ -335,6 +390,10 @@ const baseDocs: Document[] = [
     owner: 1,
     notes: [],
     deleted_at: null,
+    is_shared_by_requester: false,
+    mime_type: 'application/pdf',
+    page_count: 2,
+    user_can_change: true,
   },
   {
     id: 9,
@@ -355,6 +414,10 @@ const baseDocs: Document[] = [
     owner: 1,
     notes: [],
     deleted_at: null,
+    is_shared_by_requester: false,
+    mime_type: 'application/pdf',
+    page_count: 1,
+    user_can_change: true,
   },
   {
     id: 10,
@@ -374,6 +437,10 @@ const baseDocs: Document[] = [
     owner: 1,
     notes: [],
     deleted_at: '2026-01-01T09:00:00Z',
+    is_shared_by_requester: false,
+    mime_type: 'application/pdf',
+    page_count: 1,
+    user_can_change: true,
   },
 ];
 
@@ -415,6 +482,8 @@ export const demoStatistics: Statistics = {
   correspondent_count: demoCorrespondents.length,
   document_type_count: demoDocumentTypes.length,
   current_asn: 1009,
+  inbox_tag: 2,
+  storage_path_count: 0,
 };
 
 /* ------------------------------------------------------------------ */

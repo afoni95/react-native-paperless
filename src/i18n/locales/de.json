@@ -55,6 +55,18 @@
     "fileTypes": "Dateitypen",
     "characters": "Zeichen"
   },
+  "search": {
+    "placeholder": "Dokumente, Tags und mehr durchsuchen...",
+    "results": "Suchergebnisse",
+    "noResults": "Keine Ergebnisse gefunden",
+    "error": "Suche fehlgeschlagen. Bitte versuchen Sie es erneut.",
+    "type": {
+      "document": "Dokument",
+      "correspondent": "Korrespondent",
+      "document_type": "Dokumenttyp",
+      "tag": "Tag"
+    }
+  },
   "documents": {
     "title": "Dokumente",
     "detail": "Dokumentdetails",
@@ -138,8 +150,7 @@
     "match": "Suchmuster",
     "caseInsensitive": "Groß-/Kleinschreibung ignorieren",
     "deleteConfirm": "Möchten Sie diesen Korrespondenten wirklich löschen?",
-    "documents": "{{count}} Dokumente",
-    "lastCorrespondence": "Zuletzt: {{date}}"
+    "documents": "{{count}} Dokumente"
   },
   "documentTypes": {
     "title": "Dokumenttypen",

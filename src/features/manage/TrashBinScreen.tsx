@@ -2,7 +2,6 @@ import React, { useState, useLayoutEffect } from 'react';
 import { View, FlatList, StyleSheet, RefreshControl } from 'react-native';
 import { List, useTheme, Button, Snackbar, IconButton, Text, Divider } from 'react-native-paper';
 import { useTranslation } from 'react-i18next';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
@@ -10,6 +9,7 @@ import { documentsApi } from '@/api';
 import { Document } from '@/types';
 import { ManageStackParamList } from '@/navigation/types';
 import { LoadingScreen, EmptyState, ErrorBanner, ConfirmDialog } from '@/components';
+import { useTrashDocuments, useRestoreDocuments, useEmptyTrash } from '@/reactQuery';
 
 type NavigationProp = NativeStackNavigationProp<ManageStackParamList, 'TrashBin'>;
 
@@ -17,7 +17,6 @@ export const TrashBinScreen: React.FC = () => {
   const theme = useTheme();
   const { t, i18n } = useTranslation();
   const navigation = useNavigation<NavigationProp>();
-  const queryClient = useQueryClient();
 
   const [restoreTarget, setRestoreTarget] = useState<Document | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Document | null>(null);
@@ -27,28 +26,15 @@ export const TrashBinScreen: React.FC = () => {
     message: '',
   });
 
-  const {
-    data: trashData,
-    isLoading,
-    isError,
-    error,
-    refetch,
-    isRefetching,
-  } = useQuery({
-    queryKey: ['trash'],
-    queryFn: documentsApi.getTrash,
-  });
+  const { data: trashData, isLoading, isError, error, refetch, isRefetching } = useTrashDocuments();
 
   const documents = trashData?.results ?? [];
 
-  const restoreMutation = useMutation({
-    mutationFn: (ids: number[]) => documentsApi.restoreDocuments(ids),
+  const restoreMutation = useRestoreDocuments({
     onSuccess: async (_, ids) => {
       // Reprocess each restored document to regenerate thumbnails
       await Promise.allSettled(ids.map((id) => documentsApi.reprocessDocument(id)));
 
-      queryClient.invalidateQueries({ queryKey: ['trash'] });
-      queryClient.invalidateQueries({ queryKey: ['documents'] });
       setRestoreTarget(null);
       setSnackbar({ visible: true, message: t('trash.restoreSuccess') });
     },
@@ -58,11 +44,8 @@ export const TrashBinScreen: React.FC = () => {
     },
   });
 
-  const deleteMutation = useMutation({
-    mutationFn: (ids: number[]) => documentsApi.emptyTrash(ids),
+  const deleteMutation = useEmptyTrash({
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['trash'] });
-      queryClient.invalidateQueries({ queryKey: ['documents'] });
       setDeleteTarget(null);
       setSnackbar({ visible: true, message: t('trash.deleteSuccess') });
     },
@@ -72,10 +55,8 @@ export const TrashBinScreen: React.FC = () => {
     },
   });
 
-  const emptyMutation = useMutation({
-    mutationFn: () => documentsApi.emptyTrash(),
+  const emptyMutation = useEmptyTrash({
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['trash'] });
       setEmptyConfirmVisible(false);
       setSnackbar({ visible: true, message: t('trash.emptySuccess') });
     },
@@ -116,7 +97,10 @@ export const TrashBinScreen: React.FC = () => {
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       {isError && (
-        <ErrorBanner message={error?.message ?? t('trash.loadError')} onRetry={refetch} />
+        <ErrorBanner
+          message={error instanceof Error ? error.message : t('trash.loadError')}
+          onRetry={refetch}
+        />
       )}
 
       {documents.length > 0 && (
@@ -216,7 +200,7 @@ export const TrashBinScreen: React.FC = () => {
         message={t('trash.emptyTrashConfirm', { count: documents.length })}
         confirmLabel={t('trash.emptyTrash')}
         destructive
-        onConfirm={() => emptyMutation.mutate()}
+        onConfirm={() => emptyMutation.mutate(undefined)}
         onCancel={() => setEmptyConfirmVisible(false)}
       />
 

@@ -30,3 +30,8 @@ export type ManageStackParamList = {
   TasksList: undefined;
   LogsView: undefined;
 };
+
+export type DashboardStackParamList = {
+  Dashboard: undefined;
+  GlobalSearchResults: { query: string };
+};
