@@ -2,17 +2,15 @@ import React from 'react';
 import { ScrollView, View, StyleSheet, RefreshControl } from 'react-native';
 import { Card, Text, useTheme, Divider } from 'react-native-paper';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import { useNavigation } from '@react-navigation/native';
-import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { useTranslation } from 'react-i18next';
 import { LoadingScreen, ErrorBanner, GlobalSearchBar } from '@/components';
-import { MainTabsParamList } from '@/navigation/types';
+import { useGlobalNavigationHelper } from '@/hooks';
 import { useStatistics } from '@/reactQuery';
 
 export const DashboardScreen: React.FC = () => {
   const theme = useTheme();
   const { t } = useTranslation();
-  const navigation = useNavigation<BottomTabNavigationProp<MainTabsParamList, 'DashboardTab'>>();
+  const { navigateTo } = useGlobalNavigationHelper();
 
   const { data: stats, isLoading, isError, error, refetch, isRefetching } = useStatistics();
 
@@ -54,7 +52,7 @@ export const DashboardScreen: React.FC = () => {
           icon="file-document-outline"
           color={theme.colors.primaryContainer}
           textColor={theme.colors.onPrimaryContainer}
-          onPress={() => navigation.navigate('DocumentsTab', { screen: 'DocumentList' })}
+          onPress={() => navigateTo('documentList')}
         />
         <StatCard
           title={t('dashboard.inbox')}
@@ -62,7 +60,7 @@ export const DashboardScreen: React.FC = () => {
           icon="inbox-arrow-down"
           color={theme.colors.secondaryContainer}
           textColor={theme.colors.onSecondaryContainer}
-          onPress={() => navigation.navigate('DocumentsTab', { screen: 'DocumentList' })}
+          onPress={() => navigateTo('documentList')}
         />
       </View>
 
@@ -73,7 +71,7 @@ export const DashboardScreen: React.FC = () => {
           icon="tag-outline"
           color={theme.colors.tertiaryContainer}
           textColor={theme.colors.onTertiaryContainer}
-          onPress={() => navigation.navigate('ManageTab', { screen: 'TagsList' })}
+          onPress={() => navigateTo('tagsList')}
         />
         <StatCard
           title={t('dashboard.correspondents')}
@@ -81,7 +79,7 @@ export const DashboardScreen: React.FC = () => {
           icon="account-outline"
           color={theme.colors.primaryContainer}
           textColor={theme.colors.onPrimaryContainer}
-          onPress={() => navigation.navigate('ManageTab', { screen: 'CorrespondentsList' })}
+          onPress={() => navigateTo('correspondentsList')}
         />
       </View>
 
@@ -92,7 +90,7 @@ export const DashboardScreen: React.FC = () => {
           icon="clipboard-text-outline"
           color={theme.colors.secondaryContainer}
           textColor={theme.colors.onSecondaryContainer}
-          onPress={() => navigation.navigate('ManageTab', { screen: 'DocumentTypesList' })}
+          onPress={() => navigateTo('documentTypesList')}
         />
         <StatCard
           title={t('dashboard.characters')}

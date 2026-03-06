@@ -4,6 +4,8 @@ import { Text, Divider, useTheme, Button } from 'react-native-paper';
 import { useTranslation } from 'react-i18next';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
+import { CompositeNavigationProp, RouteProp } from '@react-navigation/native';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import {
   GlobalSearchResult,
@@ -12,14 +14,16 @@ import {
   CorrespondentSearchResult,
   DocumentTypeSearchResult,
 } from '@/types';
-import { DocumentsStackParamList } from '@/navigation/types';
+import { DashboardStackParamList, MainTabsParamList } from '@/navigation/types';
 import { useGlobalSearch, useAllTags } from '@/reactQuery';
+import { useGlobalNavigationHelper } from '@/hooks';
 
-type NavigationProp = NativeStackNavigationProp<DocumentsStackParamList, 'DocumentDetail'>;
+type NavigationProp = CompositeNavigationProp<
+  NativeStackNavigationProp<DashboardStackParamList, 'GlobalSearchResults'>,
+  BottomTabNavigationProp<MainTabsParamList>
+>;
 
-interface RouteParams {
-  query: string;
-}
+type GlobalSearchRouteProp = RouteProp<DashboardStackParamList, 'GlobalSearchResults'>;
 
 interface SearchResultItem {
   id: number;
@@ -48,8 +52,9 @@ export const GlobalSearchResultsScreen: React.FC = () => {
   const theme = useTheme();
   const { t } = useTranslation();
   const navigation = useNavigation<NavigationProp>();
-  const route = useRoute();
-  const params = route.params as RouteParams;
+  const route = useRoute<GlobalSearchRouteProp>();
+  const params = route.params;
+  const { navigateTo } = useGlobalNavigationHelper();
 
   const { data: tags } = useAllTags();
 
@@ -136,28 +141,16 @@ export const GlobalSearchResultsScreen: React.FC = () => {
   const handleResultPress = (item: SearchResultItem) => {
     switch (item.type) {
       case 'document':
-        navigation.navigate('DocumentDetail', { documentId: item.id });
+        navigateTo('documentDetail', { documentId: item.id });
         break;
       case 'tag':
-        // Navigate to tag edit screen in ManageStack
-        navigation.getParent()?.navigate('ManageTab', {
-          screen: 'TagEdit',
-          params: { tagId: item.id },
-        });
+        navigateTo('tagEdit', { tagId: item.id });
         break;
       case 'correspondent':
-        // Navigate to correspondent edit screen in ManageStack
-        navigation.getParent()?.navigate('ManageTab', {
-          screen: 'CorrespondentEdit',
-          params: { correspondentId: item.id },
-        });
+        navigateTo('correspondentEdit', { correspondentId: item.id });
         break;
       case 'document_type':
-        // Navigate to document type edit screen in ManageStack
-        navigation.getParent()?.navigate('ManageTab', {
-          screen: 'DocumentTypeEdit',
-          params: { documentTypeId: item.id },
-        });
+        navigateTo('documentTypeEdit', { documentTypeId: item.id });
         break;
     }
   };

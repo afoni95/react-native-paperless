@@ -3,8 +3,6 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from 'react-native-paper';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-
-import { DashboardScreen } from '@/features/dashboard/DashboardScreen';
 import { UploadScreen } from '@/features/documents/UploadScreen';
 import { DocumentsStack } from './DocumentsStack';
 import { ManageStack } from './ManageStack';
