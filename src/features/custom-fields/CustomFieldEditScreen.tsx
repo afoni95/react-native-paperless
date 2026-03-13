@@ -21,7 +21,7 @@ export const CustomFieldEditScreen: React.FC<Props> = ({ route, navigation }) =>
   const [dataType, setDataType] = useState<CustomFieldDataType>('string');
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
-  const { data: customField, isLoading } = useCustomField(customFieldId!, !!customFieldId);
+  const { data: customField, isLoading } = useCustomField(customFieldId, !!customFieldId);
 
   useEffect(() => {
     if (customField) {

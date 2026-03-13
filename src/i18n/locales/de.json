@@ -177,7 +177,7 @@
     "dataType": "Datentyp",
     "deleteConfirm": "Möchten Sie dieses benutzerdefinierte Feld wirklich löschen?",
     "documentsUsingField": "{{count}} Dokumente verwenden dieses Feld",
-    "unused": "Nicht in verwendung"
+    "unused": "Nicht in Verwendung"
   },
   "manage": {
     "title": "Verwalten",

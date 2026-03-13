@@ -148,7 +148,7 @@ export interface DocumentTypeSearchResult {
 export interface CustomField {
   id: number;
   name: string;
-  data_type: string;
+  data_type: CustomFieldDataType;
   extra_data: CustomFieldExtraData | null;
   document_count: number;
 }
@@ -228,6 +228,7 @@ export interface DocumentListParams {
   page?: number;
   page_size?: number;
   query?: string;
+  id__in?: number[];
   correspondent__id?: number;
   document_type__id?: number;
   tags__id__all?: number[];

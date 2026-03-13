@@ -94,7 +94,7 @@ export const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
               inputStyle={styles.searchInput}
             />
 
-            {allowClear && selectedId && (
+            {allowClear && selectedId !== null && (
               <List.Item
                 title={`— ${t('common.none')} —`}
                 onPress={() => handleSelect(null)}
@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     maxHeight: 300,
     elevation: 8,
-    shadowColor: '#00000000',
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
     shadowRadius: 8,

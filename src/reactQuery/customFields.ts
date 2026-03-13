@@ -21,15 +21,15 @@ export const useAllCustomFields = (
 };
 
 export const useCustomField = (
-  id: number,
+  id?: number,
   isEnabled = true,
   options?: QueryHookOptions<CustomField, ReturnType<typeof customFieldQueryKeys.detail>>,
 ) => {
   return useQuery({
     ...options,
-    queryKey: customFieldQueryKeys.detail(id),
-    enabled: isEnabled,
-    queryFn: () => customFieldsApi.getCustomField(id),
+    queryKey: customFieldQueryKeys.detail(id ?? -1),
+    enabled: isEnabled && id !== undefined,
+    queryFn: () => customFieldsApi.getCustomField(id!),
   });
 };
 

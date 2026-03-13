@@ -1,21 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { View, ScrollView, StyleSheet } from 'react-native';
 import { Chip, Searchbar, List, Text, useTheme, ActivityIndicator } from 'react-native-paper';
 import { useTranslation } from 'react-i18next';
-
-import { useDocument, useDocuments } from '@/reactQuery';
+import { useDocuments, useLinkedDocuments } from '@/reactQuery';
+import { Document } from '@/types';
 import { useDebounce } from '@/hooks';
 
 const truncate = (title: string) => (title.length > 10 ? title.slice(0, 10) + '…' : title);
 
 interface DocumentChipProps {
-  docId: number;
+  doc: Document;
   onRemove?: () => void;
 }
 
-const DocumentChip: React.FC<DocumentChipProps> = ({ docId, onRemove }) => {
-  const { data } = useDocument(docId);
-  const label = data?.title ? truncate(data.title) : `#${docId}`;
+const DocumentChip: React.FC<DocumentChipProps> = ({ doc, onRemove }) => {
+  const label = doc.title ? truncate(doc.title) : `#${doc.id}`;
   return (
     <Chip style={styles.chip} onClose={onRemove} closeIcon={onRemove ? 'close' : undefined}>
       {label}
@@ -28,12 +27,25 @@ interface DocumentLinkDisplayProps {
 }
 
 export const DocumentLinkDisplay: React.FC<DocumentLinkDisplayProps> = ({ ids }) => {
+  const { data: linkedDocs } = useLinkedDocuments(ids);
+
+  const docsById = useMemo(() => {
+    const map = new Map<number, Document>();
+    linkedDocs?.results.forEach((doc) => {
+      map.set(doc.id, doc);
+    });
+    return map;
+  }, [linkedDocs?.results]);
+
   if (ids.length === 0) return null;
+
   return (
     <View style={styles.chipsRow}>
-      {ids.map((id) => (
-        <DocumentChip key={id} docId={id} />
-      ))}
+      {ids.map((id) => {
+        const doc = docsById.get(id);
+        if (!doc) return null;
+        return <DocumentChip key={id} doc={doc} />;
+      })}
     </View>
   );
 };
@@ -54,6 +66,8 @@ export const DocumentLinkEditor: React.FC<DocumentLinkEditorProps> = ({ value, o
     debouncedSearch.trim().length > 0,
   );
 
+  const { data: linkedDocs } = useLinkedDocuments(value);
+
   const handleAdd = (docId: number) => {
     if (!value.includes(docId)) {
       onChange([...value, docId]);
@@ -67,13 +81,24 @@ export const DocumentLinkEditor: React.FC<DocumentLinkEditorProps> = ({ value, o
 
   const filteredResults = (searchResults?.results ?? []).filter((doc) => !value.includes(doc.id));
 
+  const docsById = useMemo(() => {
+    const map = new Map<number, Document>();
+    linkedDocs?.results.forEach((doc) => {
+      map.set(doc.id, doc);
+    });
+    return map;
+  }, [linkedDocs?.results]);
+
   return (
     <View>
       {value.length > 0 && (
         <View style={styles.chipsRow}>
-          {value.map((id) => (
-            <DocumentChip key={id} docId={id} onRemove={() => handleRemove(id)} />
-          ))}
+          {value
+            .map((id) => docsById.get(id))
+            .filter((doc): doc is Document => doc !== undefined)
+            .map((doc) => (
+              <DocumentChip key={doc.id} doc={doc} onRemove={() => handleRemove(doc.id)} />
+            ))}
         </View>
       )}
 

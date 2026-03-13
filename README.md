@@ -82,7 +82,7 @@ npm run lint:fix
 - [ ] Custom Field query filtering
 - [ ] More Like This search
 - [ ] WebSocket status updates
-- [-] Upload: add storage_path & custom_fields support
+- [ ] Upload: add storage_path & custom_fields support
 
 See the [open issues](https://github.com/afoni95/react-native-paperless/issues) for a full list of proposed features and known bugs.
 

@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, ActivityIndicator } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { useTheme } from 'react-native-paper';
 import { useLogs, useLog } from '@/reactQuery';
 
 export const LogsScreen: React.FC = () => {
   const { t } = useTranslation();
+  const theme = useTheme();
   const [selectedLog, setSelectedLog] = useState<string | null>(null);
 
   const { data: availableLogs, isLoading: logsLoading } = useLogs();
@@ -29,13 +31,13 @@ export const LogsScreen: React.FC = () => {
   if (isError) return <Text>{error instanceof Error ? error.message : t('common.error')}</Text>;
 
   return (
-    <View style={{ flex: 1, padding: 16 }}>
+    <View style={{ flex: 1, padding: 16, backgroundColor: theme.colors.background }}>
       <FlatList
         data={logs || []}
         keyExtractor={(_, index) => index.toString()}
         renderItem={({ item }) => (
           <View style={{ marginBottom: 12 }}>
-            <Text>{item}</Text>
+            <Text style={{ color: theme.colors.onSurface }}>{item}</Text>
           </View>
         )}
       />

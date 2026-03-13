@@ -50,6 +50,19 @@ export const useDocument = (
   });
 };
 
+export const useLinkedDocuments = (
+  ids: number[],
+  isEnabled = true,
+  options?: QueryHookOptions<PaginatedResponse<Document>, ReturnType<typeof documentQueryKeys.all>>,
+) => {
+  return useQuery({
+    ...options,
+    queryKey: documentQueryKeys.all({ id__in: ids }),
+    enabled: isEnabled && ids.length > 0,
+    queryFn: () => documentsApi.getDocuments({ id__in: ids, page_size: ids.length }),
+  });
+};
+
 export const useDocumentNotes = (
   documentId: number,
   isEnabled = true,
