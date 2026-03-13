@@ -32,11 +32,26 @@ export interface Document {
   archived_file_name: string | null;
   owner: number | null;
   notes: DocumentNote[];
-  // custom_fields: any[];
+  custom_fields: DocumentCustomFieldValue[];
   is_shared_by_requester: boolean;
   mime_type: string;
   page_count: number | null;
   user_can_change: boolean;
+}
+
+export interface DocumentCustomFieldValue {
+  field: number;
+  value: string | number | boolean | null | (string | number)[];
+}
+
+export interface DocumentUpdatePayload {
+  title?: string;
+  correspondent?: number | null;
+  document_type?: number | null;
+  tags?: number[];
+  archive_serial_number?: number | null;
+  created_date?: string;
+  custom_fields?: DocumentCustomFieldValue[];
 }
 
 export interface DocumentNote {
@@ -129,6 +144,39 @@ export interface DocumentTypeSearchResult {
   user_can_change: boolean;
   owner: number | null;
 }
+
+export interface CustomField {
+  id: number;
+  name: string;
+  data_type: string;
+  extra_data: CustomFieldExtraData | null;
+  document_count: number;
+}
+
+export interface CustomFieldSelectOption {
+  id: string;
+  label: string;
+}
+
+export interface CustomFieldExtraData {
+  select_options: CustomFieldSelectOption[];
+  default_currency: string | null;
+}
+
+export const CUSTOM_FIELD_DATA_TYPES = {
+  string: 'string',
+  longtext: 'longtext',
+  url: 'url',
+  date: 'date',
+  boolean: 'boolean',
+  integer: 'integer',
+  float: 'float',
+  monetary: 'monetary',
+  documentlink: 'documentlink',
+  select: 'select',
+} as const;
+
+export type CustomFieldDataType = keyof typeof CUSTOM_FIELD_DATA_TYPES;
 
 export interface Statistics {
   documents_total: number;

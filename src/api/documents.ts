@@ -1,6 +1,7 @@
 import apiClient from './client';
 import {
   Document,
+  DocumentUpdatePayload,
   DocumentListParams,
   DocumentNote,
   DocumentUploadParams,
@@ -35,7 +36,7 @@ export const documentsApi = {
     return response.data;
   },
 
-  updateDocument: async (id: number, data: Partial<Document>): Promise<Document> => {
+  updateDocument: async (id: number, data: Partial<DocumentUpdatePayload>): Promise<Document> => {
     const response = await apiClient.patch<Document>(`/api/documents/${id}/`, data);
     return response.data;
   },

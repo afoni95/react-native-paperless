@@ -1,7 +1,7 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useTranslation } from 'react-i18next';
-import { ManageHomeScreen } from '@/features/manage/ManageHomeScreen';
+import { ManagementOverviewScreen } from '@/features/manage/ManagementOverviewScreen';
 import { SettingsScreen } from '@/features/manage/SettingsScreen';
 import { TasksListScreen } from '@/features/manage/TasksListScreen';
 import { TagsListScreen } from '@/features/tags/TagsListScreen';
@@ -10,6 +10,8 @@ import { CorrespondentsListScreen } from '@/features/correspondents/Corresponden
 import { CorrespondentEditScreen } from '@/features/correspondents/CorrespondentEditScreen';
 import { DocumentTypesListScreen } from '@/features/document-types/DocumentTypesListScreen';
 import { DocumentTypeEditScreen } from '@/features/document-types/DocumentTypeEditScreen';
+import { CustomFieldsListScreen } from '@/features/custom-fields/CustomFieldsListScreen';
+import { CustomFieldEditScreen } from '@/features/custom-fields/CustomFieldEditScreen';
 import { TrashBinScreen } from '@/features/manage/TrashBinScreen';
 import { LogsScreen } from '@/features/manage/LogsScreen';
 import { ManageStackParamList } from './types';
@@ -23,7 +25,7 @@ export const ManageStack: React.FC = () => {
     <Stack.Navigator>
       <Stack.Screen
         name="ManageHome"
-        component={ManageHomeScreen}
+        component={ManagementOverviewScreen}
         options={{ title: t('manage.title') }}
       />
       <Stack.Screen
@@ -64,6 +66,20 @@ export const ManageStack: React.FC = () => {
           title: route.params?.documentTypeId
             ? t('documentTypes.editDocumentType')
             : t('documentTypes.createDocumentType'),
+        })}
+      />
+      <Stack.Screen
+        name="CustomFieldsList"
+        component={CustomFieldsListScreen}
+        options={{ title: t('customFields.title') }}
+      />
+      <Stack.Screen
+        name="CustomFieldEdit"
+        component={CustomFieldEditScreen}
+        options={({ route }) => ({
+          title: route.params?.customFieldId
+            ? t('customFields.editCustomField')
+            : t('customFields.createCustomField'),
         })}
       />
       <Stack.Screen

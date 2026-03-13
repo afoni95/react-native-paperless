@@ -227,6 +227,7 @@ const baseDocs: Document[] = [
     mime_type: 'application/pdf',
     page_count: 1,
     user_can_change: true,
+    custom_fields: [],
   },
   {
     id: 2,
@@ -251,6 +252,7 @@ const baseDocs: Document[] = [
     mime_type: 'application/pdf',
     page_count: 1,
     user_can_change: true,
+    custom_fields: [],
   },
   {
     id: 3,
@@ -275,6 +277,7 @@ const baseDocs: Document[] = [
     mime_type: 'application/pdf',
     page_count: 2,
     user_can_change: true,
+    custom_fields: [],
   },
   {
     id: 4,
@@ -299,6 +302,7 @@ const baseDocs: Document[] = [
     mime_type: 'application/pdf',
     page_count: 3,
     user_can_change: true,
+    custom_fields: [],
   },
   {
     id: 5,
@@ -323,6 +327,7 @@ const baseDocs: Document[] = [
     mime_type: 'application/pdf',
     page_count: 2,
     user_can_change: true,
+    custom_fields: [],
   },
   {
     id: 6,
@@ -346,6 +351,7 @@ const baseDocs: Document[] = [
     mime_type: 'image/jpeg',
     page_count: 1,
     user_can_change: true,
+    custom_fields: [],
   },
   {
     id: 7,
@@ -370,6 +376,7 @@ const baseDocs: Document[] = [
     mime_type: 'application/pdf',
     page_count: 1,
     user_can_change: true,
+    custom_fields: [],
   },
   {
     id: 8,
@@ -394,6 +401,7 @@ const baseDocs: Document[] = [
     mime_type: 'application/pdf',
     page_count: 2,
     user_can_change: true,
+    custom_fields: [],
   },
   {
     id: 9,
@@ -418,6 +426,7 @@ const baseDocs: Document[] = [
     mime_type: 'application/pdf',
     page_count: 1,
     user_can_change: true,
+    custom_fields: [],
   },
   {
     id: 10,
@@ -441,6 +450,7 @@ const baseDocs: Document[] = [
     mime_type: 'application/pdf',
     page_count: 1,
     user_can_change: true,
+    custom_fields: [],
   },
 ];
 

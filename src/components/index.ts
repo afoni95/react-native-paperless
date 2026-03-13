@@ -8,4 +8,5 @@ export { AuthenticatedImage } from './AuthenticatedImage';
 export { SearchableDropdown } from './SearchableDropdown';
 export { MultiSelectChips } from './MultiSelectChips';
 export { GlobalSearchBar } from './GlobalSearchBar';
+export { DocumentLinkEditor, DocumentLinkDisplay } from './DocumentLinkEditor';
 export type { FilterState } from './FilterSheet';

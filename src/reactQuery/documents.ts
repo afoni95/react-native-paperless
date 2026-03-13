@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { documentsApi } from '@/api';
 import {
   Document,
+  DocumentUpdatePayload,
   DocumentListParams,
   DocumentNote,
   DocumentUploadParams,
@@ -15,7 +16,7 @@ import { documentQueryKeys } from './queryKeys';
 
 type UpdateDocumentInput = {
   id: number;
-  data: Partial<Document>;
+  data: Partial<DocumentUpdatePayload>;
 };
 
 type DeleteDocumentNoteInput = {

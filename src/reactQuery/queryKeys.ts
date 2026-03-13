@@ -15,6 +15,11 @@ export const documentTypeQueryKeys = {
   detail: (id: number) => ['document-type', id] as const,
 };
 
+export const customFieldQueryKeys = {
+  all: ['custom-fields-all'] as const,
+  detail: (id: number) => ['custom-field', id] as const,
+};
+
 export const documentQueryKeys = {
   all: (params?: DocumentListParams) => ['documents', params ?? {}] as const,
   detail: (id: number) => ['document', id] as const,
