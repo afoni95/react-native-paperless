@@ -3,6 +3,7 @@ export { documentsApi } from './documents';
 export { tagsApi } from './tags';
 export { correspondentsApi } from './correspondents';
 export { documentTypesApi } from './documentTypes';
+export { customFieldsApi } from './customFields';
 export { statisticsApi } from './statistics';
 export { tasksApi } from './tasks';
 export { listLogs, getLog } from './logs';

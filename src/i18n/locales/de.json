@@ -91,6 +91,7 @@
     "asn": "ASN",
     "notes": "Notizen",
     "addNote": "Notiz hinzufügen",
+    "searchDocuments": "Dokumente suchen…",
     "viewPdf": "PDF anzeigen",
     "download": "Herunterladen",
     "delete": "Löschen",
@@ -109,7 +110,12 @@
     "pdfLoading": "PDF wird geladen…",
     "pdfLoadError": "PDF konnte nicht geladen werden (HTTP {{status}})",
     "downloadFailed": "Download fehlgeschlagen",
-    "downloadError": "Das Dokument konnte nicht heruntergeladen werden."
+    "downloadError": "Das Dokument konnte nicht heruntergeladen werden.",
+    "addCustomField": "Hinzufügen",
+    "selectCustomField": "Auswählen",
+    "removeCustomField": "Benutzerdefiniertes Feld entfernen",
+    "noCustomFieldsSet": "Für dieses Dokument sind keine benutzerdefinierten Felder aktiviert.",
+    "customFieldValue": "Wert"
   },
   "upload": {
     "title": "Dokument Hochladen",
@@ -163,11 +169,22 @@
     "deleteConfirm": "Möchten Sie diesen Dokumenttyp wirklich löschen?",
     "documents": "{{count}} Dokumente"
   },
+  "customFields": {
+    "title": "Benutzerdefinierte Felder",
+    "createCustomField": "Benutzerdefiniertes Feld erstellen",
+    "editCustomField": "Benutzerdefiniertes Feld bearbeiten",
+    "name": "Name",
+    "dataType": "Datentyp",
+    "deleteConfirm": "Möchten Sie dieses benutzerdefinierte Feld wirklich löschen?",
+    "documentsUsingField": "{{count}} Dokumente verwenden dieses Feld",
+    "unused": "Nicht in Verwendung"
+  },
   "manage": {
     "title": "Verwalten",
     "tags": "Tags",
     "correspondents": "Korrespondenten",
     "documentTypes": "Dokumenttypen",
+    "customFields": "Benutzerdefinierte Felder",
     "settings": "Einstellungen",
     "trashBin": "Papierkorb",
     "logs": "Protokolle",

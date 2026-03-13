@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { documentsApi } from '@/api';
 import {
   Document,
+  DocumentUpdatePayload,
   DocumentListParams,
   DocumentNote,
   DocumentUploadParams,
@@ -15,7 +16,7 @@ import { documentQueryKeys } from './queryKeys';
 
 type UpdateDocumentInput = {
   id: number;
-  data: Partial<Document>;
+  data: Partial<DocumentUpdatePayload>;
 };
 
 type DeleteDocumentNoteInput = {
@@ -46,6 +47,19 @@ export const useDocument = (
     queryKey: documentQueryKeys.detail(id),
     enabled: isEnabled,
     queryFn: () => documentsApi.getDocument(id),
+  });
+};
+
+export const useLinkedDocuments = (
+  ids: number[],
+  isEnabled = true,
+  options?: QueryHookOptions<PaginatedResponse<Document>, ReturnType<typeof documentQueryKeys.all>>,
+) => {
+  return useQuery({
+    ...options,
+    queryKey: documentQueryKeys.all({ id__in: ids }),
+    enabled: isEnabled && ids.length > 0,
+    queryFn: () => documentsApi.getDocuments({ id__in: ids, page_size: ids.length }),
   });
 };
 

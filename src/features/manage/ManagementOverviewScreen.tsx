@@ -8,7 +8,7 @@ import { ManageStackParamList } from '@/navigation/types';
 
 type NavigationProp = NativeStackNavigationProp<ManageStackParamList, 'ManageHome'>;
 
-export const ManageHomeScreen: React.FC = () => {
+export const ManagementOverviewScreen: React.FC = () => {
   const theme = useTheme();
   const { t } = useTranslation();
   const navigation = useNavigation<NavigationProp>();
@@ -35,6 +35,13 @@ export const ManageHomeScreen: React.FC = () => {
           left={(props) => <List.Icon {...props} icon="file-document-multiple" />}
           right={(props) => <List.Icon {...props} icon="chevron-right" />}
           onPress={() => navigation.navigate('DocumentTypesList')}
+        />
+        <Divider />
+        <List.Item
+          title={t('manage.customFields')}
+          left={(props) => <List.Icon {...props} icon="form-textbox" />}
+          right={(props) => <List.Icon {...props} icon="chevron-right" />}
+          onPress={() => navigation.navigate('CustomFieldsList')}
         />
         <Divider />
         <List.Item

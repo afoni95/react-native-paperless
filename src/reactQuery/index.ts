@@ -2,6 +2,7 @@ export * from './queryKeys';
 export * from './tags';
 export * from './correspondents';
 export * from './documentTypes';
+export * from './customFields';
 export * from './documents';
 export * from './tasks';
 export * from './statistics';

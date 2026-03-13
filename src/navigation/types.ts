@@ -25,6 +25,8 @@ export type ManageStackParamList = {
   CorrespondentEdit: { correspondentId?: number };
   DocumentTypesList: undefined;
   DocumentTypeEdit: { documentTypeId?: number };
+  CustomFieldsList: undefined;
+  CustomFieldEdit: { customFieldId?: number };
   Settings: undefined;
   TrashBin: undefined;
   TasksList: undefined;
