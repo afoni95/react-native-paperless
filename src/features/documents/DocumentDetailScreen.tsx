@@ -1,83 +1,64 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import { View, ScrollView, StyleSheet, RefreshControl, Alert } from 'react-native';
 import * as FileSystem from 'expo-file-system/legacy';
 import * as Sharing from 'expo-sharing';
-import {
-  Text,
-  TextInput,
-  Button,
-  Card,
-  Divider,
-  useTheme,
-  IconButton,
-  List,
-} from 'react-native-paper';
+import { Text, TextInput, Button, Card, useTheme, IconButton } from 'react-native-paper';
 import { useTranslation } from 'react-i18next';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import {
-  Tag,
-  Correspondent,
-  DocumentType,
-  StoragePath,
-  CustomField,
-  DocumentCustomFieldValue,
-} from '@/types';
+import type { Tag } from '@/types';
 import { useAuthStore } from '@/store/authStore';
 import {
   LoadingScreen,
   ErrorBanner,
-  TagChip,
   ConfirmDialog,
-  SearchableDropdown,
-  MultiSelectChips,
-  DocumentLinkDisplay,
-  CustomFieldsSection,
+  DocumentMetadataForm,
+  DocumentMetadataDisplay,
 } from '@/components';
-import {
-  formatDate,
-  formatDateTime,
-  getDefaultCustomFieldValue,
-  coerceCustomFieldValueForSubmit,
-} from '@/utils';
+import { formatDateTime, coerceCustomFieldValueForSubmit } from '@/utils';
 import { DocumentsStackParamList } from '@/navigation/types';
 import {
   useDocument,
-  useAllTags,
-  useAllCorrespondents,
-  useAllDocumentTypes,
-  useAllStoragePaths,
-  useAllCustomFields,
   useUpdateDocument,
   useDeleteDocument,
   useAddDocumentNote,
 } from '@/reactQuery';
+import { useDocumentMetadata, useCustomFieldsForm } from '@/hooks';
 
 type Props = NativeStackScreenProps<DocumentsStackParamList, 'DocumentDetail'>;
-
-const formatCustomFieldValue = (value: DocumentCustomFieldValue['value'], field?: CustomField) => {
-  if (typeof value === 'boolean') return value ? 'true' : 'false';
-
-  if (Array.isArray(value)) {
-    if (field?.data_type === 'select' && field.extra_data?.select_options?.length) {
-      const optionLabelById = new Map(
-        field.extra_data.select_options.map((opt) => [String(opt.id), opt.label]),
-      );
-
-      return value.map((entry) => optionLabelById.get(String(entry)) ?? String(entry)).join(', ');
-    }
-
-    return value.map((entry) => String(entry)).join(', ');
-  }
-
-  return value === null ? '—' : String(value);
-};
 
 export const DocumentDetailScreen: React.FC<Props> = ({ route, navigation }) => {
   const theme = useTheme();
   const { t } = useTranslation();
   const { documentId } = route.params;
 
+  // Metadata hooks
+  const {
+    allTags,
+    allCorrespondents,
+    allDocTypes,
+    allStoragePaths,
+    allCustomFields,
+    tagsMap,
+    correspondentsMap,
+    docTypesMap,
+    storagePathsMap,
+    customFieldsMap,
+  } = useDocumentMetadata();
+
+  // Custom fields form hook
+  const {
+    customFields: editCustomFields,
+    setCustomFields: setEditCustomFields,
+    fieldToAdd: customFieldToAdd,
+    setFieldToAdd: setCustomFieldToAdd,
+    availableFields: availableCustomFieldsToAdd,
+    updateFieldValue: updateCustomFieldValue,
+    removeField: removeCustomField,
+    addField: addSelectedCustomField,
+  } = useCustomFieldsForm(allCustomFields);
+
+  // Edit state
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState('');
   const [editCorrespondent, setEditCorrespondent] = useState<number | null>(null);
@@ -86,50 +67,12 @@ export const DocumentDetailScreen: React.FC<Props> = ({ route, navigation }) => 
   const [editTags, setEditTags] = useState<number[]>([]);
   const [editAsn, setEditAsn] = useState('');
   const [editCreated, setEditCreated] = useState('');
-  const [editCustomFields, setEditCustomFields] = useState<DocumentCustomFieldValue[]>([]);
-  const [customFieldToAdd, setCustomFieldToAdd] = useState<number | null>(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [newNote, setNewNote] = useState('');
 
   const { serverUrl, token } = useAuthStore();
 
   const { data: doc, isLoading, isError, refetch, isRefetching } = useDocument(documentId);
-
-  const { data: allTags } = useAllTags(true, { staleTime: 5 * 60 * 1000 });
-  const { data: allCorrespondents } = useAllCorrespondents(true, { staleTime: 5 * 60 * 1000 });
-  const { data: allDocTypes } = useAllDocumentTypes(true, { staleTime: 5 * 60 * 1000 });
-  const { data: allStoragePaths } = useAllStoragePaths(true, { staleTime: 5 * 60 * 1000 });
-  const { data: allCustomFields } = useAllCustomFields(true, { staleTime: 5 * 60 * 1000 });
-
-  const tagsMap = useMemo(() => {
-    const map = new Map<number, Tag>();
-    allTags?.forEach((tag) => map.set(tag.id, tag));
-    return map;
-  }, [allTags]);
-
-  const correspondentsMap = useMemo(() => {
-    const map = new Map<number, Correspondent>();
-    allCorrespondents?.forEach((c) => map.set(c.id, c));
-    return map;
-  }, [allCorrespondents]);
-
-  const docTypesMap = useMemo(() => {
-    const map = new Map<number, DocumentType>();
-    allDocTypes?.forEach((dt) => map.set(dt.id, dt));
-    return map;
-  }, [allDocTypes]);
-
-  const storagePathsMap = useMemo(() => {
-    const map = new Map<number, StoragePath>();
-    allStoragePaths?.forEach((sp) => map.set(sp.id, sp));
-    return map;
-  }, [allStoragePaths]);
-
-  const customFieldsMap = useMemo(() => {
-    const map = new Map<number, CustomField>();
-    allCustomFields?.forEach((field) => map.set(field.id, field));
-    return map;
-  }, [allCustomFields]);
 
   const updateMutation = useUpdateDocument({
     onSuccess: () => {
@@ -161,29 +104,6 @@ export const DocumentDetailScreen: React.FC<Props> = ({ route, navigation }) => 
     setEditCustomFields((doc.custom_fields || []).map((item) => ({ ...item })));
     setCustomFieldToAdd(null);
     setIsEditing(true);
-  };
-
-  const updateCustomFieldValue = (fieldId: number, value: DocumentCustomFieldValue['value']) => {
-    setEditCustomFields((prev) =>
-      prev.map((entry) => (entry.field === fieldId ? { ...entry, value } : entry)),
-    );
-  };
-
-  const removeCustomField = (fieldId: number) => {
-    setEditCustomFields((prev) => prev.filter((entry) => entry.field !== fieldId));
-  };
-
-  const addSelectedCustomField = () => {
-    if (!customFieldToAdd) return;
-    const fieldDefinition = customFieldsMap.get(customFieldToAdd);
-    setEditCustomFields((prev) => {
-      if (prev.some((entry) => entry.field === customFieldToAdd)) return prev;
-      return [
-        ...prev,
-        { field: customFieldToAdd, value: getDefaultCustomFieldValue(fieldDefinition) },
-      ];
-    });
-    setCustomFieldToAdd(null);
   };
 
   const handleSave = () => {
@@ -221,9 +141,6 @@ export const DocumentDetailScreen: React.FC<Props> = ({ route, navigation }) => 
   const docType = doc.document_type ? docTypesMap.get(doc.document_type) : null;
   const docTags = doc.tags.map((id) => tagsMap.get(id)).filter(Boolean) as Tag[];
   const enabledCustomFields = doc.custom_fields || [];
-  const availableCustomFieldsToAdd = (allCustomFields || []).filter(
-    (field) => !editCustomFields.some((entry) => entry.field === field.id),
-  );
 
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
@@ -299,213 +216,65 @@ export const DocumentDetailScreen: React.FC<Props> = ({ route, navigation }) => 
             </>
           )}
         </View>
-        {/* Title */}
+
         {isEditing ? (
-          <TextInput
-            label={t('documents.title')}
-            value={editTitle}
-            onChangeText={setEditTitle}
-            mode="outlined"
-            style={styles.input}
-          />
+          <>
+            <TextInput
+              label={t('documents.title')}
+              value={editTitle}
+              onChangeText={setEditTitle}
+              mode="outlined"
+              style={styles.input}
+            />
+            <DocumentMetadataForm
+              title={editTitle}
+              onTitleChange={setEditTitle}
+              correspondent={editCorrespondent}
+              onCorrespondentChange={setEditCorrespondent}
+              documentType={editDocType}
+              onDocumentTypeChange={setEditDocType}
+              storagePath={editStoragePath}
+              onStoragePathChange={setEditStoragePath}
+              tags={editTags}
+              onTagsChange={setEditTags}
+              asn={editAsn}
+              onAsnChange={setEditAsn}
+              createdDate={editCreated}
+              onCreatedDateChange={setEditCreated}
+              customFields={editCustomFields}
+              onCustomFieldsChange={setEditCustomFields}
+              fieldToAdd={customFieldToAdd}
+              onFieldToAddChange={setCustomFieldToAdd}
+              onAddField={addSelectedCustomField}
+              onRemoveField={removeCustomField}
+              onChangeField={updateCustomFieldValue}
+              allCorrespondents={(allCorrespondents || []).map((c) => ({ id: c.id, name: c.name }))}
+              allDocumentTypes={(allDocTypes || []).map((dt) => ({ id: dt.id, name: dt.name }))}
+              allStoragePaths={(allStoragePaths || []).map((sp) => ({ id: sp.id, name: sp.name }))}
+              allTags={allTags || []}
+              allCustomFields={allCustomFields || []}
+              customFieldsMap={customFieldsMap}
+              availableCustomFields={availableCustomFieldsToAdd}
+              showAsn
+              showCreatedDate
+              cardStyle={{ marginBottom: 12, borderRadius: 12 }}
+            />
+          </>
         ) : (
-          <Text
-            variant="headlineSmall"
-            style={[styles.title, { color: theme.colors.onBackground }]}
-          >
-            {doc.title}
-          </Text>
-        )}
-
-        {/* Metadata */}
-        <Card style={[styles.metaCard, { backgroundColor: theme.colors.surface }]}>
-          <Card.Content>
-            {/* Correspondent */}
-            {isEditing ? (
-              <SearchableDropdown
-                items={(allCorrespondents || []).map((c) => ({ id: c.id, name: c.name }))}
-                selectedId={editCorrespondent}
-                onSelect={setEditCorrespondent}
-                label={t('documents.correspondent')}
-                placeholder={t('documents.noCorrespondent')}
-              />
-            ) : (
-              <List.Item
-                title={t('documents.correspondent')}
-                description={correspondent?.name || t('documents.noCorrespondent')}
-                left={(props) => <List.Icon {...props} icon="account" />}
-              />
-            )}
-
-            <Divider />
-
-            {/* Document Type */}
-            {isEditing ? (
-              <SearchableDropdown
-                items={(allDocTypes || []).map((dt) => ({ id: dt.id, name: dt.name }))}
-                selectedId={editDocType}
-                onSelect={setEditDocType}
-                label={t('documents.documentType')}
-                placeholder={t('documents.noDocumentType')}
-              />
-            ) : (
-              <List.Item
-                title={t('documents.documentType')}
-                description={docType?.name || t('documents.noDocumentType')}
-                left={(props) => <List.Icon {...props} icon="file-document" />}
-              />
-            )}
-
-            <Divider />
-
-            {/* Storage Path */}
-            {isEditing ? (
-              <SearchableDropdown
-                items={(allStoragePaths || []).map((sp) => ({ id: sp.id, name: sp.name }))}
-                selectedId={editStoragePath}
-                onSelect={setEditStoragePath}
-                label={t('documents.storagePath')}
-                placeholder={t('documents.noStoragePath')}
-              />
-            ) : (
-              <List.Item
-                title={t('documents.storagePath')}
-                description={
-                  doc.storage_path
-                    ? storagePathsMap.get(doc.storage_path)?.name || t('documents.noStoragePath')
-                    : t('documents.noStoragePath')
-                }
-                left={(props) => <List.Icon {...props} icon="folder" />}
-              />
-            )}
-
-            <Divider />
-
-            {/* ASN */}
-            {isEditing ? (
-              <TextInput
-                label={t('documents.asn')}
-                value={editAsn}
-                onChangeText={setEditAsn}
-                mode="outlined"
-                keyboardType="numeric"
-                style={styles.input}
-              />
-            ) : (
-              <List.Item
-                title={t('documents.asn')}
-                description={doc.archive_serial_number?.toString() || '—'}
-                left={(props) => <List.Icon {...props} icon="pound" />}
-              />
-            )}
-
-            <Divider />
-
-            {/* Dates */}
-            {isEditing ? (
-              <TextInput
-                label={t('documents.created') + ' (YYYY-MM-DD)'}
-                value={editCreated}
-                onChangeText={setEditCreated}
-                mode="outlined"
-                style={styles.input}
-                placeholder="2024-01-31"
-              />
-            ) : (
-              <List.Item
-                title={t('documents.created')}
-                description={formatDate(doc.created)}
-                left={(props) => <List.Icon {...props} icon="calendar" />}
-              />
-            )}
-            <List.Item
-              title={t('documents.added')}
-              description={formatDateTime(doc.added)}
-              left={(props) => <List.Icon {...props} icon="calendar-plus" />}
-            />
-            <List.Item
-              title={t('documents.modified')}
-              description={formatDateTime(doc.modified)}
-              left={(props) => <List.Icon {...props} icon="calendar-edit" />}
-            />
-          </Card.Content>
-        </Card>
-
-        {/* Tags */}
-        <Card style={[styles.metaCard, { backgroundColor: theme.colors.surface }]}>
-          <Card.Content>
-            <Text variant="titleMedium" style={{ marginBottom: 8 }}>
-              {t('documents.tags')}
-            </Text>
-            {isEditing ? (
-              <MultiSelectChips
-                tags={allTags || []}
-                selectedIds={editTags}
-                onSelectionChange={setEditTags}
-              />
-            ) : (
-              <View style={styles.tagsRow}>
-                {docTags.length > 0 ? (
-                  docTags.map((tag) => (
-                    <TagChip key={tag.id} name={tag.name} color={tag.color} compact={false} />
-                  ))
-                ) : (
-                  <Text variant="bodyMedium" style={{ color: theme.colors.onSurfaceVariant }}>
-                    {t('documents.noTags')}
-                  </Text>
-                )}
-              </View>
-            )}
-          </Card.Content>
-        </Card>
-
-        {/* Custom Fields */}
-        {(isEditing || enabledCustomFields.length > 0) && (
-          <Card style={[styles.metaCard, { backgroundColor: theme.colors.surface }]}>
-            <Card.Content>
-              <Text variant="titleMedium" style={{ marginBottom: 8 }}>
-                {t('customFields.title')}
-              </Text>
-
-              {isEditing ? (
-                <CustomFieldsSection
-                  customFields={editCustomFields}
-                  availableFields={availableCustomFieldsToAdd}
-                  customFieldsMap={customFieldsMap}
-                  fieldToAdd={customFieldToAdd}
-                  onFieldToAddChange={setCustomFieldToAdd}
-                  onAddField={addSelectedCustomField}
-                  onRemoveField={removeCustomField}
-                  onChangeField={updateCustomFieldValue}
-                />
-              ) : (
-                <>
-                  {enabledCustomFields.map((entry) => {
-                    const fieldDefinition = customFieldsMap.get(entry.field);
-                    const isDocumentLink = fieldDefinition?.data_type === 'documentlink';
-                    const docLinkIds =
-                      isDocumentLink && Array.isArray(entry.value)
-                        ? (entry.value as (string | number)[])
-                            .map((v) => Number(v))
-                            .filter((n) => !Number.isNaN(n))
-                        : [];
-                    return (
-                      <List.Item
-                        key={entry.field}
-                        title={fieldDefinition?.name || `#${entry.field}`}
-                        description={
-                          isDocumentLink
-                            ? () => <DocumentLinkDisplay ids={docLinkIds} />
-                            : formatCustomFieldValue(entry.value, fieldDefinition)
-                        }
-                        left={(props) => <List.Icon {...props} icon="form-textbox" />}
-                      />
-                    );
-                  })}
-                </>
-              )}
-            </Card.Content>
-          </Card>
+          <DocumentMetadataDisplay
+            title={doc.title}
+            correspondent={correspondent}
+            documentType={docType}
+            storagePath={doc.storage_path ? storagePathsMap.get(doc.storage_path) : null}
+            tags={docTags}
+            asn={doc.archive_serial_number}
+            created={doc.created}
+            added={doc.added}
+            modified={doc.modified}
+            customFields={enabledCustomFields}
+            customFieldsMap={customFieldsMap}
+            cardStyle={{ marginBottom: 12, borderRadius: 12 }}
+          />
         )}
 
         {/* Notes */}
