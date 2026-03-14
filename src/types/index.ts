@@ -48,6 +48,7 @@ export interface DocumentUpdatePayload {
   title?: string;
   correspondent?: number | null;
   document_type?: number | null;
+  storage_path?: number | null;
   tags?: number[];
   archive_serial_number?: number | null;
   created_date?: string;
@@ -137,6 +138,31 @@ export interface DocumentType {
 export interface DocumentTypeSearchResult {
   id: number;
   name: string;
+  match: string;
+  matching_algorithm: number;
+  is_insensitive: boolean;
+  slug: string;
+  user_can_change: boolean;
+  owner: number | null;
+}
+
+export interface StoragePath {
+  id: number;
+  name: string;
+  path: string;
+  match: string;
+  matching_algorithm: number;
+  is_insensitive: boolean;
+  document_count: number;
+  owner: number | null;
+  user_can_change: boolean;
+  slug: string;
+}
+
+export interface StoragePathSearchResult {
+  id: number;
+  name: string;
+  path: string;
   match: string;
   matching_algorithm: number;
   is_insensitive: boolean;

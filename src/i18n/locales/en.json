@@ -84,6 +84,7 @@
     "asnDesc": "ASN descending",
     "correspondent": "Correspondent",
     "documentType": "Document Type",
+    "storagePath": "Storage Path",
     "tags": "Tags",
     "created": "Created",
     "added": "Added",
@@ -99,6 +100,7 @@
     "deleteBulkConfirm": "Delete {{count}} document? You can restore them from the trash bin.",
     "noCorrespondent": "No correspondent",
     "noDocumentType": "No document type",
+    "noStoragePath": "No storage path",
     "noTags": "No tags",
     "inbox": "Inbox",
     "all": "All",
@@ -169,6 +171,18 @@
     "deleteConfirm": "Are you sure you want to delete this document type?",
     "documents": "{{count}} documents"
   },
+  "storagePaths": {
+    "title": "Storage Paths",
+    "createStoragePath": "Create Storage Path",
+    "editStoragePath": "Edit Storage Path",
+    "name": "Name",
+    "pathTemplate": "Path Template",
+    "matchingAlgorithm": "Matching Algorithm",
+    "match": "Match Pattern",
+    "caseInsensitive": "Case Insensitive",
+    "deleteConfirm": "Are you sure you want to delete this storage path?",
+    "documents": "{{count}} documents"
+  },
   "customFields": {
     "title": "Custom Fields",
     "createCustomField": "Create Custom Field",
@@ -184,6 +198,7 @@
     "tags": "Tags",
     "correspondents": "Correspondents",
     "documentTypes": "Document Types",
+    "storagePaths": "Storage Paths",
     "customFields": "Custom Fields",
     "settings": "Settings",
     "trashBin": "Trash Bin",

@@ -14,7 +14,10 @@ export const documentTypeQueryKeys = {
   all: ['document-types-all'] as const,
   detail: (id: number) => ['document-type', id] as const,
 };
-
+export const storagePathQueryKeys = {
+  all: ['storage-paths-all'] as const,
+  detail: (id: number) => ['storage-path', id] as const,
+};
 export const customFieldQueryKeys = {
   all: ['custom-fields-all'] as const,
   detail: (id: number) => ['custom-field', id] as const,

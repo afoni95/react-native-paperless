@@ -84,6 +84,7 @@
     "asnDesc": "ASN absteigend",
     "correspondent": "Korrespondent",
     "documentType": "Dokumenttyp",
+    "storagePath": "Speicherpfad",
     "tags": "Tags",
     "created": "Erstellt",
     "added": "Hinzugefügt",
@@ -99,6 +100,7 @@
     "deleteBulkConfirm": "{{count}} Dokument löschen? Sie können sie aus dem Papierkorb wiederherstellen.",
     "noCorrespondent": "Kein Korrespondent",
     "noDocumentType": "Kein Dokumenttyp",
+    "noStoragePath": "Kein Speicherpfad",
     "noTags": "Keine Tags",
     "inbox": "Posteingang",
     "all": "Alle",
@@ -169,6 +171,18 @@
     "deleteConfirm": "Möchten Sie diesen Dokumenttyp wirklich löschen?",
     "documents": "{{count}} Dokumente"
   },
+  "storagePaths": {
+    "title": "Speicherpfade",
+    "createStoragePath": "Speicherpfad erstellen",
+    "editStoragePath": "Speicherpfad bearbeiten",
+    "name": "Name",
+    "pathTemplate": "Pfadvorlage",
+    "matchingAlgorithm": "Zuordnungsalgorithmus",
+    "match": "Suchmuster",
+    "caseInsensitive": "Groß-/Kleinschreibung ignorieren",
+    "deleteConfirm": "Möchten Sie diesen Speicherpfad wirklich löschen?",
+    "documents": "{{count}} Dokumente"
+  },
   "customFields": {
     "title": "Benutzerdefinierte Felder",
     "createCustomField": "Benutzerdefiniertes Feld erstellen",
@@ -184,6 +198,7 @@
     "tags": "Tags",
     "correspondents": "Korrespondenten",
     "documentTypes": "Dokumenttypen",
+    "storagePaths": "Speicherpfade",
     "customFields": "Benutzerdefinierte Felder",
     "settings": "Einstellungen",
     "trashBin": "Papierkorb",

@@ -38,6 +38,13 @@ export const ManagementOverviewScreen: React.FC = () => {
         />
         <Divider />
         <List.Item
+          title={t('manage.storagePaths')}
+          left={(props) => <List.Icon {...props} icon="folder-multiple" />}
+          right={(props) => <List.Icon {...props} icon="chevron-right" />}
+          onPress={() => navigation.navigate('StoragePathsList')}
+        />
+        <Divider />
+        <List.Item
           title={t('manage.customFields')}
           left={(props) => <List.Icon {...props} icon="form-textbox" />}
           right={(props) => <List.Icon {...props} icon="chevron-right" />}

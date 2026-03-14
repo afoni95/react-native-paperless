@@ -17,7 +17,14 @@ import {
 import { useTranslation } from 'react-i18next';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { Tag, Correspondent, DocumentType, CustomField, DocumentCustomFieldValue } from '@/types';
+import {
+  Tag,
+  Correspondent,
+  DocumentType,
+  StoragePath,
+  CustomField,
+  DocumentCustomFieldValue,
+} from '@/types';
 import { useAuthStore } from '@/store/authStore';
 import {
   LoadingScreen,
@@ -36,6 +43,7 @@ import {
   useAllTags,
   useAllCorrespondents,
   useAllDocumentTypes,
+  useAllStoragePaths,
   useAllCustomFields,
   useUpdateDocument,
   useDeleteDocument,
@@ -117,6 +125,7 @@ export const DocumentDetailScreen: React.FC<Props> = ({ route, navigation }) => 
   const [editTitle, setEditTitle] = useState('');
   const [editCorrespondent, setEditCorrespondent] = useState<number | null>(null);
   const [editDocType, setEditDocType] = useState<number | null>(null);
+  const [editStoragePath, setEditStoragePath] = useState<number | null>(null);
   const [editTags, setEditTags] = useState<number[]>([]);
   const [editAsn, setEditAsn] = useState('');
   const [editCreated, setEditCreated] = useState('');
@@ -132,6 +141,7 @@ export const DocumentDetailScreen: React.FC<Props> = ({ route, navigation }) => 
   const { data: allTags } = useAllTags(true, { staleTime: 5 * 60 * 1000 });
   const { data: allCorrespondents } = useAllCorrespondents(true, { staleTime: 5 * 60 * 1000 });
   const { data: allDocTypes } = useAllDocumentTypes(true, { staleTime: 5 * 60 * 1000 });
+  const { data: allStoragePaths } = useAllStoragePaths(true, { staleTime: 5 * 60 * 1000 });
   const { data: allCustomFields } = useAllCustomFields(true, { staleTime: 5 * 60 * 1000 });
 
   const tagsMap = useMemo(() => {
@@ -151,6 +161,12 @@ export const DocumentDetailScreen: React.FC<Props> = ({ route, navigation }) => 
     allDocTypes?.forEach((dt) => map.set(dt.id, dt));
     return map;
   }, [allDocTypes]);
+
+  const storagePathsMap = useMemo(() => {
+    const map = new Map<number, StoragePath>();
+    allStoragePaths?.forEach((sp) => map.set(sp.id, sp));
+    return map;
+  }, [allStoragePaths]);
 
   const customFieldsMap = useMemo(() => {
     const map = new Map<number, CustomField>();
@@ -181,6 +197,7 @@ export const DocumentDetailScreen: React.FC<Props> = ({ route, navigation }) => 
     setEditTitle(doc.title);
     setEditCorrespondent(doc.correspondent);
     setEditDocType(doc.document_type);
+    setEditStoragePath(doc.storage_path);
     setEditTags([...doc.tags]);
     setEditAsn(doc.archive_serial_number?.toString() || '');
     setEditCreated(doc.created_date || doc.created?.split('T')[0] || '');
@@ -221,6 +238,7 @@ export const DocumentDetailScreen: React.FC<Props> = ({ route, navigation }) => 
         title: editTitle,
         correspondent: editCorrespondent,
         document_type: editDocType,
+        storage_path: editStoragePath,
         tags: editTags,
         archive_serial_number: editAsn ? parseInt(editAsn, 10) : null,
         created_date: editCreated || undefined,
@@ -380,6 +398,29 @@ export const DocumentDetailScreen: React.FC<Props> = ({ route, navigation }) => 
                 title={t('documents.documentType')}
                 description={docType?.name || t('documents.noDocumentType')}
                 left={(props) => <List.Icon {...props} icon="file-document" />}
+              />
+            )}
+
+            <Divider />
+
+            {/* Storage Path */}
+            {isEditing ? (
+              <SearchableDropdown
+                items={(allStoragePaths || []).map((sp) => ({ id: sp.id, name: sp.name }))}
+                selectedId={editStoragePath}
+                onSelect={setEditStoragePath}
+                label={t('documents.storagePath')}
+                placeholder={t('documents.noStoragePath')}
+              />
+            ) : (
+              <List.Item
+                title={t('documents.storagePath')}
+                description={
+                  doc.storage_path
+                    ? storagePathsMap.get(doc.storage_path)?.name || t('documents.noStoragePath')
+                    : t('documents.noStoragePath')
+                }
+                left={(props) => <List.Icon {...props} icon="folder" />}
               />
             )}
 
