@@ -196,9 +196,6 @@ const styles = StyleSheet.create({
     marginTop: 12,
     borderRadius: 8,
   },
-  saveButtonContent: {
-    paddingVertical: 8,
-  },
   deleteButton: {
     marginTop: 12,
     borderRadius: 8,
