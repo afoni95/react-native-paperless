@@ -1,23 +1,12 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { View, ScrollView, StyleSheet, Alert } from 'react-native';
-import {
-  Button,
-  Text,
-  TextInput,
-  useTheme,
-  ProgressBar,
-  Card,
-  Snackbar,
-  Switch,
-  Chip,
-  IconButton,
-} from 'react-native-paper';
+import { Button, Text, TextInput, useTheme, ProgressBar, Card, Snackbar } from 'react-native-paper';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import * as DocumentPicker from 'expo-document-picker';
 import * as ImagePicker from 'expo-image-picker';
 
-import { SearchableDropdown, MultiSelectChips } from '@/components';
+import { SearchableDropdown, MultiSelectChips, CustomFieldsSection } from '@/components';
 import { CustomField, DocumentCustomFieldValue } from '@/types';
 import {
   useAllTags,
@@ -28,6 +17,7 @@ import {
   useAllStoragePaths,
   useAllCustomFields,
 } from '@/reactQuery';
+import { getDefaultCustomFieldValue, coerceCustomFieldValueForSubmit } from '@/utils';
 
 export const UploadScreen: React.FC = () => {
   const theme = useTheme();
@@ -210,7 +200,6 @@ export const UploadScreen: React.FC = () => {
   const addSelectedCustomField = () => {
     if (!customFieldToAdd) return;
     const fieldDefinition = customFieldsMap.get(customFieldToAdd);
-
     setSelectedCustomFields((prev) => {
       if (prev.some((entry) => entry.field === customFieldToAdd)) return prev;
       return [
@@ -218,54 +207,7 @@ export const UploadScreen: React.FC = () => {
         { field: customFieldToAdd, value: getDefaultCustomFieldValue(fieldDefinition) },
       ];
     });
-
     setCustomFieldToAdd(null);
-  };
-
-  const getDefaultCustomFieldValue = (field?: CustomField) => {
-    if (!field) return '';
-    if (field.data_type === 'boolean') return false;
-    if (field.data_type === 'select' || field.data_type === 'documentlink') return [];
-    return '';
-  };
-
-  const coerceCustomFieldValueForSubmit = (
-    value: DocumentCustomFieldValue['value'],
-    field?: CustomField,
-  ): DocumentCustomFieldValue['value'] => {
-    if (!field) return value;
-
-    if (field.data_type === 'boolean') {
-      if (typeof value === 'boolean') return value;
-      return value === 'true';
-    }
-
-    if (field.data_type === 'integer') {
-      if (value === '' || value === null) return null;
-      const parsed = Number.parseInt(String(value), 10);
-      return Number.isNaN(parsed) ? value : parsed;
-    }
-
-    if (field.data_type === 'float') {
-      if (value === '' || value === null) return null;
-      const parsed = Number.parseFloat(String(value));
-      return Number.isNaN(parsed) ? value : parsed;
-    }
-
-    if (field.data_type === 'documentlink') {
-      if (Array.isArray(value)) return value;
-      const parsedValues = String(value)
-        .split(',')
-        .map((v) => v.trim())
-        .filter(Boolean)
-        .map((v) => {
-          const n = Number.parseInt(v, 10);
-          return Number.isNaN(n) ? v : n;
-        });
-      return parsedValues;
-    }
-
-    return value;
   };
 
   return (
@@ -357,120 +299,16 @@ export const UploadScreen: React.FC = () => {
           <Card style={[styles.card, { backgroundColor: theme.colors.surface }]}>
             <Card.Title title={t('customFields.title')} />
             <Card.Content>
-              <View style={styles.customFieldAddRow}>
-                <View style={styles.customFieldAddDropdown}>
-                  <SearchableDropdown
-                    items={availableCustomFieldsToAdd.map((field) => ({
-                      id: field.id,
-                      name: field.name,
-                    }))}
-                    selectedId={customFieldToAdd}
-                    onSelect={setCustomFieldToAdd}
-                    placeholder={t('documents.selectCustomField')}
-                  />
-                </View>
-                <Button
-                  mode="outlined"
-                  onPress={addSelectedCustomField}
-                  disabled={!customFieldToAdd}
-                >
-                  {t('documents.addCustomField')}
-                </Button>
-              </View>
-
-              {selectedCustomFields.length === 0 && (
-                <Text variant="bodyMedium" style={{ color: theme.colors.onSurfaceVariant }}>
-                  {t('documents.noCustomFieldsSet')}
-                </Text>
-              )}
-
-              {selectedCustomFields.map((entry) => {
-                const fieldDefinition = customFieldsMap.get(entry.field);
-                const isSelectField = fieldDefinition?.data_type === 'select';
-                const hasSelectOptions = !!fieldDefinition?.extra_data?.select_options?.length;
-                const selectValues = Array.isArray(entry.value)
-                  ? entry.value.map((value) => String(value))
-                  : [];
-
-                return (
-                  <View
-                    key={entry.field}
-                    style={[styles.customFieldEditor, { borderColor: theme.colors.outlineVariant }]}
-                  >
-                    <View style={styles.customFieldEditorHeader}>
-                      <View style={{ flex: 1 }}>
-                        <Text variant="titleSmall">
-                          {fieldDefinition?.name || `#${entry.field}`}
-                        </Text>
-                      </View>
-                      <IconButton
-                        icon="close"
-                        size={18}
-                        onPress={() => removeCustomField(entry.field)}
-                        accessibilityLabel={t('documents.removeCustomField')}
-                      />
-                    </View>
-
-                    {fieldDefinition?.data_type === 'boolean' ? (
-                      <View style={styles.customFieldBooleanRow}>
-                        <Switch
-                          value={Boolean(entry.value)}
-                          onValueChange={(newValue) =>
-                            updateCustomFieldValue(entry.field, newValue)
-                          }
-                        />
-                      </View>
-                    ) : isSelectField && hasSelectOptions ? (
-                      <View style={styles.customFieldChipsRow}>
-                        {fieldDefinition.extra_data!.select_options.map((option) => {
-                          const optionId = String(option.id);
-                          const isSelected = selectValues.includes(optionId);
-                          return (
-                            <Chip
-                              key={optionId}
-                              selected={isSelected}
-                              onPress={() => {
-                                const newValues = isSelected
-                                  ? selectValues.filter((id) => id !== optionId)
-                                  : [...selectValues, optionId];
-                                const normalized = newValues.map((id) => {
-                                  const parsed = Number.parseInt(id, 10);
-                                  return Number.isNaN(parsed) ? id : parsed;
-                                });
-                                updateCustomFieldValue(
-                                  entry.field,
-                                  normalized.length > 0 ? normalized : '',
-                                );
-                              }}
-                              style={styles.customFieldChip}
-                            >
-                              {option.label}
-                            </Chip>
-                          );
-                        })}
-                      </View>
-                    ) : (
-                      <TextInput
-                        mode="outlined"
-                        value={
-                          Array.isArray(entry.value)
-                            ? entry.value.join(', ')
-                            : String(entry.value ?? '')
-                        }
-                        onChangeText={(newValue) => updateCustomFieldValue(entry.field, newValue)}
-                        multiline={fieldDefinition?.data_type === 'longtext'}
-                        keyboardType={
-                          fieldDefinition?.data_type === 'integer' ||
-                          fieldDefinition?.data_type === 'float'
-                            ? 'numeric'
-                            : 'default'
-                        }
-                        placeholder={t('documents.customFieldValue')}
-                      />
-                    )}
-                  </View>
-                );
-              })}
+              <CustomFieldsSection
+                customFields={selectedCustomFields}
+                availableFields={availableCustomFieldsToAdd}
+                customFieldsMap={customFieldsMap}
+                fieldToAdd={customFieldToAdd}
+                onFieldToAddChange={setCustomFieldToAdd}
+                onAddField={addSelectedCustomField}
+                onRemoveField={removeCustomField}
+                onChangeField={updateCustomFieldValue}
+              />
             </Card.Content>
           </Card>
         )}
@@ -646,38 +484,5 @@ const styles = StyleSheet.create({
   },
   snackbar: {
     marginBottom: 8,
-  },
-  customFieldAddRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    marginBottom: 8,
-  },
-  customFieldAddDropdown: {
-    flex: 1,
-  },
-  customFieldEditor: {
-    borderWidth: StyleSheet.hairlineWidth,
-    borderRadius: 8,
-    padding: 8,
-    marginBottom: 8,
-  },
-  customFieldEditorHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 4,
-  },
-  customFieldBooleanRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-  },
-  customFieldChipsRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-  },
-  customFieldChip: {
-    marginBottom: 4,
   },
 });
