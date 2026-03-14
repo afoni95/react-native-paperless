@@ -10,6 +10,8 @@ import { CorrespondentsListScreen } from '@/features/correspondents/Corresponden
 import { CorrespondentEditScreen } from '@/features/correspondents/CorrespondentEditScreen';
 import { DocumentTypesListScreen } from '@/features/document-types/DocumentTypesListScreen';
 import { DocumentTypeEditScreen } from '@/features/document-types/DocumentTypeEditScreen';
+import { StoragePathsListScreen } from '@/features/manage/StoragePathsListScreen';
+import { StoragePathEditScreen } from '@/features/manage/StoragePathEditScreen';
 import { CustomFieldsListScreen } from '@/features/custom-fields/CustomFieldsListScreen';
 import { CustomFieldEditScreen } from '@/features/custom-fields/CustomFieldEditScreen';
 import { TrashBinScreen } from '@/features/manage/TrashBinScreen';
@@ -66,6 +68,20 @@ export const ManageStack: React.FC = () => {
           title: route.params?.documentTypeId
             ? t('documentTypes.editDocumentType')
             : t('documentTypes.createDocumentType'),
+        })}
+      />
+      <Stack.Screen
+        name="StoragePathsList"
+        component={StoragePathsListScreen}
+        options={{ title: t('storagePaths.title') }}
+      />
+      <Stack.Screen
+        name="StoragePathEdit"
+        component={StoragePathEditScreen}
+        options={({ route }) => ({
+          title: route.params?.storagePathId
+            ? t('storagePaths.editStoragePath')
+            : t('storagePaths.createStoragePath'),
         })}
       />
       <Stack.Screen

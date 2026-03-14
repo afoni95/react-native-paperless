@@ -95,8 +95,20 @@ export const documentsApi = {
     if (params.title) formData.append('title', params.title);
     if (params.correspondent) formData.append('correspondent', String(params.correspondent));
     if (params.document_type) formData.append('document_type', String(params.document_type));
+    if (params.storage_path) formData.append('storage_path', String(params.storage_path));
     if (params.tags) {
       params.tags.forEach((tag) => formData.append('tags', String(tag)));
+    }
+    if (params.custom_fields) {
+      params.custom_fields.forEach((field) => {
+        if (Array.isArray(field.value)) {
+          field.value.forEach((v) => {
+            formData.append(`custom_fields[${field.field}]`, String(v));
+          });
+        } else {
+          formData.append(`custom_fields[${field.field}]`, String(field.value ?? ''));
+        }
+      });
     }
 
     const response = await apiClient.post('/api/documents/post_document/', formData, {

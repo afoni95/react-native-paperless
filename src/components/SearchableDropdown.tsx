@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useRef } from 'react';
-import { View, ScrollView, StyleSheet, Modal, Pressable } from 'react-native';
+import { View, ScrollView, StyleSheet, Modal, Pressable, Dimensions } from 'react-native';
 import { Searchbar, List, useTheme } from 'react-native-paper';
 import { useTranslation } from 'react-i18next';
 
@@ -33,6 +33,7 @@ export const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
     top: number;
     left: number;
     width: number;
+    maxHeight: number;
   } | null>(null);
   const triggerRef = useRef<View>(null);
 
@@ -45,7 +46,24 @@ export const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
 
   const handleOpen = () => {
     triggerRef.current?.measureInWindow((x, y, width, height) => {
-      setDropdownLayout({ top: y + height + 4, left: x, width });
+      const screenHeight = Dimensions.get('window').height;
+      const spacing = 4;
+      const viewportPadding = 8;
+      const preferredMaxHeight = 300;
+      const availableBelow = Math.max(screenHeight - (y + height) - spacing - viewportPadding, 120);
+      const availableAbove = Math.max(y - spacing - viewportPadding, 120);
+      const shouldOpenUp = availableBelow < preferredMaxHeight && availableAbove > availableBelow;
+
+      setDropdownLayout({
+        top: shouldOpenUp
+          ? Math.max(viewportPadding, y - Math.min(preferredMaxHeight, availableAbove) - spacing)
+          : y + height + spacing,
+        left: x,
+        width,
+        maxHeight: shouldOpenUp
+          ? Math.min(preferredMaxHeight, availableAbove)
+          : Math.min(preferredMaxHeight, availableBelow),
+      });
       setIsOpen(true);
     });
   };
@@ -83,6 +101,7 @@ export const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
                 top: dropdownLayout?.top ?? 0,
                 left: dropdownLayout?.left ?? 0,
                 width: dropdownLayout?.width ?? 0,
+                maxHeight: dropdownLayout?.maxHeight ?? 300,
               },
             ]}
           >

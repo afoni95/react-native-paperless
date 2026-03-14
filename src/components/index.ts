@@ -9,4 +9,8 @@ export { SearchableDropdown } from './SearchableDropdown';
 export { MultiSelectChips } from './MultiSelectChips';
 export { GlobalSearchBar } from './GlobalSearchBar';
 export { DocumentLinkEditor, DocumentLinkDisplay } from './DocumentLinkEditor';
+export { CustomFieldEditor } from './CustomFieldEditor';
+export { CustomFieldsSection } from './CustomFieldsSection';
+export { DocumentMetadataForm } from './DocumentMetadataForm';
+export { DocumentMetadataDisplay } from './DocumentMetadataDisplay';
 export type { FilterState } from './FilterSheet';

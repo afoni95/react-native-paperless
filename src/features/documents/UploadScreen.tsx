@@ -1,25 +1,45 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, ScrollView, StyleSheet, Alert } from 'react-native';
-import { Button, Text, TextInput, useTheme, ProgressBar, Card, Snackbar } from 'react-native-paper';
+import { Button, Text, useTheme, ProgressBar, Card, Snackbar } from 'react-native-paper';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import * as DocumentPicker from 'expo-document-picker';
 import * as ImagePicker from 'expo-image-picker';
 
-import { SearchableDropdown, MultiSelectChips } from '@/components';
-import {
-  useAllTags,
-  useAllCorrespondents,
-  useAllDocumentTypes,
-  useAllTasks,
-  useUploadDocument,
-} from '@/reactQuery';
+import { DocumentMetadataForm } from '@/components';
+
+import { useAllTasks, useUploadDocument } from '@/reactQuery';
+import { coerceCustomFieldValueForSubmit } from '@/utils';
+import { useDocumentMetadata, useCustomFieldsForm } from '@/hooks';
 
 export const UploadScreen: React.FC = () => {
   const theme = useTheme();
   const { t } = useTranslation();
   const queryClient = useQueryClient();
 
+  // Metadata hooks
+  const {
+    allTags,
+    allCorrespondents,
+    allDocTypes,
+    allStoragePaths,
+    allCustomFields,
+    customFieldsMap,
+  } = useDocumentMetadata();
+
+  // Custom fields form hook
+  const {
+    customFields: selectedCustomFields,
+    setCustomFields: setSelectedCustomFields,
+    fieldToAdd: customFieldToAdd,
+    setFieldToAdd: setCustomFieldToAdd,
+    availableFields: availableCustomFieldsToAdd,
+    updateFieldValue: updateCustomFieldValue,
+    removeField: removeCustomField,
+    addField: addSelectedCustomField,
+  } = useCustomFieldsForm(allCustomFields);
+
+  // File upload state
   const [selectedFile, setSelectedFile] = useState<{
     uri: string;
     name: string;
@@ -29,6 +49,7 @@ export const UploadScreen: React.FC = () => {
   const [correspondent, setCorrespondent] = useState<number | null>(null);
   const [documentType, setDocumentType] = useState<number | null>(null);
   const [selectedTags, setSelectedTags] = useState<number[]>([]);
+  const [storagePath, setStoragePath] = useState<number | null>(null);
 
   // Snackbar toast state
   const [snackbar, setSnackbar] = useState<{
@@ -87,9 +108,16 @@ export const UploadScreen: React.FC = () => {
     }
   }, [allServerTasks, queryClient, t]);
 
-  const { data: allTags } = useAllTags(true, { staleTime: 5 * 60 * 1000 });
-  const { data: allCorrespondents } = useAllCorrespondents(true, { staleTime: 5 * 60 * 1000 });
-  const { data: allDocTypes } = useAllDocumentTypes(true, { staleTime: 5 * 60 * 1000 });
+  const resetForm = () => {
+    setSelectedFile(null);
+    setTitle('');
+    setCorrespondent(null);
+    setDocumentType(null);
+    setSelectedTags([]);
+    setStoragePath(null);
+    setSelectedCustomFields([]);
+    setCustomFieldToAdd(null);
+  };
 
   const uploadMutation = useUploadDocument({
     onSuccess: () => {
@@ -150,14 +178,6 @@ export const UploadScreen: React.FC = () => {
     }
   };
 
-  const resetForm = () => {
-    setSelectedFile(null);
-    setTitle('');
-    setCorrespondent(null);
-    setDocumentType(null);
-    setSelectedTags([]);
-  };
-
   return (
     <View style={[styles.wrapper, { backgroundColor: theme.colors.background }]}>
       <ScrollView
@@ -200,42 +220,35 @@ export const UploadScreen: React.FC = () => {
         </Card>
 
         {/* Optional metadata */}
-        <Card style={[styles.card, { backgroundColor: theme.colors.surface }]}>
-          <Card.Content>
-            <TextInput
-              label={t('upload.documentTitle')}
-              value={title}
-              onChangeText={setTitle}
-              mode="outlined"
-              style={styles.input}
-            />
+        <DocumentMetadataForm
+          title={title}
+          onTitleChange={setTitle}
+          correspondent={correspondent}
+          onCorrespondentChange={setCorrespondent}
+          documentType={documentType}
+          onDocumentTypeChange={setDocumentType}
+          storagePath={storagePath}
+          onStoragePathChange={setStoragePath}
+          tags={selectedTags}
+          onTagsChange={setSelectedTags}
+          customFields={selectedCustomFields}
+          onCustomFieldsChange={setSelectedCustomFields}
+          fieldToAdd={customFieldToAdd}
+          onFieldToAddChange={setCustomFieldToAdd}
+          onAddField={addSelectedCustomField}
+          onRemoveField={removeCustomField}
+          onChangeField={updateCustomFieldValue}
+          allCorrespondents={(allCorrespondents || []).map((c) => ({ id: c.id, name: c.name }))}
+          allDocumentTypes={(allDocTypes || []).map((dt) => ({ id: dt.id, name: dt.name }))}
+          allStoragePaths={(allStoragePaths || []).map((sp) => ({ id: sp.id, name: sp.name }))}
+          allTags={allTags || []}
+          allCustomFields={allCustomFields || []}
+          customFieldsMap={customFieldsMap}
+          availableCustomFields={availableCustomFieldsToAdd}
+          cardStyle={{ marginBottom: 16, borderRadius: 12 }}
+        />
 
-            <SearchableDropdown
-              items={(allCorrespondents || []).map((c) => ({ id: c.id, name: c.name }))}
-              selectedId={correspondent}
-              onSelect={setCorrespondent}
-              label={t('upload.selectCorrespondent')}
-              placeholder={t('upload.selectCorrespondent')}
-            />
-
-            <SearchableDropdown
-              items={(allDocTypes || []).map((dt) => ({ id: dt.id, name: dt.name }))}
-              selectedId={documentType}
-              onSelect={setDocumentType}
-              label={t('upload.selectDocumentType')}
-              placeholder={t('upload.selectDocumentType')}
-            />
-
-            <MultiSelectChips
-              tags={allTags || []}
-              selectedIds={selectedTags}
-              onSelectionChange={setSelectedTags}
-              label={t('upload.selectTags')}
-            />
-          </Card.Content>
-        </Card>
-
-        {/* upload btn + progress */}
+        {/* Upload section */}
         {uploadMutation.isPending && (
           <ProgressBar indeterminate color={theme.colors.primary} style={styles.progress} />
         )}
@@ -245,12 +258,26 @@ export const UploadScreen: React.FC = () => {
           icon="upload"
           onPress={() => {
             if (!selectedFile) return;
+
+            // Prepare custom fields for submission
+            const customFieldsForSubmit = selectedCustomFields
+              .filter((entry) => entry.value !== undefined && entry.value !== '')
+              .map((entry) => ({
+                field: entry.field,
+                value: coerceCustomFieldValueForSubmit(
+                  entry.value,
+                  customFieldsMap.get(entry.field),
+                ),
+              }));
+
             uploadMutation.mutate({
               document: selectedFile,
               title: title || undefined,
               correspondent: correspondent || undefined,
               document_type: documentType || undefined,
               tags: selectedTags.length > 0 ? selectedTags : undefined,
+              storage_path: storagePath || undefined,
+              custom_fields: customFieldsForSubmit.length > 0 ? customFieldsForSubmit : undefined,
             });
           }}
           loading={uploadMutation.isPending}
