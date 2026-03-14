@@ -248,6 +248,8 @@ export interface DocumentUploadParams {
   correspondent?: number;
   document_type?: number;
   tags?: number[];
+  storage_path?: number;
+  custom_fields?: DocumentCustomFieldValue[];
 }
 
 export interface DocumentListParams {

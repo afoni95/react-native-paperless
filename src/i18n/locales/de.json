@@ -116,7 +116,7 @@
     "addCustomField": "Hinzufügen",
     "selectCustomField": "Auswählen",
     "removeCustomField": "Benutzerdefiniertes Feld entfernen",
-    "noCustomFieldsSet": "Für dieses Dokument sind keine benutzerdefinierten Felder aktiviert.",
+    "noCustomFieldsSet": "Dokument hat aktuell keine benutzerdefinierten Felder",
     "customFieldValue": "Wert"
   },
   "upload": {

@@ -1,18 +1,32 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { View, ScrollView, StyleSheet, Alert } from 'react-native';
-import { Button, Text, TextInput, useTheme, ProgressBar, Card, Snackbar } from 'react-native-paper';
+import {
+  Button,
+  Text,
+  TextInput,
+  useTheme,
+  ProgressBar,
+  Card,
+  Snackbar,
+  Switch,
+  Chip,
+  IconButton,
+} from 'react-native-paper';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import * as DocumentPicker from 'expo-document-picker';
 import * as ImagePicker from 'expo-image-picker';
 
 import { SearchableDropdown, MultiSelectChips } from '@/components';
+import { CustomField, DocumentCustomFieldValue } from '@/types';
 import {
   useAllTags,
   useAllCorrespondents,
   useAllDocumentTypes,
   useAllTasks,
   useUploadDocument,
+  useAllStoragePaths,
+  useAllCustomFields,
 } from '@/reactQuery';
 
 export const UploadScreen: React.FC = () => {
@@ -29,6 +43,9 @@ export const UploadScreen: React.FC = () => {
   const [correspondent, setCorrespondent] = useState<number | null>(null);
   const [documentType, setDocumentType] = useState<number | null>(null);
   const [selectedTags, setSelectedTags] = useState<number[]>([]);
+  const [storagePath, setStoragePath] = useState<number | null>(null);
+  const [selectedCustomFields, setSelectedCustomFields] = useState<DocumentCustomFieldValue[]>([]);
+  const [customFieldToAdd, setCustomFieldToAdd] = useState<number | null>(null);
 
   // Snackbar toast state
   const [snackbar, setSnackbar] = useState<{
@@ -90,6 +107,25 @@ export const UploadScreen: React.FC = () => {
   const { data: allTags } = useAllTags(true, { staleTime: 5 * 60 * 1000 });
   const { data: allCorrespondents } = useAllCorrespondents(true, { staleTime: 5 * 60 * 1000 });
   const { data: allDocTypes } = useAllDocumentTypes(true, { staleTime: 5 * 60 * 1000 });
+  const { data: allStoragePaths } = useAllStoragePaths(true, { staleTime: 5 * 60 * 1000 });
+  const { data: allCustomFields } = useAllCustomFields(true, { staleTime: 5 * 60 * 1000 });
+
+  // Create a map of custom field definitions for easier access
+  const customFieldsMap = useMemo(() => {
+    const map = new Map<number, CustomField>();
+    (allCustomFields || []).forEach((field) => {
+      map.set(field.id, field);
+    });
+    return map;
+  }, [allCustomFields]);
+
+  const availableCustomFieldsToAdd = useMemo(
+    () =>
+      (allCustomFields || []).filter(
+        (field) => !selectedCustomFields.some((entry) => entry.field === field.id),
+      ),
+    [allCustomFields, selectedCustomFields],
+  );
 
   const uploadMutation = useUploadDocument({
     onSuccess: () => {
@@ -156,6 +192,80 @@ export const UploadScreen: React.FC = () => {
     setCorrespondent(null);
     setDocumentType(null);
     setSelectedTags([]);
+    setStoragePath(null);
+    setSelectedCustomFields([]);
+    setCustomFieldToAdd(null);
+  };
+
+  const updateCustomFieldValue = (fieldId: number, value: DocumentCustomFieldValue['value']) => {
+    setSelectedCustomFields((prev) =>
+      prev.map((entry) => (entry.field === fieldId ? { ...entry, value } : entry)),
+    );
+  };
+
+  const removeCustomField = (fieldId: number) => {
+    setSelectedCustomFields((prev) => prev.filter((entry) => entry.field !== fieldId));
+  };
+
+  const addSelectedCustomField = () => {
+    if (!customFieldToAdd) return;
+    const fieldDefinition = customFieldsMap.get(customFieldToAdd);
+
+    setSelectedCustomFields((prev) => {
+      if (prev.some((entry) => entry.field === customFieldToAdd)) return prev;
+      return [
+        ...prev,
+        { field: customFieldToAdd, value: getDefaultCustomFieldValue(fieldDefinition) },
+      ];
+    });
+
+    setCustomFieldToAdd(null);
+  };
+
+  const getDefaultCustomFieldValue = (field?: CustomField) => {
+    if (!field) return '';
+    if (field.data_type === 'boolean') return false;
+    if (field.data_type === 'select' || field.data_type === 'documentlink') return [];
+    return '';
+  };
+
+  const coerceCustomFieldValueForSubmit = (
+    value: DocumentCustomFieldValue['value'],
+    field?: CustomField,
+  ): DocumentCustomFieldValue['value'] => {
+    if (!field) return value;
+
+    if (field.data_type === 'boolean') {
+      if (typeof value === 'boolean') return value;
+      return value === 'true';
+    }
+
+    if (field.data_type === 'integer') {
+      if (value === '' || value === null) return null;
+      const parsed = Number.parseInt(String(value), 10);
+      return Number.isNaN(parsed) ? value : parsed;
+    }
+
+    if (field.data_type === 'float') {
+      if (value === '' || value === null) return null;
+      const parsed = Number.parseFloat(String(value));
+      return Number.isNaN(parsed) ? value : parsed;
+    }
+
+    if (field.data_type === 'documentlink') {
+      if (Array.isArray(value)) return value;
+      const parsedValues = String(value)
+        .split(',')
+        .map((v) => v.trim())
+        .filter(Boolean)
+        .map((v) => {
+          const n = Number.parseInt(v, 10);
+          return Number.isNaN(n) ? v : n;
+        });
+      return parsedValues;
+    }
+
+    return value;
   };
 
   return (
@@ -226,6 +336,13 @@ export const UploadScreen: React.FC = () => {
               placeholder={t('upload.selectDocumentType')}
             />
 
+            <SearchableDropdown
+              items={(allStoragePaths || []).map((sp) => ({ id: sp.id, name: sp.name }))}
+              selectedId={storagePath}
+              onSelect={setStoragePath}
+              label={t('documents.storagePath')}
+              placeholder={t('documents.noStoragePath')}
+            />
             <MultiSelectChips
               tags={allTags || []}
               selectedIds={selectedTags}
@@ -235,7 +352,130 @@ export const UploadScreen: React.FC = () => {
           </Card.Content>
         </Card>
 
-        {/* upload btn + progress */}
+        {/* Custom Fields */}
+        {(allCustomFields || []).length > 0 && (
+          <Card style={[styles.card, { backgroundColor: theme.colors.surface }]}>
+            <Card.Title title={t('customFields.title')} />
+            <Card.Content>
+              <View style={styles.customFieldAddRow}>
+                <View style={styles.customFieldAddDropdown}>
+                  <SearchableDropdown
+                    items={availableCustomFieldsToAdd.map((field) => ({
+                      id: field.id,
+                      name: field.name,
+                    }))}
+                    selectedId={customFieldToAdd}
+                    onSelect={setCustomFieldToAdd}
+                    placeholder={t('documents.selectCustomField')}
+                  />
+                </View>
+                <Button
+                  mode="outlined"
+                  onPress={addSelectedCustomField}
+                  disabled={!customFieldToAdd}
+                >
+                  {t('documents.addCustomField')}
+                </Button>
+              </View>
+
+              {selectedCustomFields.length === 0 && (
+                <Text variant="bodyMedium" style={{ color: theme.colors.onSurfaceVariant }}>
+                  {t('documents.noCustomFieldsSet')}
+                </Text>
+              )}
+
+              {selectedCustomFields.map((entry) => {
+                const fieldDefinition = customFieldsMap.get(entry.field);
+                const isSelectField = fieldDefinition?.data_type === 'select';
+                const hasSelectOptions = !!fieldDefinition?.extra_data?.select_options?.length;
+                const selectValues = Array.isArray(entry.value)
+                  ? entry.value.map((value) => String(value))
+                  : [];
+
+                return (
+                  <View
+                    key={entry.field}
+                    style={[styles.customFieldEditor, { borderColor: theme.colors.outlineVariant }]}
+                  >
+                    <View style={styles.customFieldEditorHeader}>
+                      <View style={{ flex: 1 }}>
+                        <Text variant="titleSmall">
+                          {fieldDefinition?.name || `#${entry.field}`}
+                        </Text>
+                      </View>
+                      <IconButton
+                        icon="close"
+                        size={18}
+                        onPress={() => removeCustomField(entry.field)}
+                        accessibilityLabel={t('documents.removeCustomField')}
+                      />
+                    </View>
+
+                    {fieldDefinition?.data_type === 'boolean' ? (
+                      <View style={styles.customFieldBooleanRow}>
+                        <Switch
+                          value={Boolean(entry.value)}
+                          onValueChange={(newValue) =>
+                            updateCustomFieldValue(entry.field, newValue)
+                          }
+                        />
+                      </View>
+                    ) : isSelectField && hasSelectOptions ? (
+                      <View style={styles.customFieldChipsRow}>
+                        {fieldDefinition.extra_data!.select_options.map((option) => {
+                          const optionId = String(option.id);
+                          const isSelected = selectValues.includes(optionId);
+                          return (
+                            <Chip
+                              key={optionId}
+                              selected={isSelected}
+                              onPress={() => {
+                                const newValues = isSelected
+                                  ? selectValues.filter((id) => id !== optionId)
+                                  : [...selectValues, optionId];
+                                const normalized = newValues.map((id) => {
+                                  const parsed = Number.parseInt(id, 10);
+                                  return Number.isNaN(parsed) ? id : parsed;
+                                });
+                                updateCustomFieldValue(
+                                  entry.field,
+                                  normalized.length > 0 ? normalized : '',
+                                );
+                              }}
+                              style={styles.customFieldChip}
+                            >
+                              {option.label}
+                            </Chip>
+                          );
+                        })}
+                      </View>
+                    ) : (
+                      <TextInput
+                        mode="outlined"
+                        value={
+                          Array.isArray(entry.value)
+                            ? entry.value.join(', ')
+                            : String(entry.value ?? '')
+                        }
+                        onChangeText={(newValue) => updateCustomFieldValue(entry.field, newValue)}
+                        multiline={fieldDefinition?.data_type === 'longtext'}
+                        keyboardType={
+                          fieldDefinition?.data_type === 'integer' ||
+                          fieldDefinition?.data_type === 'float'
+                            ? 'numeric'
+                            : 'default'
+                        }
+                        placeholder={t('documents.customFieldValue')}
+                      />
+                    )}
+                  </View>
+                );
+              })}
+            </Card.Content>
+          </Card>
+        )}
+
+        {/* Upload section */}
         {uploadMutation.isPending && (
           <ProgressBar indeterminate color={theme.colors.primary} style={styles.progress} />
         )}
@@ -245,12 +485,26 @@ export const UploadScreen: React.FC = () => {
           icon="upload"
           onPress={() => {
             if (!selectedFile) return;
+
+            // Prepare custom fields for submission
+            const customFieldsForSubmit = selectedCustomFields
+              .filter((entry) => entry.value !== undefined && entry.value !== '')
+              .map((entry) => ({
+                field: entry.field,
+                value: coerceCustomFieldValueForSubmit(
+                  entry.value,
+                  customFieldsMap.get(entry.field),
+                ),
+              }));
+
             uploadMutation.mutate({
               document: selectedFile,
               title: title || undefined,
               correspondent: correspondent || undefined,
               document_type: documentType || undefined,
               tags: selectedTags.length > 0 ? selectedTags : undefined,
+              storage_path: storagePath || undefined,
+              custom_fields: customFieldsForSubmit.length > 0 ? customFieldsForSubmit : undefined,
             });
           }}
           loading={uploadMutation.isPending}
@@ -392,5 +646,38 @@ const styles = StyleSheet.create({
   },
   snackbar: {
     marginBottom: 8,
+  },
+  customFieldAddRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 8,
+  },
+  customFieldAddDropdown: {
+    flex: 1,
+  },
+  customFieldEditor: {
+    borderWidth: StyleSheet.hairlineWidth,
+    borderRadius: 8,
+    padding: 8,
+    marginBottom: 8,
+  },
+  customFieldEditorHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  customFieldBooleanRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+  },
+  customFieldChipsRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  customFieldChip: {
+    marginBottom: 4,
   },
 });

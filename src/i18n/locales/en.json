@@ -116,7 +116,7 @@
     "addCustomField": "Add",
     "selectCustomField": "Select",
     "removeCustomField": "Remove Custom Field",
-    "noCustomFieldsSet": "No custom fields enabled for this document.",
+    "noCustomFieldsSet": "Document currently has no custom fields",
     "customFieldValue": "Value"
   },
   "upload": {
