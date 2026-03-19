@@ -9,3 +9,5 @@ export { statisticsApi } from './statistics';
 export { tasksApi } from './tasks';
 export { listLogs, getLog } from './logs';
 export { default as apiClient } from './client';
+export { usersApi } from './users';
+export { groupsApi } from './groups';

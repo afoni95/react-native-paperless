@@ -20,7 +20,9 @@
     "auto": "System",
     "offline": "You are offline",
     "somethingWentWrong": "Something went wrong",
-    "server": "Server"
+    "server": "Server",
+    "email": "Email",
+    "leave": "Leave blank to keep current password"
   },
   "auth": {
     "serverUrl": "Server URL",
@@ -123,10 +125,6 @@
     "title": "Upload Document",
     "chooseFile": "Choose File",
     "takePhoto": "Take Photo",
-    "documentTitle": "Title (optional)",
-    "selectCorrespondent": "Select Correspondent",
-    "selectDocumentType": "Select Document Type",
-    "selectTags": "Select Tags",
     "upload": "Upload",
     "uploading": "Uploading...",
     "uploadSuccess": "Document uploaded successfully! It will be processed shortly.",
@@ -195,6 +193,18 @@
   },
   "manage": {
     "title": "Manage",
+    "users": "Users",
+    "groups": "Groups",
+    "editUser": "Edit User",
+    "createUser": "Create User",
+    "editGroup": "Edit Group",
+    "createGroup": "Create Group",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "active": "Active",
+    "superuser": "Superuser",
+    "staff": "Staff",
+    "permissions": "Permissions",
     "tags": "Tags",
     "correspondents": "Correspondents",
     "documentTypes": "Document Types",
@@ -231,5 +241,35 @@
     "deleteError": "Failed to delete document",
     "emptySuccess": "Trash emptied",
     "emptyError": "Failed to empty trash"
+  },
+  "permissionMatrix": {
+    "title": "Permission Matrix",
+    "resources": {
+      "logentry": "Log Entry",
+      "group": "Group",
+      "user": "User",
+      "correspondent": "Correspondent",
+      "customfield": "Custom Field",
+      "document": "Document",
+      "documenttype": "Document Type",
+      "note": "Note",
+      "paperlesstask": "Task",
+      "savedview": "Saved View",
+      "sharelink": "Share Link",
+      "storagepath": "Storage Path",
+      "tag": "Tag",
+      "uisettings": "UI Settings",
+      "workflow": "Workflow",
+      "applicationconfiguration": "Application Config",
+      "mailaccount": "Mail Account",
+      "mailrule": "Mail Rule",
+      "processedmail": "Processed Mail"
+    },
+    "actions": {
+      "add": "Add",
+      "change": "Edit",
+      "delete": "Delete",
+      "view": "View"
+    }
   }
 }

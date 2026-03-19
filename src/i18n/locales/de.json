@@ -20,7 +20,9 @@
     "auto": "System",
     "offline": "Keine Verbindung",
     "somethingWentWrong": "Etwas ist schiefgelaufen",
-    "server": "Server"
+    "server": "Server",
+    "email": "E-Mail",
+    "leave": "Leer lassen, um das aktuelle Passwort beizubehalten"
   },
   "auth": {
     "serverUrl": "Server-URL",
@@ -123,10 +125,6 @@
     "title": "Dokument Hochladen",
     "chooseFile": "Datei wählen",
     "takePhoto": "Foto aufnehmen",
-    "documentTitle": "Titel (optional)",
-    "selectCorrespondent": "Korrespondent wählen",
-    "selectDocumentType": "Dokumenttyp wählen",
-    "selectTags": "Tags wählen",
     "upload": "Hochladen",
     "uploading": "Wird hochgeladen...",
     "uploadSuccess": "Dokument erfolgreich hochgeladen! Es wird in Kürze verarbeitet.",
@@ -195,6 +193,18 @@
   },
   "manage": {
     "title": "Verwalten",
+    "users": "Benutzer",
+    "groups": "Gruppen",
+    "editUser": "Benutzer bearbeiten",
+    "createUser": "Benutzer erstellen",
+    "editGroup": "Gruppe bearbeiten",
+    "createGroup": "Gruppe erstellen",
+    "firstName": "Vorname",
+    "lastName": "Nachname",
+    "active": "Aktiv",
+    "superuser": "Superuser",
+    "staff": "Mitarbeiter",
+    "permissions": "Berechtigungen",
     "tags": "Tags",
     "correspondents": "Korrespondenten",
     "documentTypes": "Dokumenttypen",
@@ -231,5 +241,35 @@
     "deleteError": "Dokument konnte nicht gelöscht werden",
     "emptySuccess": "Papierkorb geleert",
     "emptyError": "Papierkorb konnte nicht geleert werden"
+  },
+  "permissionMatrix": {
+    "title": "Berechtigungsmatrix",
+    "resources": {
+      "logentry": "Logeintrag",
+      "group": "Gruppe",
+      "user": "Benutzer",
+      "correspondent": "Korrespondent",
+      "customfield": "Benutzerdefiniertes Feld",
+      "document": "Dokument",
+      "documenttype": "Dokumenttyp",
+      "note": "Notiz",
+      "paperlesstask": "Aufgabe",
+      "savedview": "Gespeicherte Ansicht",
+      "sharelink": "Link freigeben",
+      "storagepath": "Speicherpfad",
+      "tag": "Tag",
+      "uisettings": "Benutzeroberflächen-Einstellungen",
+      "workflow": "Arbeitsablauf",
+      "applicationconfiguration": "Anwendung konfigurieren",
+      "mailaccount": "E-Mail Konto",
+      "mailrule": "E-Mail Regel",
+      "processedmail": "Verarbeitete E-Mail"
+    },
+    "actions": {
+      "add": "Hinzufügen",
+      "change": "Bearbeiten",
+      "delete": "Löschen",
+      "view": "Anzeigen"
+    }
   }
 }

@@ -19,6 +19,10 @@ export type DocumentsStackParamList = {
 
 export type ManageStackParamList = {
   ManageHome: undefined;
+  UsersList: undefined;
+  UserEdit: { userId?: number };
+  GroupsList: undefined;
+  GroupEdit: { groupId?: number };
   TagsList: undefined;
   TagEdit: { tagId?: number };
   CorrespondentsList: undefined;

@@ -13,4 +13,5 @@ export { CustomFieldEditor } from './CustomFieldEditor';
 export { CustomFieldsSection } from './CustomFieldsSection';
 export { DocumentMetadataForm } from './DocumentMetadataForm';
 export { DocumentMetadataDisplay } from './DocumentMetadataDisplay';
+export { PermissionMatrix } from './PermissionMatrix';
 export type { FilterState } from './FilterSheet';
