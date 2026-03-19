@@ -68,6 +68,24 @@ function extractUsedKeys(code) {
   return used;
 }
 
+function extractPartialPrefixes(code) {
+  const prefixes = new Set();
+
+  // Template literal with dynamic segment: `prefix.${variable}`
+  const templateRegex = /`([a-zA-Z0-9_.]+\.)(\$\{)/g;
+  for (const match of code.matchAll(templateRegex)) {
+    prefixes.add(match[1]);
+  }
+
+  // String concatenation with dynamic segment: 'prefix.' + variable
+  const concatRegex = /(['"`])([a-zA-Z0-9_.]+\.)(\1)\s*\+/g;
+  for (const match of code.matchAll(concatRegex)) {
+    prefixes.add(match[2]);
+  }
+
+  return prefixes;
+}
+
 function main() {
   if (!fs.existsSync(LOCALES_DIR)) {
     console.error(`Locales directory not found: ${LOCALES_DIR}`);
@@ -84,12 +102,15 @@ function main() {
   }
 
   const sourceFiles = SOURCE_ROOTS.flatMap(walkFiles);
-  const usedKeys = new Set(
-    sourceFiles.flatMap((filePath) => [...extractUsedKeys(fs.readFileSync(filePath, 'utf8'))]),
+  const fileContents = sourceFiles.map((filePath) => fs.readFileSync(filePath, 'utf8'));
+  const usedKeys = new Set(fileContents.flatMap((code) => [...extractUsedKeys(code)]));
+  const partialPrefixes = new Set(
+    fileContents.flatMap((code) => [...extractPartialPrefixes(code)]),
   );
 
   console.log(`Scanned ${sourceFiles.length} source files.`);
-  console.log(`Detected ${usedKeys.size} used translation keys in code.\n`);
+  console.log(`Detected ${usedKeys.size} used translation keys in code.`);
+  console.log(`Detected ${partialPrefixes.size} partial key prefixes (dynamic usage).\n`);
 
   let hasUnused = false;
 
@@ -97,11 +118,17 @@ function main() {
     const localeName = path.basename(localeFile, '.json');
     const localeJson = JSON.parse(fs.readFileSync(path.join(LOCALES_DIR, localeFile), 'utf8'));
     const allKeys = flattenKeys(localeJson).sort();
-    const unused = allKeys.filter((key) => !usedKeys.has(key));
+    const notUsed = allKeys.filter((key) => !usedKeys.has(key));
+    const warnings = notUsed.filter((key) =>
+      [...partialPrefixes].some((prefix) => key.startsWith(prefix)),
+    );
+    const warningSet = new Set(warnings);
+    const unused = notUsed.filter((key) => !warningSet.has(key));
 
     console.log(`Locale: ${localeName}`);
     console.log(`  Total keys: ${allKeys.length}`);
-    console.log(`  Used keys:  ${allKeys.length - unused.length}`);
+    console.log(`  Used keys:  ${allKeys.length - notUsed.length}`);
+    console.log(`  Partial:    ${warnings.length} (dynamic keys)`);
     console.log(`  Unused:     ${unused.length}`);
 
     if (unused.length) {

@@ -67,7 +67,7 @@ npm run i18:unused
 - [ ] Processed Mail view
 - [ ] Share Links CRUD
 - [ ] Workflows
-- [ ] Users/Groups management
+- [X] Users/Groups management
 
 ### Special Endpoints
 

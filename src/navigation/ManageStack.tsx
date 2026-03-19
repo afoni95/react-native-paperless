@@ -16,6 +16,10 @@ import { CustomFieldsListScreen } from '@/features/custom-fields/CustomFieldsLis
 import { CustomFieldEditScreen } from '@/features/custom-fields/CustomFieldEditScreen';
 import { TrashBinScreen } from '@/features/manage/TrashBinScreen';
 import { LogsScreen } from '@/features/manage/LogsScreen';
+import { UsersListScreen } from '@/features/manage/UsersListScreen';
+import { UserEditScreen } from '@/features/manage/UserEditScreen';
+import { GroupsListScreen } from '@/features/manage/GroupsListScreen';
+import { GroupEditScreen } from '@/features/manage/GroupEditScreen';
 import { ManageStackParamList } from './types';
 
 const Stack = createNativeStackNavigator<ManageStackParamList>();
@@ -113,6 +117,30 @@ export const ManageStack: React.FC = () => {
         name="TasksList"
         component={TasksListScreen}
         options={{ title: t('tasks.title') }}
+      />
+      <Stack.Screen
+        name="UsersList"
+        component={UsersListScreen}
+        options={{ title: t('manage.users') }}
+      />
+      <Stack.Screen
+        name="UserEdit"
+        component={UserEditScreen}
+        options={({ route }) => ({
+          title: route.params?.userId ? t('manage.editUser') : t('manage.createUser'),
+        })}
+      />
+      <Stack.Screen
+        name="GroupsList"
+        component={GroupsListScreen}
+        options={{ title: t('manage.groups') }}
+      />
+      <Stack.Screen
+        name="GroupEdit"
+        component={GroupEditScreen}
+        options={({ route }) => ({
+          title: route.params?.groupId ? t('manage.editGroup') : t('manage.createGroup'),
+        })}
       />
     </Stack.Navigator>
   );

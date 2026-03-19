@@ -17,6 +17,20 @@ export const ManagementOverviewScreen: React.FC = () => {
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <List.Section>
         <List.Item
+          title={t('manage.users')}
+          left={(props) => <List.Icon {...props} icon="account" />}
+          right={(props) => <List.Icon {...props} icon="chevron-right" />}
+          onPress={() => navigation.navigate('UsersList')}
+        />
+        <Divider />
+        <List.Item
+          title={t('manage.groups')}
+          left={(props) => <List.Icon {...props} icon="account-group" />}
+          right={(props) => <List.Icon {...props} icon="chevron-right" />}
+          onPress={() => navigation.navigate('GroupsList')}
+        />
+        <Divider />
+        <List.Item
           title={t('manage.tags')}
           left={(props) => <List.Icon {...props} icon="tag-multiple" />}
           right={(props) => <List.Icon {...props} icon="chevron-right" />}

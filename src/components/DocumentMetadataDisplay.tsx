@@ -2,7 +2,8 @@ import React from 'react';
 import { View } from 'react-native';
 import { Card, useTheme, Text, List, Divider } from 'react-native-paper';
 import { useTranslation } from 'react-i18next';
-import { TagChip, DocumentLinkDisplay } from '@/components';
+import { TagChip } from './TagChip';
+import { DocumentLinkDisplay } from './DocumentLinkEditor';
 import {
   CustomField,
   DocumentCustomFieldValue,
