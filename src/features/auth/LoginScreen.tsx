@@ -77,18 +77,46 @@ export const LoginScreen: React.FC = () => {
     }
   }, [mfaRequired, mfaOpacity, mfaTranslate]);
 
-  // Auto-paste from clipboard when app comes to foreground and MFA is active
+  // Auto-paste from clipboard when app comes to foreground and MFA is active.
+  // Android needs a delay after onResume before clipboard is readable.
   useEffect(() => {
     if (!mfaRequired) return;
-    const subscription = AppState.addEventListener('change', async (nextState) => {
-      if (nextState === 'active') {
-        const text = await Clipboard.getStringAsync();
-        if (/^\d{6}$/.test(text.trim())) {
-          setMfaCode(text.trim());
+
+    let cancelled = false;
+
+    const tryReadClipboard = async () => {
+      const delays = [300, 600, 1200];
+      for (const ms of delays) {
+        if (cancelled) return;
+        await new Promise((r) => setTimeout(r, ms));
+        if (cancelled) return;
+
+        try {
+          const hasString = await Clipboard.hasStringAsync();
+          if (!hasString) continue;
+
+          const text = await Clipboard.getStringAsync();
+          const cleaned = text.trim().replace(/[\s\-]/g, '');
+          if (/^\d{6}$/.test(cleaned)) {
+            if (!cancelled) setMfaCode(cleaned);
+            return;
+          }
+        } catch {
+          // Clipboard not available yet, retry
         }
       }
+    };
+
+    const subscription = AppState.addEventListener('change', (nextState) => {
+      if (nextState === 'active') {
+        tryReadClipboard();
+      }
     });
-    return () => subscription.remove();
+
+    return () => {
+      cancelled = true;
+      subscription.remove();
+    };
   }, [mfaRequired]);
 
   // Auto-submit when exactly 6 digits are entered
