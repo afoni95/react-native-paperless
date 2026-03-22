@@ -287,40 +287,44 @@ export const DocumentDetailScreen: React.FC<Props> = ({ route, navigation }) => 
         )}
 
         {/* Notes */}
-        <Card style={[styles.metaCard, { backgroundColor: theme.colors.surface }]}>
-          <Card.Content>
-            <Text variant="titleMedium" style={{ marginBottom: 8 }}>
-              {t('documents.notes')}
-            </Text>
-            {doc.notes &&
-              doc.notes.length > 0 &&
-              doc.notes.map((note) => (
-                <View key={note.id} style={styles.noteItem}>
-                  <Text variant="bodyMedium">{note.note}</Text>
-                  <Text variant="labelSmall" style={{ color: theme.colors.onSurfaceVariant }}>
-                    {formatDateTime(note.created)}
-                  </Text>
+        {can('view', 'note') ? (
+          <Card style={[styles.metaCard, { backgroundColor: theme.colors.surface }]}>
+            <Card.Content>
+              <Text variant="titleMedium" style={{ marginBottom: 8 }}>
+                {t('documents.notes')}
+              </Text>
+              {doc.notes &&
+                doc.notes.length > 0 &&
+                doc.notes.map((note) => (
+                  <View key={note.id} style={styles.noteItem}>
+                    <Text variant="bodyMedium">{note.note}</Text>
+                    <Text variant="labelSmall" style={{ color: theme.colors.onSurfaceVariant }}>
+                      {formatDateTime(note.created)}
+                    </Text>
+                  </View>
+                ))}
+              {can('add', 'note') ? (
+                <View style={styles.addNoteRow}>
+                  <TextInput
+                    placeholder={t('documents.addNote')}
+                    value={newNote}
+                    onChangeText={setNewNote}
+                    mode="outlined"
+                    style={[styles.noteInput]}
+                    dense
+                  />
+                  <IconButton
+                    icon="send"
+                    onPress={() => {
+                      if (newNote.trim()) addNoteMutation.mutate(newNote.trim());
+                    }}
+                    disabled={!newNote.trim() || addNoteMutation.isPending}
+                  />
                 </View>
-              ))}
-            <View style={styles.addNoteRow}>
-              <TextInput
-                placeholder={t('documents.addNote')}
-                value={newNote}
-                onChangeText={setNewNote}
-                mode="outlined"
-                style={[styles.noteInput]}
-                dense
-              />
-              <IconButton
-                icon="send"
-                onPress={() => {
-                  if (newNote.trim()) addNoteMutation.mutate(newNote.trim());
-                }}
-                disabled={!newNote.trim() || addNoteMutation.isPending}
-              />
-            </View>
-          </Card.Content>
-        </Card>
+              ) : null}
+            </Card.Content>
+          </Card>
+        ) : null}
       </ScrollView>
 
       <ConfirmDialog
