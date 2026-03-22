@@ -19,6 +19,10 @@ import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '@/store/authStore';
 import { authApi, MfaRequiredError, MFA_INVALID_ERROR } from '@/api/auth';
 import { PaperlessApiError } from '@/types';
+import { pauseAsync } from '@/utils';
+
+const MFA_CODE_PATTERN = /^\d{6}$/;
+const CLIPBOARD_RETRY_DELAYS_MS = [300, 600, 1200];
 
 export const LoginScreen: React.FC = () => {
   const theme = useTheme();
@@ -85,10 +89,10 @@ export const LoginScreen: React.FC = () => {
     let cancelled = false;
 
     const tryReadClipboard = async () => {
-      const delays = [300, 600, 1200];
-      for (const ms of delays) {
+      for (const delayMs of CLIPBOARD_RETRY_DELAYS_MS) {
         if (cancelled) return;
-        await new Promise((r) => setTimeout(r, ms));
+
+        await pauseAsync(delayMs);
         if (cancelled) return;
 
         try {
@@ -97,8 +101,8 @@ export const LoginScreen: React.FC = () => {
 
           const text = await Clipboard.getStringAsync();
           const cleaned = text.trim().replace(/[\s\-]/g, '');
-          if (/^\d{6}$/.test(cleaned)) {
-            if (!cancelled) setMfaCode(cleaned);
+          if (MFA_CODE_PATTERN.test(cleaned) && !cancelled) {
+            setMfaCode(cleaned);
             return;
           }
         } catch {
