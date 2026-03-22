@@ -8,7 +8,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { ManageStackParamList } from '@/navigation/types';
 import { useUser, useUpsertUser, useGroups } from '@/reactQuery';
 import type { Group } from '@/api/groups';
-import { PermissionMatrix } from '@/components';
+import { PermissionMatrix, HasPermission } from '@/components';
 
 type NavigationProp = NativeStackNavigationProp<ManageStackParamList, 'UserEdit'>;
 
@@ -217,15 +217,17 @@ export const UserEditScreen: React.FC = () => {
           </>
         )}
 
-        <Button
-          mode="contained"
-          style={styles.button}
-          onPress={handleSave}
-          loading={upsert.isPending}
-          disabled={isLoading || upsert.isPending}
-        >
-          {t('common.save')}
-        </Button>
+        <HasPermission action={userId ? 'change' : 'add'} resource="user">
+          <Button
+            mode="contained"
+            style={styles.button}
+            onPress={handleSave}
+            loading={upsert.isPending}
+            disabled={isLoading || upsert.isPending}
+          >
+            {t('common.save')}
+          </Button>
+        </HasPermission>
       </View>
     </ScrollView>
   );

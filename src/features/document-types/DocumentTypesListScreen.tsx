@@ -4,6 +4,7 @@ import { Searchbar, FAB, List, useTheme } from 'react-native-paper';
 import { useTranslation } from 'react-i18next';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
+import { usePermissionContext } from '@/hooks/PermissionProvider';
 
 import { DocumentType } from '@/types';
 import { LoadingScreen, EmptyState, ErrorBanner, ConfirmDialog } from '@/components';
@@ -27,6 +28,9 @@ export const DocumentTypesListScreen: React.FC = () => {
       setDeleteTarget(null);
     },
   });
+
+  const { can } = usePermissionContext();
+  const canAddDocumentType = can('add', 'documenttype');
 
   const filteredItems = useMemo(() => {
     if (!types) return [];
@@ -65,8 +69,11 @@ export const DocumentTypesListScreen: React.FC = () => {
             description={t('documentTypes.documents', { count: item.document_count })}
             left={(props) => <List.Icon {...props} icon="file-document-outline" />}
             right={(props) => <List.Icon {...props} icon="pencil" />}
-            onPress={() => navigation.navigate('DocumentTypeEdit', { documentTypeId: item.id })}
-            onLongPress={() => setDeleteTarget(item)}
+            onPress={() =>
+              can('change', 'documenttype') &&
+              navigation.navigate('DocumentTypeEdit', { documentTypeId: item.id })
+            }
+            onLongPress={() => can('delete', 'documenttype') && setDeleteTarget(item)}
           />
         )}
         contentContainerStyle={isEmpty ? styles.emptyContainer : undefined}
@@ -81,12 +88,14 @@ export const DocumentTypesListScreen: React.FC = () => {
         keyboardShouldPersistTaps="handled"
       />
 
-      <FAB
-        icon="plus"
-        style={[styles.fab, { backgroundColor: theme.colors.primary }]}
-        color={theme.colors.onPrimary}
-        onPress={() => navigation.navigate('DocumentTypeEdit', {})}
-      />
+      {canAddDocumentType && (
+        <FAB
+          icon="plus"
+          style={[styles.fab, { backgroundColor: theme.colors.primary }]}
+          color={theme.colors.onPrimary}
+          onPress={() => navigation.navigate('DocumentTypeEdit', {})}
+        />
+      )}
 
       <ConfirmDialog
         visible={!!deleteTarget}
@@ -94,7 +103,7 @@ export const DocumentTypesListScreen: React.FC = () => {
         message={t('documentTypes.deleteConfirm')}
         destructive
         onConfirm={() => {
-          if (deleteTarget) deleteMutation.mutate(deleteTarget.id);
+          if (deleteTarget && can('delete', 'documenttype')) deleteMutation.mutate(deleteTarget.id);
         }}
         onCancel={() => setDeleteTarget(null)}
       />

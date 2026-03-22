@@ -16,9 +16,11 @@ import { hasHardwareAsync, isEnrolledAsync, authenticateAsync } from 'expo-local
 import { TextInput, Button, Text, useTheme, HelperText, Checkbox } from 'react-native-paper';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useTranslation } from 'react-i18next';
-import { useAuthStore } from '@/store/authStore';
 import { authApi, MfaRequiredError, MFA_INVALID_ERROR } from '@/api/auth';
-import { PaperlessApiError } from '@/types';
+import apiClient from '@/api/client';
+import { useAuthStore } from '@/store/authStore';
+import { PaginatedResponse, PaperlessApiError } from '@/types';
+import { User } from '@/api/users';
 import { pauseAsync } from '@/utils';
 
 const MFA_CODE_PATTERN = /^\d{6}$/;
@@ -27,8 +29,16 @@ const CLIPBOARD_RETRY_DELAYS_MS = [300, 600, 1200];
 export const LoginScreen: React.FC = () => {
   const theme = useTheme();
   const { t } = useTranslation();
-  const { login, loginDemo, serverUrl, setServerUrl, biometricEnabled, setBiometricEnabled } =
-    useAuthStore();
+  const {
+    login,
+    loginDemo,
+    serverUrl,
+    setServerUrl,
+    biometricEnabled,
+    logout,
+    setBiometricEnabled,
+    setUsername: setStoredUsername,
+  } = useAuthStore();
 
   const [url, setUrl] = useState(serverUrl);
   const [biometricAvailable, setBiometricAvailable] = useState(false);
@@ -175,6 +185,7 @@ export const LoginScreen: React.FC = () => {
         }
       }
       await setBiometricEnabled(biometricChecked);
+      await setUsername('demo');
       loginDemo();
       return;
     }
@@ -205,6 +216,16 @@ export const LoginScreen: React.FC = () => {
 
       await setBiometricEnabled(biometricChecked);
       await login(response.token, cleanUrl);
+      await setStoredUsername(username);
+
+      try {
+        const resp = await apiClient.get('/api/users/', { params: { username } });
+        const list = resp.data as PaginatedResponse<User>;
+        const found = list.results?.find((u) => u.username === username) || null;
+        if (found) useAuthStore.setState({ user: found });
+      } catch {
+        await logout();
+      }
     } catch (err: unknown) {
       if (err instanceof MfaRequiredError) {
         // Server demands TOTP – reveal the MFA input field

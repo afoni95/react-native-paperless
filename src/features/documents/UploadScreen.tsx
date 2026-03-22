@@ -11,6 +11,7 @@ import { DocumentMetadataForm } from '@/components';
 import { useAllTasks, useUploadDocument } from '@/reactQuery';
 import { coerceCustomFieldValueForSubmit } from '@/utils';
 import { useDocumentMetadata, useCustomFieldsForm } from '@/hooks';
+import { usePermissionContext } from '@/hooks/PermissionProvider';
 
 export const UploadScreen: React.FC = () => {
   const theme = useTheme();
@@ -26,6 +27,9 @@ export const UploadScreen: React.FC = () => {
     allCustomFields,
     customFieldsMap,
   } = useDocumentMetadata();
+
+  const { can } = usePermissionContext();
+  const canAddDocument = can('add', 'document');
 
   // Custom fields form hook
   const {
@@ -253,40 +257,42 @@ export const UploadScreen: React.FC = () => {
           <ProgressBar indeterminate color={theme.colors.primary} style={styles.progress} />
         )}
 
-        <Button
-          mode="contained"
-          icon="upload"
-          onPress={() => {
-            if (!selectedFile) return;
+        {canAddDocument && (
+          <Button
+            mode="contained"
+            icon="upload"
+            onPress={() => {
+              if (!selectedFile) return;
 
-            // Prepare custom fields for submission
-            const customFieldsForSubmit = selectedCustomFields
-              .filter((entry) => entry.value !== undefined && entry.value !== '')
-              .map((entry) => ({
-                field: entry.field,
-                value: coerceCustomFieldValueForSubmit(
-                  entry.value,
-                  customFieldsMap.get(entry.field),
-                ),
-              }));
+              // Prepare custom fields for submission
+              const customFieldsForSubmit = selectedCustomFields
+                .filter((entry) => entry.value !== undefined && entry.value !== '')
+                .map((entry) => ({
+                  field: entry.field,
+                  value: coerceCustomFieldValueForSubmit(
+                    entry.value,
+                    customFieldsMap.get(entry.field),
+                  ),
+                }));
 
-            uploadMutation.mutate({
-              document: selectedFile,
-              title: title || undefined,
-              correspondent: correspondent || undefined,
-              document_type: documentType || undefined,
-              tags: selectedTags.length > 0 ? selectedTags : undefined,
-              storage_path: storagePath || undefined,
-              custom_fields: customFieldsForSubmit.length > 0 ? customFieldsForSubmit : undefined,
-            });
-          }}
-          loading={uploadMutation.isPending}
-          disabled={!selectedFile || uploadMutation.isPending}
-          style={styles.uploadButton}
-          contentStyle={styles.uploadButtonContent}
-        >
-          {uploadMutation.isPending ? t('upload.uploading') : t('upload.upload')}
-        </Button>
+              uploadMutation.mutate({
+                document: selectedFile,
+                title: title || undefined,
+                correspondent: correspondent || undefined,
+                document_type: documentType || undefined,
+                tags: selectedTags.length > 0 ? selectedTags : undefined,
+                storage_path: storagePath || undefined,
+                custom_fields: customFieldsForSubmit.length > 0 ? customFieldsForSubmit : undefined,
+              });
+            }}
+            loading={uploadMutation.isPending}
+            disabled={!selectedFile || uploadMutation.isPending}
+            style={styles.uploadButton}
+            contentStyle={styles.uploadButtonContent}
+          >
+            {uploadMutation.isPending ? t('upload.uploading') : t('upload.upload')}
+          </Button>
+        )}
       </ScrollView>
 
       {/* Pinned bottom bar — task processing status */}

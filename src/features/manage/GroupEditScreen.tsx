@@ -8,7 +8,7 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import type { ManageStackParamList } from '@/navigation/types';
 import { useGroup, useUpsertGroup } from '@/reactQuery';
-import { PermissionMatrix } from '@/components';
+import { PermissionMatrix, HasPermission } from '@/components';
 
 type NavigationProp = NativeStackNavigationProp<ManageStackParamList, 'GroupEdit'>;
 
@@ -76,15 +76,17 @@ export const GroupEditScreen: React.FC = () => {
           disabled={isLoading || upsert.isPending}
         />
 
-        <Button
-          mode="contained"
-          style={styles.button}
-          onPress={handleSave}
-          loading={upsert.isPending}
-          disabled={isLoading || upsert.isPending}
-        >
-          {t('common.save')}
-        </Button>
+        <HasPermission action={groupId ? 'change' : 'add'} resource="group">
+          <Button
+            mode="contained"
+            style={styles.button}
+            onPress={handleSave}
+            loading={upsert.isPending}
+            disabled={isLoading || upsert.isPending}
+          >
+            {t('common.save')}
+          </Button>
+        </HasPermission>
       </View>
     </ScrollView>
   );

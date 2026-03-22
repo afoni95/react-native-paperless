@@ -17,6 +17,7 @@ import {
 import { DashboardStackParamList, MainTabsParamList } from '@/navigation/types';
 import { useGlobalSearch, useAllTags } from '@/reactQuery';
 import { useGlobalNavigationHelper } from '@/hooks';
+import { usePermissionContext } from '@/hooks/PermissionProvider';
 
 type NavigationProp = CompositeNavigationProp<
   NativeStackNavigationProp<DashboardStackParamList, 'GlobalSearchResults'>,
@@ -55,6 +56,7 @@ export const GlobalSearchResultsScreen: React.FC = () => {
   const route = useRoute<GlobalSearchRouteProp>();
   const params = route.params;
   const { navigateTo } = useGlobalNavigationHelper();
+  const { can } = usePermissionContext();
 
   const { data: tags } = useAllTags();
 
@@ -141,16 +143,18 @@ export const GlobalSearchResultsScreen: React.FC = () => {
   const handleResultPress = (item: SearchResultItem) => {
     switch (item.type) {
       case 'document':
-        navigateTo('documentDetail', { documentId: item.id });
+        if (can('view', 'document')) navigateTo('documentDetail', { documentId: item.id });
         break;
       case 'tag':
-        navigateTo('tagEdit', { tagId: item.id });
+        if (can('change', 'tag')) navigateTo('tagEdit', { tagId: item.id });
         break;
       case 'correspondent':
-        navigateTo('correspondentEdit', { correspondentId: item.id });
+        if (can('change', 'correspondent'))
+          navigateTo('correspondentEdit', { correspondentId: item.id });
         break;
       case 'document_type':
-        navigateTo('documentTypeEdit', { documentTypeId: item.id });
+        if (can('change', 'documenttype'))
+          navigateTo('documentTypeEdit', { documentTypeId: item.id });
         break;
     }
   };

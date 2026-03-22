@@ -9,9 +9,10 @@ import { AuthStack } from './AuthStack';
 import { MainTabs } from './MainTabs';
 import { BiometricLockScreen } from '@/features/auth/BiometricLockScreen';
 import { navigationLightTheme, navigationDarkTheme } from '@/theme';
+import { PermissionProvider } from '@/hooks/PermissionProvider';
 
 export const AppNavigator: React.FC = () => {
-  const { isAuthenticated, isLoading, biometricLocked } = useAuthStore();
+  const { isAuthenticated, isLoading, biometricLocked, user } = useAuthStore();
   const { theme: themeMode } = useSettingsStore();
   const systemScheme = useColorScheme();
 
@@ -23,7 +24,9 @@ export const AppNavigator: React.FC = () => {
 
   return (
     <NavigationContainer theme={isDark ? navigationDarkTheme : navigationLightTheme}>
-      {isAuthenticated ? <MainTabs /> : <AuthStack />}
+      <PermissionProvider user={user}>
+        {isAuthenticated ? <MainTabs /> : <AuthStack />}
+      </PermissionProvider>
     </NavigationContainer>
   );
 };

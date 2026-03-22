@@ -4,6 +4,7 @@ import { List, useTheme, FAB } from 'react-native-paper';
 import { useTranslation } from 'react-i18next';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { usePermissionContext } from '@/hooks/PermissionProvider';
 
 import type { ManageStackParamList } from '@/navigation/types';
 import { useUsers } from '@/reactQuery';
@@ -17,6 +18,9 @@ export const UsersListScreen: React.FC = () => {
 
   const { data, isLoading, isError } = useUsers();
 
+  const { can } = usePermissionContext();
+  const canAddUser = can('add', 'user');
+
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <List.Section>
@@ -29,16 +33,20 @@ export const UsersListScreen: React.FC = () => {
             description={user.email}
             left={(props) => <List.Icon {...props} icon="account" />}
             right={(props) => <List.Icon {...props} icon="chevron-right" />}
-            onPress={() => navigation.navigate('UserEdit', { userId: user.id })}
+            onPress={() =>
+              can('change', 'user') && navigation.navigate('UserEdit', { userId: user.id })
+            }
           />
         ))}
       </List.Section>
-      <FAB
-        style={styles.fab}
-        icon="plus"
-        onPress={() => navigation.navigate('UserEdit', {})}
-        color={theme.colors.onPrimary}
-      />
+      {canAddUser && (
+        <FAB
+          style={styles.fab}
+          icon="plus"
+          onPress={() => navigation.navigate('UserEdit', {})}
+          color={theme.colors.onPrimary}
+        />
+      )}
     </View>
   );
 };

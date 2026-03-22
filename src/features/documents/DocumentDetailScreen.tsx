@@ -24,6 +24,7 @@ import {
   useAddDocumentNote,
 } from '@/reactQuery';
 import { useDocumentMetadata, useCustomFieldsForm } from '@/hooks';
+import { usePermissionContext } from '@/hooks/PermissionProvider';
 
 type Props = NativeStackScreenProps<DocumentsStackParamList, 'DocumentDetail'>;
 
@@ -31,6 +32,7 @@ export const DocumentDetailScreen: React.FC<Props> = ({ route, navigation }) => 
   const theme = useTheme();
   const { t } = useTranslation();
   const { documentId } = route.params;
+  const { can } = usePermissionContext();
 
   // Metadata hooks
   const {
@@ -142,6 +144,9 @@ export const DocumentDetailScreen: React.FC<Props> = ({ route, navigation }) => 
   const docTags = doc.tags.map((id) => tagsMap.get(id)).filter(Boolean) as Tag[];
   const enabledCustomFields = doc.custom_fields || [];
 
+  const allowEdit = can('change', 'document') || !!doc.user_can_change;
+  const allowDelete = can('delete', 'document') || !!doc.user_can_change;
+
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <ScrollView
@@ -167,9 +172,11 @@ export const DocumentDetailScreen: React.FC<Props> = ({ route, navigation }) => 
             </>
           ) : (
             <>
-              <Button mode="outlined" icon="pencil" onPress={startEditing}>
-                {t('common.edit')}
-              </Button>
+              {allowEdit && (
+                <Button mode="outlined" icon="pencil" onPress={startEditing}>
+                  {t('common.edit')}
+                </Button>
+              )}
               <Button
                 mode="outlined"
                 icon="file-pdf-box"
@@ -208,11 +215,13 @@ export const DocumentDetailScreen: React.FC<Props> = ({ route, navigation }) => 
               >
                 {t('documents.download')}
               </Button>
-              <IconButton
-                icon="delete"
-                iconColor={theme.colors.error}
-                onPress={() => setShowDeleteDialog(true)}
-              />
+              {allowDelete && (
+                <IconButton
+                  icon="delete"
+                  iconColor={theme.colors.error}
+                  onPress={() => setShowDeleteDialog(true)}
+                />
+              )}
             </>
           )}
         </View>
@@ -278,40 +287,44 @@ export const DocumentDetailScreen: React.FC<Props> = ({ route, navigation }) => 
         )}
 
         {/* Notes */}
-        <Card style={[styles.metaCard, { backgroundColor: theme.colors.surface }]}>
-          <Card.Content>
-            <Text variant="titleMedium" style={{ marginBottom: 8 }}>
-              {t('documents.notes')}
-            </Text>
-            {doc.notes &&
-              doc.notes.length > 0 &&
-              doc.notes.map((note) => (
-                <View key={note.id} style={styles.noteItem}>
-                  <Text variant="bodyMedium">{note.note}</Text>
-                  <Text variant="labelSmall" style={{ color: theme.colors.onSurfaceVariant }}>
-                    {formatDateTime(note.created)}
-                  </Text>
+        {can('view', 'note') ? (
+          <Card style={[styles.metaCard, { backgroundColor: theme.colors.surface }]}>
+            <Card.Content>
+              <Text variant="titleMedium" style={{ marginBottom: 8 }}>
+                {t('documents.notes')}
+              </Text>
+              {doc.notes &&
+                doc.notes.length > 0 &&
+                doc.notes.map((note) => (
+                  <View key={note.id} style={styles.noteItem}>
+                    <Text variant="bodyMedium">{note.note}</Text>
+                    <Text variant="labelSmall" style={{ color: theme.colors.onSurfaceVariant }}>
+                      {formatDateTime(note.created)}
+                    </Text>
+                  </View>
+                ))}
+              {can('add', 'note') ? (
+                <View style={styles.addNoteRow}>
+                  <TextInput
+                    placeholder={t('documents.addNote')}
+                    value={newNote}
+                    onChangeText={setNewNote}
+                    mode="outlined"
+                    style={[styles.noteInput]}
+                    dense
+                  />
+                  <IconButton
+                    icon="send"
+                    onPress={() => {
+                      if (newNote.trim()) addNoteMutation.mutate(newNote.trim());
+                    }}
+                    disabled={!newNote.trim() || addNoteMutation.isPending}
+                  />
                 </View>
-              ))}
-            <View style={styles.addNoteRow}>
-              <TextInput
-                placeholder={t('documents.addNote')}
-                value={newNote}
-                onChangeText={setNewNote}
-                mode="outlined"
-                style={[styles.noteInput]}
-                dense
-              />
-              <IconButton
-                icon="send"
-                onPress={() => {
-                  if (newNote.trim()) addNoteMutation.mutate(newNote.trim());
-                }}
-                disabled={!newNote.trim() || addNoteMutation.isPending}
-              />
-            </View>
-          </Card.Content>
-        </Card>
+              ) : null}
+            </Card.Content>
+          </Card>
+        ) : null}
       </ScrollView>
 
       <ConfirmDialog
