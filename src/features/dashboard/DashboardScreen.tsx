@@ -6,11 +6,18 @@ import { useTranslation } from 'react-i18next';
 import { LoadingScreen, ErrorBanner, GlobalSearchBar } from '@/components';
 import { useGlobalNavigationHelper } from '@/hooks';
 import { useStatistics } from '@/reactQuery';
+import { usePermissionContext } from '@/hooks/PermissionProvider';
 
 export const DashboardScreen: React.FC = () => {
   const theme = useTheme();
   const { t } = useTranslation();
   const { navigateTo } = useGlobalNavigationHelper();
+  const { can } = usePermissionContext();
+
+  const showDocumentsTab = can('view', 'document');
+  const showTagsList = can('view', 'tag');
+  const showCorrespondentsList = can('view', 'correspondent');
+  const showDocumentTypesList = can('view', 'documenttype');
 
   const { data: stats, isLoading, isError, error, refetch, isRefetching } = useStatistics();
 
@@ -52,16 +59,23 @@ export const DashboardScreen: React.FC = () => {
           icon="file-document-outline"
           color={theme.colors.primaryContainer}
           textColor={theme.colors.onPrimaryContainer}
-          onPress={() => navigateTo('documentList')}
+          onPress={() => {
+            if (showDocumentsTab) {
+              navigateTo('documentList');
+            }
+          }}
         />
         <StatCard
           title={t('dashboard.inbox')}
           value={stats?.documents_inbox ?? 0}
           icon="inbox-arrow-down"
-          color={theme.colors.secondaryContainer}
-          textColor={theme.colors.onSecondaryContainer}
-          onPress={() => navigateTo('documentList')}
-        />
+          color={theme.colors.tertiaryContainer}
+          textColor={theme.colors.onTertiaryContainer}
+          onPress={() => {
+            if (showDocumentsTab) {
+              navigateTo('documentList');
+            }
+          }} />
       </View>
 
       <View style={styles.cardRow}>
@@ -71,7 +85,11 @@ export const DashboardScreen: React.FC = () => {
           icon="tag-outline"
           color={theme.colors.tertiaryContainer}
           textColor={theme.colors.onTertiaryContainer}
-          onPress={() => navigateTo('tagsList')}
+          onPress={() => {
+            if (showTagsList) {
+              navigateTo('tagsList');
+            }
+          }}
         />
         <StatCard
           title={t('dashboard.correspondents')}
@@ -79,7 +97,11 @@ export const DashboardScreen: React.FC = () => {
           icon="account-outline"
           color={theme.colors.primaryContainer}
           textColor={theme.colors.onPrimaryContainer}
-          onPress={() => navigateTo('correspondentsList')}
+          onPress={() => {
+            if (showCorrespondentsList) {
+              navigateTo('correspondentsList');
+            }
+          }}
         />
       </View>
 
@@ -88,9 +110,13 @@ export const DashboardScreen: React.FC = () => {
           title={t('dashboard.documentTypes')}
           value={stats?.document_type_count ?? 0}
           icon="clipboard-text-outline"
-          color={theme.colors.secondaryContainer}
-          textColor={theme.colors.onSecondaryContainer}
-          onPress={() => navigateTo('documentTypesList')}
+          color={theme.colors.primaryContainer}
+          textColor={theme.colors.onPrimaryContainer}
+          onPress={() => {
+            if (showDocumentTypesList) {
+              navigateTo('documentTypesList');
+            }
+          }}
         />
         <StatCard
           title={t('dashboard.characters')}

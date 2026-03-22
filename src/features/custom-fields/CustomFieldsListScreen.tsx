@@ -4,6 +4,7 @@ import { Searchbar, FAB, List, useTheme, Chip } from 'react-native-paper';
 import { useTranslation } from 'react-i18next';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { usePermissionContext } from '@/hooks/PermissionProvider';
 
 import { ManageStackParamList } from '@/navigation/types';
 import { CustomField, CUSTOM_FIELD_DATA_TYPES } from '@/types';
@@ -34,6 +35,9 @@ export const CustomFieldsListScreen: React.FC = () => {
       setDeleteTarget(null);
     },
   });
+
+  const { can } = usePermissionContext();
+  const canAddCustomField = can('add', 'customfield');
 
   const filteredCustomFields = useMemo(() => {
     if (!customFields) return [];
@@ -87,8 +91,8 @@ export const CustomFieldsListScreen: React.FC = () => {
                 <List.Icon {...props} icon="pencil" />
               </View>
             )}
-            onPress={() => navigation.navigate('CustomFieldEdit', { customFieldId: item.id })}
-            onLongPress={() => setDeleteTarget(item)}
+            onPress={() => can('change', 'customfield') && navigation.navigate('CustomFieldEdit', { customFieldId: item.id })}
+            onLongPress={() => can('delete', 'customfield') && setDeleteTarget(item)}
             style={styles.listItem}
           />
         )}
@@ -106,12 +110,14 @@ export const CustomFieldsListScreen: React.FC = () => {
         keyboardShouldPersistTaps="handled"
       />
 
-      <FAB
-        icon="plus"
-        style={[styles.fab, { backgroundColor: theme.colors.primary }]}
-        color={theme.colors.onPrimary}
-        onPress={() => navigation.navigate('CustomFieldEdit', {})}
-      />
+      {canAddCustomField && (
+        <FAB
+          icon="plus"
+          style={[styles.fab, { backgroundColor: theme.colors.primary }]}
+          color={theme.colors.onPrimary}
+          onPress={() => navigation.navigate('CustomFieldEdit', {})}
+        />
+      )}
 
       <ConfirmDialog
         visible={!!deleteTarget}
@@ -119,7 +125,7 @@ export const CustomFieldsListScreen: React.FC = () => {
         message={t('customFields.deleteConfirm')}
         destructive
         onConfirm={() => {
-          if (deleteTarget) deleteMutation.mutate(deleteTarget.id);
+          if (deleteTarget && can('delete', 'customfield')) deleteMutation.mutate(deleteTarget.id);
         }}
         onCancel={() => setDeleteTarget(null)}
       />

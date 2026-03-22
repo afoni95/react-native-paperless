@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import { MATCHING_ALGORITHMS, MatchingAlgorithm } from '@/types';
-import { LoadingScreen, ConfirmDialog } from '@/components';
+import { LoadingScreen, ConfirmDialog, HasPermission } from '@/components';
 import { ManageStackParamList } from '@/navigation/types';
 import { useCorrespondent, useUpsertCorrespondent, useDeleteCorrespondent } from '@/reactQuery';
 
@@ -100,36 +100,40 @@ export const CorrespondentEditScreen: React.FC<Props> = ({ route, navigation }) 
         <Switch value={isInsensitive} onValueChange={setIsInsensitive} />
       </View>
 
-      <Button
-        mode="contained"
-        onPress={() =>
-          saveMutation.mutate({
-            id: correspondentId,
-            name,
-            match,
-            matching_algorithm: matchingAlgorithm,
-            is_insensitive: isInsensitive,
-          })
-        }
-        loading={saveMutation.isPending}
-        disabled={!name.trim() || saveMutation.isPending}
-        style={styles.saveButton}
-        contentStyle={styles.saveButtonContent}
-      >
-        {t('common.save')}
-      </Button>
-
-      {!isNew && (
+      <HasPermission action={isNew ? 'add' : 'change'} resource="correspondent">
         <Button
-          mode="outlined"
-          icon="delete"
-          textColor={theme.colors.error}
-          onPress={() => setShowDeleteDialog(true)}
-          style={styles.deleteButton}
+          mode="contained"
+          onPress={() =>
+            saveMutation.mutate({
+              id: correspondentId,
+              name,
+              match,
+              matching_algorithm: matchingAlgorithm,
+              is_insensitive: isInsensitive,
+            })
+          }
+          loading={saveMutation.isPending}
+          disabled={!name.trim() || saveMutation.isPending}
+          style={styles.saveButton}
           contentStyle={styles.saveButtonContent}
         >
-          {t('common.delete')}
+          {t('common.save')}
         </Button>
+      </HasPermission>
+
+      {!isNew && (
+        <HasPermission action="delete" resource="correspondent">
+          <Button
+            mode="outlined"
+            icon="delete"
+            textColor={theme.colors.error}
+            onPress={() => setShowDeleteDialog(true)}
+            style={styles.deleteButton}
+            contentStyle={styles.saveButtonContent}
+          >
+            {t('common.delete')}
+          </Button>
+        </HasPermission>
       )}
 
       <ConfirmDialog

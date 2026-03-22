@@ -6,10 +6,12 @@ import { useTranslation } from 'react-i18next';
 import { TaskStatus } from '@/types';
 import { LoadingScreen, EmptyState, ErrorBanner } from '@/components';
 import { useAllTasks, useAcknowledgeTasks } from '@/reactQuery';
+import { usePermissionContext } from '@/hooks/PermissionProvider';
 
 export const TasksListScreen: React.FC = () => {
   const theme = useTheme();
   const { t } = useTranslation();
+  const { can } = usePermissionContext();
 
   const [snackbarVisible, setSnackbarVisible] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
@@ -68,7 +70,7 @@ export const TasksListScreen: React.FC = () => {
             <Button
               mode="text"
               onPress={handleAcknowledgeAll}
-              disabled={
+              disabled={!can('change', 'paperlesstask') ||
                 acknowledgeMutation.isPending || !tasks?.some((task) => task.status === 'SUCCESS')
               }
               style={styles.acknowledgeAllButton}
@@ -97,7 +99,7 @@ export const TasksListScreen: React.FC = () => {
                     icon="check"
                     size={20}
                     onPress={() => handleAcknowledgeTask(item)}
-                    disabled={acknowledgeMutation.isPending}
+                    disabled={!can('change', 'paperlesstask') || acknowledgeMutation.isPending}
                   />
                 ) : null
               }
@@ -122,7 +124,7 @@ export const TasksListScreen: React.FC = () => {
           )
         }
         refreshControl={
-          <RefreshControl
+          < RefreshControl
             refreshing={isRefetching}
             onRefresh={refetch}
             colors={[theme.colors.primary]}
@@ -138,7 +140,7 @@ export const TasksListScreen: React.FC = () => {
       >
         {snackbarMessage}
       </Snackbar>
-    </View>
+    </View >
   );
 };
 

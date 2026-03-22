@@ -4,6 +4,7 @@ import { Searchbar, FAB, List, useTheme } from 'react-native-paper';
 import { useTranslation } from 'react-i18next';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { usePermissionContext } from '@/hooks/PermissionProvider';
 
 import { ManageStackParamList } from '@/navigation/types';
 import { Tag } from '@/types';
@@ -27,6 +28,9 @@ export const TagsListScreen: React.FC = () => {
       setDeleteTarget(null);
     },
   });
+
+  const { can } = usePermissionContext();
+  const canAddTag = can('add', 'tag');
 
   const filteredTags = useMemo(() => {
     if (!tags) return [];
@@ -69,8 +73,8 @@ export const TagsListScreen: React.FC = () => {
                 <List.Icon {...props} icon="pencil" />
               </View>
             )}
-            onPress={() => navigation.navigate('TagEdit', { tagId: item.id })}
-            onLongPress={() => setDeleteTarget(item)}
+            onPress={() => can('change', 'tag') && navigation.navigate('TagEdit', { tagId: item.id })}
+            onLongPress={() => can('delete', 'tag') && setDeleteTarget(item)}
             style={styles.listItem}
           />
         )}
@@ -86,12 +90,14 @@ export const TagsListScreen: React.FC = () => {
         keyboardShouldPersistTaps="handled"
       />
 
-      <FAB
-        icon="plus"
-        style={[styles.fab, { backgroundColor: theme.colors.primary }]}
-        color={theme.colors.onPrimary}
-        onPress={() => navigation.navigate('TagEdit', {})}
-      />
+      {canAddTag && (
+        <FAB
+          icon="plus"
+          style={[styles.fab, { backgroundColor: theme.colors.primary }]}
+          color={theme.colors.onPrimary}
+          onPress={() => navigation.navigate('TagEdit', {})}
+        />
+      )}
 
       <ConfirmDialog
         visible={!!deleteTarget}
@@ -99,7 +105,7 @@ export const TagsListScreen: React.FC = () => {
         message={t('tags.deleteConfirm')}
         destructive
         onConfirm={() => {
-          if (deleteTarget) deleteMutation.mutate(deleteTarget.id);
+          if (deleteTarget && can('delete', 'tag')) deleteMutation.mutate(deleteTarget.id);
         }}
         onCancel={() => setDeleteTarget(null)}
       />

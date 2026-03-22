@@ -4,6 +4,7 @@ import { Searchbar, FAB, List, useTheme, Text } from 'react-native-paper';
 import { useTranslation } from 'react-i18next';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { usePermissionContext } from '@/hooks/PermissionProvider';
 
 import { ManageStackParamList } from '@/navigation/types';
 import { StoragePath } from '@/types';
@@ -45,6 +46,9 @@ export const StoragePathsListScreen: React.FC = () => {
     );
   }, [storagePaths, searchQuery]);
 
+  const { can } = usePermissionContext();
+  const canAddStoragePath = can('add', 'storagepath');
+
   if (isLoading) {
     return <LoadingScreen message={t('common.loading')} />;
   }
@@ -84,8 +88,8 @@ export const StoragePathsListScreen: React.FC = () => {
                 <List.Icon {...props} icon="pencil" />
               </View>
             )}
-            onPress={() => navigation.navigate('StoragePathEdit', { storagePathId: item.id })}
-            onLongPress={() => setDeleteTarget(item)}
+            onPress={() => can('change', 'storagepath') && navigation.navigate('StoragePathEdit', { storagePathId: item.id })}
+            onLongPress={() => can('delete', 'storagepath') && setDeleteTarget(item)}
             style={styles.listItem}
           />
         )}
@@ -103,12 +107,14 @@ export const StoragePathsListScreen: React.FC = () => {
         keyboardShouldPersistTaps="handled"
       />
 
-      <FAB
-        icon="plus"
-        style={[styles.fab, { backgroundColor: theme.colors.primary }]}
-        color={theme.colors.onPrimary}
-        onPress={() => navigation.navigate('StoragePathEdit', {})}
-      />
+      {canAddStoragePath && (
+        <FAB
+          icon="plus"
+          style={[styles.fab, { backgroundColor: theme.colors.primary }]}
+          color={theme.colors.onPrimary}
+          onPress={() => navigation.navigate('StoragePathEdit', {})}
+        />
+      )}
 
       <ConfirmDialog
         visible={!!deleteTarget}
@@ -116,7 +122,7 @@ export const StoragePathsListScreen: React.FC = () => {
         message={t('storagePaths.deleteConfirm')}
         destructive
         onConfirm={() => {
-          if (deleteTarget) deleteMutation.mutate(deleteTarget.id);
+          if (deleteTarget && can('delete', 'storagepath')) deleteMutation.mutate(deleteTarget.id);
         }}
         onCancel={() => setDeleteTarget(null)}
       />

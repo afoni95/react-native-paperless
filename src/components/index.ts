@@ -14,4 +14,5 @@ export { CustomFieldsSection } from './CustomFieldsSection';
 export { DocumentMetadataForm } from './DocumentMetadataForm';
 export { DocumentMetadataDisplay } from './DocumentMetadataDisplay';
 export { PermissionMatrix } from './PermissionMatrix';
+export { HasPermission } from './HasPermission';
 export type { FilterState } from './FilterSheet';

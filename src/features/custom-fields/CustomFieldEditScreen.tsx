@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import { CUSTOM_FIELD_DATA_TYPES, CustomFieldDataType } from '@/types';
-import { LoadingScreen, ConfirmDialog } from '@/components';
+import { LoadingScreen, ConfirmDialog, HasPermission } from '@/components';
 import { ManageStackParamList } from '@/navigation/types';
 import { useCustomField, useUpsertCustomField, useDeleteCustomField } from '@/reactQuery';
 
@@ -85,34 +85,38 @@ export const CustomFieldEditScreen: React.FC<Props> = ({ route, navigation }) =>
         )}
       </View>
 
-      <Button
-        mode="contained"
-        onPress={() =>
-          saveMutation.mutate({
-            id: customFieldId,
-            name,
-            data_type: dataType,
-          })
-        }
-        loading={saveMutation.isPending}
-        disabled={!name.trim() || saveMutation.isPending}
-        style={styles.saveButton}
-        contentStyle={styles.saveButtonContent}
-      >
-        {t('common.save')}
-      </Button>
-
-      {!isNew && (
+      <HasPermission action={isNew ? 'add' : 'change'} resource="customfield">
         <Button
-          mode="outlined"
-          icon="delete"
-          textColor={theme.colors.error}
-          onPress={() => setShowDeleteDialog(true)}
-          style={styles.deleteButton}
+          mode="contained"
+          onPress={() =>
+            saveMutation.mutate({
+              id: customFieldId,
+              name,
+              data_type: dataType,
+            })
+          }
+          loading={saveMutation.isPending}
+          disabled={!name.trim() || saveMutation.isPending}
+          style={styles.saveButton}
           contentStyle={styles.saveButtonContent}
         >
-          {t('common.delete')}
+          {t('common.save')}
         </Button>
+      </HasPermission>
+
+      {!isNew && (
+        <HasPermission action="delete" resource="customfield">
+          <Button
+            mode="outlined"
+            icon="delete"
+            textColor={theme.colors.error}
+            onPress={() => setShowDeleteDialog(true)}
+            style={styles.deleteButton}
+            contentStyle={styles.saveButtonContent}
+          >
+            {t('common.delete')}
+          </Button>
+        </HasPermission>
       )}
 
       <ConfirmDialog

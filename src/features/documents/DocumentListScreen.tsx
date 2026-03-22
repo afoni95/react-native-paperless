@@ -8,6 +8,7 @@ import { useNavigation } from '@react-navigation/native';
 
 import { documentsApi } from '@/api';
 import { useDebounce, useLookupMaps } from '@/hooks';
+import { usePermissionContext } from '@/hooks/PermissionProvider';
 import { Document, DocumentListParams, Tag } from '@/types';
 import {
   LoadingScreen,
@@ -44,6 +45,8 @@ export const DocumentListScreen: React.FC = () => {
   const queryClient = useQueryClient();
   const { allTags, allCorrespondents, allDocTypes, tagsMap, correspondentsMap, docTypesMap } =
     useLookupMaps();
+
+  const { can } = usePermissionContext();
 
   const [searchText, setSearchText] = useState('');
   const [ordering, setOrdering] = useState('-created');
@@ -149,7 +152,7 @@ export const DocumentListScreen: React.FC = () => {
           onPress={() => {
             if (hasSelections) {
               toggleSelection(item.id);
-            } else {
+            } else if (can('view', 'document')) {
               navigation.navigate('DocumentDetail', { documentId: item.id });
             }
           }}
@@ -232,6 +235,7 @@ export const DocumentListScreen: React.FC = () => {
       getThumbUri,
       hasSelections,
       selectedIds,
+      can,
       toggleSelection,
     ],
   );
@@ -305,6 +309,7 @@ export const DocumentListScreen: React.FC = () => {
             <Button mode="text" onPress={() => setSelectedIds(new Set())} compact>
               Unselect All
             </Button>
+            {can('delete', 'document') && (
             <Button
               mode="contained"
               buttonColor={theme.colors.error}
@@ -316,6 +321,7 @@ export const DocumentListScreen: React.FC = () => {
             >
               {t('documents.delete')}
             </Button>
+          )}
           </View>
         </View>
       )}
@@ -369,6 +375,10 @@ export const DocumentListScreen: React.FC = () => {
         destructive
         onConfirm={() => {
           if (deleteTarget) {
+            if (!can('delete', 'document')) {
+              setDeleteTarget(null);
+              return;
+            }
             if (deleteTarget.id === -1) {
               // Bulk delete
               deleteMutation.mutate(Array.from(selectedIds));

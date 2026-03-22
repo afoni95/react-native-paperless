@@ -8,6 +8,7 @@ import { Correspondent } from '@/types';
 import { LoadingScreen, EmptyState, ErrorBanner, ConfirmDialog } from '@/components';
 import { ManageStackParamList } from '@/navigation/types';
 import { useAllCorrespondents, useDeleteCorrespondent } from '@/reactQuery';
+import { usePermissionContext } from '@/hooks/PermissionProvider';
 
 type NavigationProp = NativeStackNavigationProp<ManageStackParamList, 'CorrespondentsList'>;
 
@@ -33,6 +34,9 @@ export const CorrespondentsListScreen: React.FC = () => {
       setDeleteTarget(null);
     },
   });
+
+  const { can } = usePermissionContext();
+  const canAddCorrespondent = can('add', 'correspondent');
 
   const filteredItems = useMemo(() => {
     if (!correspondents) return [];
@@ -69,8 +73,8 @@ export const CorrespondentsListScreen: React.FC = () => {
             description={`${t('correspondents.documents', { count: item.document_count })}`}
             left={(props) => <List.Icon {...props} icon="account" />}
             right={(props) => <List.Icon {...props} icon="pencil" />}
-            onPress={() => navigation.navigate('CorrespondentEdit', { correspondentId: item.id })}
-            onLongPress={() => setDeleteTarget(item)}
+            onPress={() => can('change', 'correspondent') && navigation.navigate('CorrespondentEdit', { correspondentId: item.id })}
+            onLongPress={() => can('delete', 'correspondent') && setDeleteTarget(item)}
           />
         )}
         contentContainerStyle={filteredItems.length === 0 ? styles.emptyContainer : undefined}
@@ -85,12 +89,14 @@ export const CorrespondentsListScreen: React.FC = () => {
         keyboardShouldPersistTaps="handled"
       />
 
-      <FAB
-        icon="plus"
-        style={[styles.fab, { backgroundColor: theme.colors.primary }]}
-        color={theme.colors.onPrimary}
-        onPress={() => navigation.navigate('CorrespondentEdit', {})}
-      />
+      {canAddCorrespondent && (
+        <FAB
+          icon="plus"
+          style={[styles.fab, { backgroundColor: theme.colors.primary }]}
+          color={theme.colors.onPrimary}
+          onPress={() => navigation.navigate('CorrespondentEdit', {})}
+        />
+      )}
 
       <ConfirmDialog
         visible={!!deleteTarget}
@@ -98,7 +104,7 @@ export const CorrespondentsListScreen: React.FC = () => {
         message={t('correspondents.deleteConfirm')}
         destructive
         onConfirm={() => {
-          if (deleteTarget) deleteMutation.mutate(deleteTarget.id);
+          if (deleteTarget && can('delete', 'correspondent')) deleteMutation.mutate(deleteTarget.id);
         }}
         onCancel={() => setDeleteTarget(null)}
       />

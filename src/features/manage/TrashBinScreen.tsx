@@ -9,6 +9,7 @@ import { documentsApi } from '@/api';
 import { Document } from '@/types';
 import { ManageStackParamList } from '@/navigation/types';
 import { LoadingScreen, EmptyState, ErrorBanner, ConfirmDialog } from '@/components';
+import { usePermissionContext } from '@/hooks/PermissionProvider';
 import { useTrashDocuments, useRestoreDocuments, useEmptyTrash } from '@/reactQuery';
 
 type NavigationProp = NativeStackNavigationProp<ManageStackParamList, 'TrashBin'>;
@@ -29,6 +30,8 @@ export const TrashBinScreen: React.FC = () => {
   const { data: trashData, isLoading, isError, error, refetch, isRefetching } = useTrashDocuments();
 
   const documents = trashData?.results ?? [];
+
+  const { can } = usePermissionContext();
 
   const restoreMutation = useRestoreDocuments({
     onSuccess: async (_, ids) => {
@@ -70,7 +73,7 @@ export const TrashBinScreen: React.FC = () => {
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () =>
-        documents.length > 0 ? (
+        documents.length > 0 && can('delete', 'document') ? (
           <IconButton
             icon="trash-can-outline"
             iconColor={theme.colors.error}
@@ -79,7 +82,7 @@ export const TrashBinScreen: React.FC = () => {
           />
         ) : null,
     });
-  }, [navigation, documents.length, theme.colors.error, emptyMutation.isPending]);
+  }, [navigation, documents.length, theme.colors.error, emptyMutation.isPending, can]);
 
   const formatDate = (dateString: string | null) => {
     if (!dateString) return '';
@@ -108,15 +111,17 @@ export const TrashBinScreen: React.FC = () => {
           <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant }}>
             {documents.length === 1 ? '1 document' : `${documents.length} documents`}
           </Text>
-          <Button
-            mode="text"
-            textColor={theme.colors.error}
-            compact
-            onPress={() => setEmptyConfirmVisible(true)}
-            disabled={emptyMutation.isPending}
-          >
-            {t('trash.emptyTrash')}
-          </Button>
+          {can('delete', 'document') && (
+            <Button
+              mode="text"
+              textColor={theme.colors.error}
+              compact
+              onPress={() => setEmptyConfirmVisible(true)}
+              disabled={emptyMutation.isPending}
+            >
+              {t('trash.emptyTrash')}
+            </Button>
+          )}
         </View>
       )}
 
@@ -134,23 +139,27 @@ export const TrashBinScreen: React.FC = () => {
             left={(props) => <List.Icon {...props} icon="file-document-outline" />}
             right={() => (
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-                <Button
-                  mode="text"
-                  compact
-                  onPress={() => setRestoreTarget(item)}
-                  disabled={restoreMutation.isPending || deleteMutation.isPending}
-                >
-                  {t('trash.restore')}
-                </Button>
-                <Button
-                  mode="text"
-                  textColor={theme.colors.error}
-                  compact
-                  onPress={() => setDeleteTarget(item)}
-                  disabled={restoreMutation.isPending || deleteMutation.isPending}
-                >
-                  {t('trash.deletePermanently')}
-                </Button>
+                {can('change', 'document') && (
+                  <Button
+                    mode="text"
+                    compact
+                    onPress={() => setRestoreTarget(item)}
+                    disabled={restoreMutation.isPending || deleteMutation.isPending}
+                  >
+                    {t('trash.restore')}
+                  </Button>
+                )}
+                {can('delete', 'document') && (
+                  <Button
+                    mode="text"
+                    textColor={theme.colors.error}
+                    compact
+                    onPress={() => setDeleteTarget(item)}
+                    disabled={restoreMutation.isPending || deleteMutation.isPending}
+                  >
+                    {t('trash.deletePermanently')}
+                  </Button>
+                )}
               </View>
             )}
             style={styles.listItem}
@@ -175,7 +184,7 @@ export const TrashBinScreen: React.FC = () => {
         message={t('trash.restoreConfirm', { title: restoreTarget?.title ?? '' })}
         confirmLabel={t('trash.restore')}
         onConfirm={() => {
-          if (restoreTarget) restoreMutation.mutate([restoreTarget.id]);
+          if (restoreTarget && can('change', 'document')) restoreMutation.mutate([restoreTarget.id]);
         }}
         onCancel={() => setRestoreTarget(null)}
       />
@@ -188,7 +197,7 @@ export const TrashBinScreen: React.FC = () => {
         confirmLabel={t('trash.deletePermanently')}
         destructive
         onConfirm={() => {
-          if (deleteTarget) deleteMutation.mutate([deleteTarget.id]);
+          if (deleteTarget && can('delete', 'document')) deleteMutation.mutate([deleteTarget.id]);
         }}
         onCancel={() => setDeleteTarget(null)}
       />
