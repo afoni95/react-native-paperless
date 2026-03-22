@@ -69,7 +69,10 @@ export const DocumentTypesListScreen: React.FC = () => {
             description={t('documentTypes.documents', { count: item.document_count })}
             left={(props) => <List.Icon {...props} icon="file-document-outline" />}
             right={(props) => <List.Icon {...props} icon="pencil" />}
-            onPress={() => can('change', 'documenttype') && navigation.navigate('DocumentTypeEdit', { documentTypeId: item.id })}
+            onPress={() =>
+              can('change', 'documenttype') &&
+              navigation.navigate('DocumentTypeEdit', { documentTypeId: item.id })
+            }
             onLongPress={() => can('delete', 'documenttype') && setDeleteTarget(item)}
           />
         )}

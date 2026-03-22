@@ -70,8 +70,10 @@ export const TasksListScreen: React.FC = () => {
             <Button
               mode="text"
               onPress={handleAcknowledgeAll}
-              disabled={!can('change', 'paperlesstask') ||
-                acknowledgeMutation.isPending || !tasks?.some((task) => task.status === 'SUCCESS')
+              disabled={
+                !can('change', 'paperlesstask') ||
+                acknowledgeMutation.isPending ||
+                !tasks?.some((task) => task.status === 'SUCCESS')
               }
               style={styles.acknowledgeAllButton}
             >
@@ -124,7 +126,7 @@ export const TasksListScreen: React.FC = () => {
           )
         }
         refreshControl={
-          < RefreshControl
+          <RefreshControl
             refreshing={isRefetching}
             onRefresh={refetch}
             colors={[theme.colors.primary]}
@@ -140,7 +142,7 @@ export const TasksListScreen: React.FC = () => {
       >
         {snackbarMessage}
       </Snackbar>
-    </View >
+    </View>
   );
 };
 

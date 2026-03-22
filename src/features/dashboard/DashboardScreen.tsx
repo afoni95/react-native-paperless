@@ -75,7 +75,8 @@ export const DashboardScreen: React.FC = () => {
             if (showDocumentsTab) {
               navigateTo('documentList');
             }
-          }} />
+          }}
+        />
       </View>
 
       <View style={styles.cardRow}>

@@ -88,7 +88,10 @@ export const StoragePathsListScreen: React.FC = () => {
                 <List.Icon {...props} icon="pencil" />
               </View>
             )}
-            onPress={() => can('change', 'storagepath') && navigation.navigate('StoragePathEdit', { storagePathId: item.id })}
+            onPress={() =>
+              can('change', 'storagepath') &&
+              navigation.navigate('StoragePathEdit', { storagePathId: item.id })
+            }
             onLongPress={() => can('delete', 'storagepath') && setDeleteTarget(item)}
             style={styles.listItem}
           />

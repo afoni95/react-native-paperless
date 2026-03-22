@@ -33,7 +33,9 @@ export const UsersListScreen: React.FC = () => {
             description={user.email}
             left={(props) => <List.Icon {...props} icon="account" />}
             right={(props) => <List.Icon {...props} icon="chevron-right" />}
-            onPress={() => can('change', 'user') && navigation.navigate('UserEdit', { userId: user.id })}
+            onPress={() =>
+              can('change', 'user') && navigation.navigate('UserEdit', { userId: user.id })
+            }
           />
         ))}
       </List.Section>

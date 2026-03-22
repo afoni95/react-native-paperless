@@ -73,7 +73,9 @@ export const TagsListScreen: React.FC = () => {
                 <List.Icon {...props} icon="pencil" />
               </View>
             )}
-            onPress={() => can('change', 'tag') && navigation.navigate('TagEdit', { tagId: item.id })}
+            onPress={() =>
+              can('change', 'tag') && navigation.navigate('TagEdit', { tagId: item.id })
+            }
             onLongPress={() => can('delete', 'tag') && setDeleteTarget(item)}
             style={styles.listItem}
           />

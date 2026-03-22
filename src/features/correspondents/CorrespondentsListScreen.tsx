@@ -73,7 +73,10 @@ export const CorrespondentsListScreen: React.FC = () => {
             description={`${t('correspondents.documents', { count: item.document_count })}`}
             left={(props) => <List.Icon {...props} icon="account" />}
             right={(props) => <List.Icon {...props} icon="pencil" />}
-            onPress={() => can('change', 'correspondent') && navigation.navigate('CorrespondentEdit', { correspondentId: item.id })}
+            onPress={() =>
+              can('change', 'correspondent') &&
+              navigation.navigate('CorrespondentEdit', { correspondentId: item.id })
+            }
             onLongPress={() => can('delete', 'correspondent') && setDeleteTarget(item)}
           />
         )}
@@ -104,7 +107,8 @@ export const CorrespondentsListScreen: React.FC = () => {
         message={t('correspondents.deleteConfirm')}
         destructive
         onConfirm={() => {
-          if (deleteTarget && can('delete', 'correspondent')) deleteMutation.mutate(deleteTarget.id);
+          if (deleteTarget && can('delete', 'correspondent'))
+            deleteMutation.mutate(deleteTarget.id);
         }}
         onCancel={() => setDeleteTarget(null)}
       />

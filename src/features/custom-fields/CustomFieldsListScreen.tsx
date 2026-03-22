@@ -91,7 +91,10 @@ export const CustomFieldsListScreen: React.FC = () => {
                 <List.Icon {...props} icon="pencil" />
               </View>
             )}
-            onPress={() => can('change', 'customfield') && navigation.navigate('CustomFieldEdit', { customFieldId: item.id })}
+            onPress={() =>
+              can('change', 'customfield') &&
+              navigation.navigate('CustomFieldEdit', { customFieldId: item.id })
+            }
             onLongPress={() => can('delete', 'customfield') && setDeleteTarget(item)}
             style={styles.listItem}
           />

@@ -26,7 +26,10 @@ export function usePermissions(options?: UsePermissionsOptions) {
     return [] as string[];
   }, [optPermissions, userUp, userInh]);
 
-  const has = React.useCallback((perm: string) => options?.user?.is_superuser || permissions.includes(perm), [permissions, options?.user]);
+  const has = React.useCallback(
+    (perm: string) => options?.user?.is_superuser || permissions.includes(perm),
+    [permissions, options?.user],
+  );
 
   const hasAny = React.useCallback(
     (perms: string[]) => options?.user?.is_superuser || perms.some((p) => permissions.includes(p)),

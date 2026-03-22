@@ -310,18 +310,18 @@ export const DocumentListScreen: React.FC = () => {
               Unselect All
             </Button>
             {can('delete', 'document') && (
-            <Button
-              mode="contained"
-              buttonColor={theme.colors.error}
-              textColor={theme.colors.onError}
-              onPress={() => {
-                setDeleteTarget({ id: -1 } as Document);
-              }}
-              compact
-            >
-              {t('documents.delete')}
-            </Button>
-          )}
+              <Button
+                mode="contained"
+                buttonColor={theme.colors.error}
+                textColor={theme.colors.onError}
+                onPress={() => {
+                  setDeleteTarget({ id: -1 } as Document);
+                }}
+                compact
+              >
+                {t('documents.delete')}
+              </Button>
+            )}
           </View>
         </View>
       )}

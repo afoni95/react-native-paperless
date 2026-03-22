@@ -149,10 +149,12 @@ export const GlobalSearchResultsScreen: React.FC = () => {
         if (can('change', 'tag')) navigateTo('tagEdit', { tagId: item.id });
         break;
       case 'correspondent':
-        if (can('change', 'correspondent')) navigateTo('correspondentEdit', { correspondentId: item.id });
+        if (can('change', 'correspondent'))
+          navigateTo('correspondentEdit', { correspondentId: item.id });
         break;
       case 'document_type':
-        if (can('change', 'documenttype')) navigateTo('documentTypeEdit', { documentTypeId: item.id });
+        if (can('change', 'documenttype'))
+          navigateTo('documentTypeEdit', { documentTypeId: item.id });
         break;
     }
   };

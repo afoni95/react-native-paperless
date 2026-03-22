@@ -32,7 +32,9 @@ export const GroupsListScreen: React.FC = () => {
             title={group.name}
             left={(props) => <List.Icon {...props} icon="account-group" />}
             right={(props) => <List.Icon {...props} icon="chevron-right" />}
-            onPress={() => can('change', 'group') && navigation.navigate('GroupEdit', { groupId: group.id })}
+            onPress={() =>
+              can('change', 'group') && navigation.navigate('GroupEdit', { groupId: group.id })
+            }
           />
         ))}
       </List.Section>

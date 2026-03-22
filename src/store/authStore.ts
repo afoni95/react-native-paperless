@@ -81,7 +81,14 @@ export const useAuthStore = create<AuthState>((set) => ({
             isLoading: false,
           });
         } else {
-          set({ token, serverUrl, isAuthenticated: true, biometricEnabled, isLoading: false, username });
+          set({
+            token,
+            serverUrl,
+            isAuthenticated: true,
+            biometricEnabled,
+            isLoading: false,
+            username,
+          });
 
           // Try to fetch the full user object if we have a username
           if (username) {
@@ -90,7 +97,7 @@ export const useAuthStore = create<AuthState>((set) => ({
               const list = resp.data as PaginatedResponse<User>;
               const found = list.results?.find((u) => u.username === username) || null;
               if (found) set({ user: found });
-            } catch (e) {
+            } catch {
               await SecureStore.deleteItemAsync(TOKEN_KEY);
               await AsyncStorage.removeItem(USERNAME_KEY);
               set({ token: null, isAuthenticated: false, isDemo: false });
@@ -141,7 +148,7 @@ export const useAuthStore = create<AuthState>((set) => ({
             const list = resp.data as PaginatedResponse<User>;
             const found = list.results?.find((u) => u.username === username) || null;
             if (found) set({ user: found });
-          } catch (e) {
+          } catch {
             await SecureStore.deleteItemAsync(TOKEN_KEY);
             await AsyncStorage.removeItem(USERNAME_KEY);
             set({ token: null, isAuthenticated: false, isDemo: false });

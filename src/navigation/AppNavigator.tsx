@@ -24,7 +24,9 @@ export const AppNavigator: React.FC = () => {
 
   return (
     <NavigationContainer theme={isDark ? navigationDarkTheme : navigationLightTheme}>
-      <PermissionProvider user={user}>{isAuthenticated ? <MainTabs /> : <AuthStack />}</PermissionProvider>
+      <PermissionProvider user={user}>
+        {isAuthenticated ? <MainTabs /> : <AuthStack />}
+      </PermissionProvider>
     </NavigationContainer>
   );
 };

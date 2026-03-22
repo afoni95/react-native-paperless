@@ -184,7 +184,8 @@ export const TrashBinScreen: React.FC = () => {
         message={t('trash.restoreConfirm', { title: restoreTarget?.title ?? '' })}
         confirmLabel={t('trash.restore')}
         onConfirm={() => {
-          if (restoreTarget && can('change', 'document')) restoreMutation.mutate([restoreTarget.id]);
+          if (restoreTarget && can('change', 'document'))
+            restoreMutation.mutate([restoreTarget.id]);
         }}
         onCancel={() => setRestoreTarget(null)}
       />

@@ -25,8 +25,16 @@ import { User } from '@/api/users';
 export const LoginScreen: React.FC = () => {
   const theme = useTheme();
   const { t } = useTranslation();
-  const { login, loginDemo, serverUrl, setServerUrl, biometricEnabled, logout, setBiometricEnabled, setUsername: setStoredUsername } =
-    useAuthStore();
+  const {
+    login,
+    loginDemo,
+    serverUrl,
+    setServerUrl,
+    biometricEnabled,
+    logout,
+    setBiometricEnabled,
+    setUsername: setStoredUsername,
+  } = useAuthStore();
 
   const [url, setUrl] = useState(serverUrl);
   const [biometricAvailable, setBiometricAvailable] = useState(false);
@@ -183,7 +191,7 @@ export const LoginScreen: React.FC = () => {
         const list = resp.data as PaginatedResponse<User>;
         const found = list.results?.find((u) => u.username === username) || null;
         if (found) useAuthStore.setState({ user: found });
-      } catch (e) {
+      } catch {
         await logout();
       }
     } catch (err: unknown) {

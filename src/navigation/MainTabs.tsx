@@ -35,39 +35,42 @@ export const MainTabs: React.FC = () => {
       />,
     ];
 
-    if (showDocumentsTab) arr.push(
-      <Tab.Screen
-        key="DocumentsTab"
-        name="DocumentsTab"
-        component={DocumentsStack}
-        options={{
-          title: t('documents.title'),
-          tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="file-document-multiple" color={color} size={size} />
-          ),
-        }}
-      />,
-    );
+    if (showDocumentsTab)
+      arr.push(
+        <Tab.Screen
+          key="DocumentsTab"
+          name="DocumentsTab"
+          component={DocumentsStack}
+          options={{
+            title: t('documents.title'),
+            tabBarIcon: ({ color, size }) => (
+              <MaterialCommunityIcons name="file-document-multiple" color={color} size={size} />
+            ),
+          }}
+        />,
+      );
 
-    if (showUploadTab) arr.push(
-      <Tab.Screen
-        key="UploadTab"
-        name="UploadTab"
-        component={UploadScreen}
-        options={({ navigation }) => ({
-          title: t('upload.title'),
-          tabBarStyle: { display: showUploadTab ? 'none' : 'none' },
-          headerShown: true,
-          headerLeft: ({ tintColor }) => (
-            <Button disabled={!navigation.canGoBack()} onPress={() => navigation.goBack()}>
-              <MaterialCommunityIcons size={32} color={tintColor} name='arrow-left' /> </Button>
-          ),
-          tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="upload" color={color} size={size + 8} />
-          ),
-        })}
-      />,
-    );
+    if (showUploadTab)
+      arr.push(
+        <Tab.Screen
+          key="UploadTab"
+          name="UploadTab"
+          component={UploadScreen}
+          options={({ navigation }) => ({
+            title: t('upload.title'),
+            tabBarStyle: { display: showUploadTab ? 'none' : 'none' },
+            headerShown: true,
+            headerLeft: ({ tintColor }) => (
+              <Button disabled={!navigation.canGoBack()} onPress={() => navigation.goBack()}>
+                <MaterialCommunityIcons size={32} color={tintColor} name="arrow-left" />{' '}
+              </Button>
+            ),
+            tabBarIcon: ({ color, size }) => (
+              <MaterialCommunityIcons name="upload" color={color} size={size + 8} />
+            ),
+          })}
+        />,
+      );
 
     arr.push(
       <Tab.Screen
@@ -86,7 +89,6 @@ export const MainTabs: React.FC = () => {
 
     return arr;
   }, [showDocumentsTab, showUploadTab, t]);
-
 
   return (
     <Tab.Navigator
