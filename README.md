@@ -86,7 +86,7 @@ npm run i18:unused
 - [x] Internationalization
 - [x] Theme support (light/dark/system)
 - [x] Biometric lock screen
-- [ ] Object-level Permissions
+- [X] Object-level Permissions
 - [ ] Custom Field query filtering
 - [ ] More Like This search
 - [ ] WebSocket status updates
