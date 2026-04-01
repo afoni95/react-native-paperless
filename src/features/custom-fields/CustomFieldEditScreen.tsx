@@ -8,6 +8,7 @@ import { CUSTOM_FIELD_DATA_TYPES, CustomFieldDataType } from '@/types';
 import { LoadingScreen, ConfirmDialog, HasPermission } from '@/components';
 import { ManageStackParamList } from '@/navigation/types';
 import { useCustomField, useUpsertCustomField, useDeleteCustomField } from '@/reactQuery';
+import { screenStyles, formStyles, buttonStyles } from '@/theme/commonStyles';
 
 type Props = NativeStackScreenProps<ManageStackParamList, 'CustomFieldEdit'>;
 
@@ -54,7 +55,7 @@ export const CustomFieldEditScreen: React.FC<Props> = ({ route, navigation }) =>
 
   return (
     <ScrollView
-      style={[styles.container, { backgroundColor: theme.colors.background }]}
+      style={[screenStyles.container, { backgroundColor: theme.colors.background }]}
       contentContainerStyle={styles.content}
       keyboardShouldPersistTaps="handled"
     >
@@ -66,7 +67,7 @@ export const CustomFieldEditScreen: React.FC<Props> = ({ route, navigation }) =>
         style={styles.input}
       />
 
-      <Text variant="labelLarge" style={[styles.label, { color: theme.colors.onBackground }]}>
+      <Text variant="labelLarge" style={[formStyles.label, { color: theme.colors.onBackground }]}>
         {t('customFields.dataType')}
       </Text>
       <View style={styles.typeGrid}>
@@ -97,8 +98,8 @@ export const CustomFieldEditScreen: React.FC<Props> = ({ route, navigation }) =>
           }
           loading={saveMutation.isPending}
           disabled={!name.trim() || saveMutation.isPending}
-          style={styles.saveButton}
-          contentStyle={styles.saveButtonContent}
+          style={buttonStyles.saveButton}
+          contentStyle={buttonStyles.saveButtonContent}
         >
           {t('common.save')}
         </Button>
@@ -111,8 +112,8 @@ export const CustomFieldEditScreen: React.FC<Props> = ({ route, navigation }) =>
             icon="delete"
             textColor={theme.colors.error}
             onPress={() => setShowDeleteDialog(true)}
-            style={styles.deleteButton}
-            contentStyle={styles.saveButtonContent}
+            style={buttonStyles.deleteButton}
+            contentStyle={buttonStyles.saveButtonContent}
           >
             {t('common.delete')}
           </Button>
@@ -135,9 +136,6 @@ export const CustomFieldEditScreen: React.FC<Props> = ({ route, navigation }) =>
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
   content: {
     paddingHorizontal: 16,
     paddingTop: 16,
@@ -145,10 +143,6 @@ const styles = StyleSheet.create({
   },
   input: {
     marginBottom: 14,
-  },
-  label: {
-    marginBottom: 8,
-    marginTop: 4,
   },
   typeGrid: {
     flexDirection: 'row',
@@ -158,17 +152,5 @@ const styles = StyleSheet.create({
   },
   typeButton: {
     marginBottom: 4,
-  },
-  saveButton: {
-    marginTop: 24,
-    borderRadius: 8,
-  },
-  saveButtonContent: {
-    paddingVertical: 8,
-  },
-  deleteButton: {
-    marginTop: 12,
-    borderRadius: 8,
-    borderColor: '#d32f2f',
   },
 });

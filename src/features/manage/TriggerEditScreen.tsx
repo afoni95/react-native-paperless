@@ -15,6 +15,7 @@ import {
   useAllTags,
 } from '@/reactQuery';
 import { customFieldsApi } from '@/api/customFields';
+import { screenStyles, buttonStyles } from '@/theme/commonStyles';
 
 type Props = NativeStackScreenProps<ManageStackParamList, 'TriggerEdit'>;
 
@@ -193,8 +194,8 @@ export const TriggerEditScreen: React.FC<Props> = ({ route, navigation }) => {
 
   return (
     <ScrollView
-      style={[styles.container, { backgroundColor: theme.colors.background }]}
-      contentContainerStyle={styles.content}
+      style={[screenStyles.container, { backgroundColor: theme.colors.background }]}
+      contentContainerStyle={screenStyles.content}
       keyboardShouldPersistTaps="handled"
     >
       <NonSearchableDropdown
@@ -410,7 +411,7 @@ export const TriggerEditScreen: React.FC<Props> = ({ route, navigation }) => {
         </>
       ) : null}
 
-      <Button mode="contained" onPress={handleSave} style={styles.saveButton}>
+      <Button mode="contained" onPress={handleSave} style={buttonStyles.saveButton}>
         {t('common.apply')}
       </Button>
 
@@ -418,7 +419,7 @@ export const TriggerEditScreen: React.FC<Props> = ({ route, navigation }) => {
         mode="outlined"
         textColor={theme.colors.error}
         onPress={handleDelete}
-        style={styles.deleteButton}
+        style={buttonStyles.deleteButton}
       >
         {t('common.delete')}
       </Button>
@@ -427,12 +428,6 @@ export const TriggerEditScreen: React.FC<Props> = ({ route, navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  content: {
-    padding: 16,
-  },
   segmented: {
     marginBottom: 16,
   },
@@ -444,11 +439,5 @@ const styles = StyleSheet.create({
   },
   switchContainer: {
     marginBottom: 12,
-  },
-  saveButton: {
-    marginTop: 24,
-  },
-  deleteButton: {
-    marginTop: 12,
   },
 });

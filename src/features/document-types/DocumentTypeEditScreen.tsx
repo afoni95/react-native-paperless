@@ -7,6 +7,7 @@ import { MATCHING_ALGORITHMS, MatchingAlgorithm } from '@/types';
 import { LoadingScreen, ConfirmDialog, HasPermission } from '@/components';
 import { ManageStackParamList } from '@/navigation/types';
 import { useDocumentType, useUpsertDocumentType, useDeleteDocumentType } from '@/reactQuery';
+import { screenStyles, formStyles, buttonStyles } from '@/theme/commonStyles';
 
 type Props = NativeStackScreenProps<ManageStackParamList, 'DocumentTypeEdit'>;
 
@@ -57,7 +58,7 @@ export const DocumentTypeEditScreen: React.FC<Props> = ({ route, navigation }) =
 
   return (
     <ScrollView
-      style={[styles.container, { backgroundColor: theme.colors.background }]}
+      style={[screenStyles.container, { backgroundColor: theme.colors.background }]}
       contentContainerStyle={styles.content}
       keyboardShouldPersistTaps="handled"
     >
@@ -66,7 +67,7 @@ export const DocumentTypeEditScreen: React.FC<Props> = ({ route, navigation }) =
         value={name}
         onChangeText={setName}
         mode="outlined"
-        style={styles.input}
+        style={formStyles.input}
       />
 
       <TextInput
@@ -74,27 +75,27 @@ export const DocumentTypeEditScreen: React.FC<Props> = ({ route, navigation }) =
         value={match}
         onChangeText={setMatch}
         mode="outlined"
-        style={styles.input}
+        style={formStyles.input}
       />
 
-      <Text variant="labelLarge" style={[styles.label, { color: theme.colors.onBackground }]}>
+      <Text variant="labelLarge" style={[formStyles.label, { color: theme.colors.onBackground }]}>
         {t('documentTypes.matchingAlgorithm')}
       </Text>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.algoRow}>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={formStyles.algoRow}>
         {(Object.entries(MATCHING_ALGORITHMS) as [string, string][]).map(([key, label]) => (
           <Button
             key={key}
             mode={matchingAlgorithm === Number(key) ? 'contained' : 'outlined'}
             compact
             onPress={() => setMatchingAlgorithm(Number(key) as MatchingAlgorithm)}
-            style={styles.algoButton}
+            style={formStyles.algoButton}
           >
             {label}
           </Button>
         ))}
       </ScrollView>
 
-      <View style={styles.switchRow}>
+      <View style={formStyles.switchRow}>
         <Text variant="bodyLarge">{t('documentTypes.caseInsensitive')}</Text>
         <Switch value={isInsensitive} onValueChange={setIsInsensitive} />
       </View>
@@ -113,8 +114,8 @@ export const DocumentTypeEditScreen: React.FC<Props> = ({ route, navigation }) =
           }
           loading={saveMutation.isPending}
           disabled={!name.trim() || saveMutation.isPending}
-          style={styles.saveButton}
-          contentStyle={styles.saveButtonContent}
+          style={buttonStyles.saveButton}
+          contentStyle={buttonStyles.saveButtonContent}
         >
           {t('common.save')}
         </Button>
@@ -127,8 +128,8 @@ export const DocumentTypeEditScreen: React.FC<Props> = ({ route, navigation }) =
             icon="delete"
             textColor={theme.colors.error}
             onPress={() => setShowDeleteDialog(true)}
-            style={styles.deleteButton}
-            contentStyle={styles.saveButtonContent}
+            style={buttonStyles.deleteButton}
+            contentStyle={buttonStyles.saveButtonContent}
           >
             {t('common.delete')}
           </Button>
@@ -151,44 +152,8 @@ export const DocumentTypeEditScreen: React.FC<Props> = ({ route, navigation }) =
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
   content: {
     padding: 16,
     paddingBottom: 32,
-  },
-  input: {
-    marginBottom: 12,
-  },
-  label: {
-    marginBottom: 8,
-    marginTop: 4,
-  },
-  algoRow: {
-    marginBottom: 16,
-  },
-  algoButton: {
-    marginRight: 4,
-  },
-  switchRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 12,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#e0e0e0',
-  },
-  saveButton: {
-    marginTop: 24,
-    borderRadius: 8,
-  },
-  saveButtonContent: {
-    paddingVertical: 8,
-  },
-  deleteButton: {
-    marginTop: 12,
-    borderRadius: 8,
-    borderColor: '#d32f2f',
   },
 });

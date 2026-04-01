@@ -9,6 +9,7 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { ManageStackParamList } from '@/navigation/types';
 import { useGroup, useUpsertGroup } from '@/reactQuery';
 import { PermissionMatrix, HasPermission } from '@/components';
+import { screenStyles } from '@/theme/commonStyles';
 
 type NavigationProp = NativeStackNavigationProp<ManageStackParamList, 'GroupEdit'>;
 
@@ -53,8 +54,8 @@ export const GroupEditScreen: React.FC = () => {
   };
 
   return (
-    <ScrollView style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      <View style={styles.contentContainer}>
+    <ScrollView style={[screenStyles.container, { backgroundColor: theme.colors.background }]}>
+      <View style={screenStyles.contentWithBottom}>
         <TextInput
           label={t('Group Name')}
           value={name}
@@ -93,8 +94,6 @@ export const GroupEditScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  contentContainer: { padding: 16, paddingBottom: 32 },
   input: { marginBottom: 16 },
   button: { marginTop: 16 },
 });
