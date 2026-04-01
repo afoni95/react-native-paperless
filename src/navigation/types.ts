@@ -1,4 +1,29 @@
 import { NavigatorScreenParams } from '@react-navigation/native';
+import { WorkflowTrigger, WorkflowAction } from '@/types/workflows';
+
+export type TriggerEditResult =
+  | {
+      token: number;
+      mode: 'save';
+      trigger: Partial<WorkflowTrigger>;
+    }
+  | {
+      token: number;
+      mode: 'delete';
+      triggerId: number;
+    };
+
+export type ActionEditResult =
+  | {
+      token: number;
+      mode: 'save';
+      action: Partial<WorkflowAction>;
+    }
+  | {
+      token: number;
+      mode: 'delete';
+      actionId: number;
+    };
 
 export type AuthStackParamList = {
   Login: undefined;
@@ -33,6 +58,22 @@ export type ManageStackParamList = {
   StoragePathEdit: { storagePathId?: number };
   CustomFieldsList: undefined;
   CustomFieldEdit: { customFieldId?: number };
+  WorkflowsList: undefined;
+  WorkflowEdit: {
+    workflowId?: number;
+    triggerResult?: TriggerEditResult;
+    actionResult?: ActionEditResult;
+  };
+  TriggerEdit: {
+    workflowId: number;
+    triggerId?: number;
+    trigger?: WorkflowTrigger;
+  };
+  ActionEdit: {
+    workflowId: number;
+    actionId?: number;
+    action?: WorkflowAction;
+  };
   Settings: undefined;
   TrashBin: undefined;
   TasksList: undefined;

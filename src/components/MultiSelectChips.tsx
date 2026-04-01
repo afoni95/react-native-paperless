@@ -2,18 +2,26 @@ import React, { useMemo, useState } from 'react';
 import { View, ScrollView, StyleSheet } from 'react-native';
 import { Chip, Searchbar, Text, useTheme } from 'react-native-paper';
 import { useTranslation } from 'react-i18next';
-import { Tag } from '@/types';
 import { getContrastTextColor } from '@/utils';
 
+export type ChipItem = {
+  id: number;
+  name: string;
+  color?: string;
+  text_color?: string;
+};
+
 interface MultiSelectChipsProps {
-  tags: Tag[];
+  chipItems: ChipItem[];
   selectedIds: number[];
   onSelectionChange: (ids: number[]) => void;
   label?: string;
 }
 
+const MAX_VISIBLE = 6;
+
 export const MultiSelectChips: React.FC<MultiSelectChipsProps> = ({
-  tags,
+  chipItems: tags,
   selectedIds,
   onSelectionChange,
   label,
@@ -21,11 +29,22 @@ export const MultiSelectChips: React.FC<MultiSelectChipsProps> = ({
   const theme = useTheme();
   const { t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState('');
+  const [expanded, setExpanded] = useState(false);
 
   const filteredTags = useMemo(() => {
     if (!searchQuery) return tags;
     return tags.filter((tag) => tag.name.toLowerCase().includes(searchQuery.toLowerCase()));
   }, [tags, searchQuery]);
+
+  const visibleTags = useMemo(() => {
+    if (expanded) return filteredTags;
+    // Prefer selected tags first, then fill with non-selected until MAX_VISIBLE.
+    const selectedInFiltered = filteredTags.filter((tag) => selectedIds.includes(tag.id));
+    const nonSelected = filteredTags.filter((tag) => !selectedIds.includes(tag.id));
+    return [...selectedInFiltered, ...nonSelected].slice(0, MAX_VISIBLE);
+  }, [filteredTags, expanded, selectedIds]);
+
+  const extraCount = Math.max(0, filteredTags.length - visibleTags.length);
 
   const handleToggle = (id: number) => {
     if (selectedIds.includes(id)) {
@@ -38,7 +57,7 @@ export const MultiSelectChips: React.FC<MultiSelectChipsProps> = ({
   return (
     <View style={styles.container}>
       {!!label && (
-        <Text variant="labelLarge" style={{ color: theme.colors.onSurface, marginBottom: 8 }}>
+        <Text variant="labelLarge" style={{ color: theme.colors.onSurface, marginBottom: 6 }}>
           {label}
         </Text>
       )}
@@ -51,9 +70,12 @@ export const MultiSelectChips: React.FC<MultiSelectChipsProps> = ({
         inputStyle={styles.searchInput}
       />
 
-      <ScrollView style={styles.chipContainer} nestedScrollEnabled>
+      <ScrollView
+        style={expanded ? styles.chipContainerMax : styles.chipContainerMin}
+        nestedScrollEnabled
+      >
         <View style={styles.chipWrap}>
-          {filteredTags.map((tag) => {
+          {visibleTags.map((tag) => {
             const isSelected = selectedIds.includes(tag.id);
             return (
               <Chip
@@ -61,24 +83,50 @@ export const MultiSelectChips: React.FC<MultiSelectChipsProps> = ({
                 mode="flat"
                 selected={isSelected}
                 onPress={() => handleToggle(tag.id)}
-                style={{
-                  backgroundColor: isSelected
-                    ? tag.color || theme.colors.primaryContainer
-                    : theme.colors.surfaceVariant,
-                  marginRight: 4,
-                  marginBottom: 4,
-                }}
-                textStyle={{
-                  color: isSelected
-                    ? tag.text_color || getContrastTextColor(tag.color)
-                    : theme.colors.onSurfaceVariant,
-                  fontSize: 12,
-                }}
+                style={[
+                  styles.chip,
+                  {
+                    backgroundColor: isSelected
+                      ? tag.color || theme.colors.primaryContainer
+                      : theme.colors.surfaceVariant,
+                  },
+                ]}
+                textStyle={[
+                  styles.chipText,
+                  {
+                    color: isSelected
+                      ? tag.text_color ||
+                        getContrastTextColor(tag.color || theme.colors.primaryContainer)
+                      : theme.colors.onSurfaceVariant,
+                  },
+                ]}
               >
                 {tag.name}
               </Chip>
             );
           })}
+
+          {!expanded && extraCount > 0 ? (
+            <Chip
+              mode="outlined"
+              onPress={() => setExpanded(true)}
+              style={styles.moreChip}
+              textStyle={styles.chipText}
+            >
+              +{extraCount}
+            </Chip>
+          ) : null}
+
+          {expanded && filteredTags.length > MAX_VISIBLE ? (
+            <Chip
+              mode="outlined"
+              onPress={() => setExpanded(false)}
+              style={styles.moreChip}
+              textStyle={styles.chipText}
+            >
+              {t('common.showMore')}
+            </Chip>
+          ) : null}
         </View>
       </ScrollView>
     </View>
@@ -94,13 +142,33 @@ const styles = StyleSheet.create({
     elevation: 0,
   },
   searchInput: {
-    fontSize: 14,
+    fontSize: 13,
+    paddingVertical: 0,
   },
-  chipContainer: {
-    maxHeight: 150,
+  chipContainerMin: {
+    maxHeight: 135,
+  },
+  chipContainerMax: {
+    maxHeight: 260,
   },
   chipWrap: {
     flexDirection: 'row',
     flexWrap: 'wrap',
+  },
+  chip: {
+    marginRight: 4,
+    marginBottom: 4,
+    paddingVertical: 2,
+    paddingHorizontal: 2,
+  },
+  chipText: {
+    fontSize: 12,
+  },
+  moreChip: {
+    marginRight: 6,
+    marginBottom: 6,
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    minHeight: 28,
   },
 });

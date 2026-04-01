@@ -346,3 +346,13 @@ export type ApiStatus = {
   database: ApiStatusDatabase;
   tasks: ApiStatusTasks;
 };
+
+export type {
+  Workflow,
+  WorkflowTrigger,
+  WorkflowAction,
+  WorkflowCreatePayload,
+  WorkflowUpdatePayload,
+  TriggerType,
+  ActionType,
+} from './workflows';

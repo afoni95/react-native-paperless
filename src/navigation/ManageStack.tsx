@@ -14,6 +14,10 @@ import { StoragePathsListScreen } from '@/features/manage/StoragePathsListScreen
 import { StoragePathEditScreen } from '@/features/manage/StoragePathEditScreen';
 import { CustomFieldsListScreen } from '@/features/custom-fields/CustomFieldsListScreen';
 import { CustomFieldEditScreen } from '@/features/custom-fields/CustomFieldEditScreen';
+import { WorkflowsListScreen } from '@/features/manage/WorkflowsListScreen';
+import { WorkflowEditScreen } from '@/features/manage/WorkflowEditScreen';
+import { TriggerEditScreen } from '@/features/manage/TriggerEditScreen';
+import { ActionEditScreen } from '@/features/manage/ActionEditScreen';
 import { TrashBinScreen } from '@/features/manage/TrashBinScreen';
 import { LogsScreen } from '@/features/manage/LogsScreen';
 import { UsersListScreen } from '@/features/manage/UsersListScreen';
@@ -101,6 +105,30 @@ export const ManageStack: React.FC = () => {
             ? t('customFields.editCustomField')
             : t('customFields.createCustomField'),
         })}
+      />
+      <Stack.Screen
+        name="WorkflowsList"
+        component={WorkflowsListScreen}
+        options={{ title: t('workflows.title') }}
+      />
+      <Stack.Screen
+        name="WorkflowEdit"
+        component={WorkflowEditScreen}
+        options={({ route }) => ({
+          title: route.params?.workflowId
+            ? t('workflows.editWorkflow')
+            : t('workflows.createWorkflow'),
+        })}
+      />
+      <Stack.Screen
+        name="TriggerEdit"
+        component={TriggerEditScreen}
+        options={{ title: t('workflows.editTrigger') }}
+      />
+      <Stack.Screen
+        name="ActionEdit"
+        component={ActionEditScreen}
+        options={{ title: t('workflows.editAction') }}
       />
       <Stack.Screen
         name="Settings"

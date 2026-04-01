@@ -2,8 +2,10 @@ import React from 'react';
 import { Card, TextInput, useTheme } from 'react-native-paper';
 import { useTranslation } from 'react-i18next';
 import type { Tag } from '@/types';
-import { SearchableDropdown, MultiSelectChips, CustomFieldsSection } from '@/components';
 import type { CustomField, DocumentCustomFieldValue } from '@/types';
+import { SearchableDropdown } from './SearchableDropdown';
+import { MultiSelectChips } from './MultiSelectChips';
+import { CustomFieldsSection } from './CustomFieldsSection';
 
 interface DocumentMetadataFormProps {
   title: string;
@@ -118,7 +120,7 @@ export const DocumentMetadataForm: React.FC<DocumentMetadataFormProps> = ({
           />
 
           <MultiSelectChips
-            tags={allTags}
+            chipItems={allTags}
             selectedIds={tags}
             onSelectionChange={onTagsChange}
             label={t('documents.tags')}

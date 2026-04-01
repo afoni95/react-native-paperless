@@ -160,7 +160,7 @@ export const FilterSheet: React.FC<FilterSheetProps> = ({
             {t('documents.tags')}
           </Text>
           <MultiSelectChips
-            tags={tags}
+            chipItems={tags}
             selectedIds={localFilters.tags}
             onSelectionChange={(ids) => setLocalFilters({ ...localFilters, tags: ids })}
           />
