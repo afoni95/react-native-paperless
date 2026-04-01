@@ -1,10 +1,32 @@
 import { create } from 'zustand';
+import axios from 'axios';
 import type { User } from '@/api/users';
 import * as SecureStore from 'expo-secure-store';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { TOKEN_KEY, SERVER_URL_KEY, BIOMETRIC_ENABLED_KEY, USERNAME_KEY } from './constants';
-import apiClient from '@/api/client';
-import { PaginatedResponse } from '@/types';
+import type { PaginatedResponse } from '@/types';
+
+const PAPERLESS_API_ACCEPT_HEADER = 'application/json; version=9';
+
+async function fetchCurrentUser(
+  serverUrl: string,
+  token: string,
+  username: string,
+): Promise<User | null> {
+  const { data } = await axios.get<PaginatedResponse<User>>(
+    `${serverUrl.replace(/\/+$/, '')}/api/users/`,
+    {
+      headers: {
+        Accept: PAPERLESS_API_ACCEPT_HEADER,
+        Authorization: `Token ${token}`,
+      },
+      params: { username },
+      timeout: 30000,
+    },
+  );
+
+  return data.results?.find((user) => user.username === username) || null;
+}
 
 interface AuthState {
   token: string | null;
@@ -93,9 +115,7 @@ export const useAuthStore = create<AuthState>((set) => ({
           // Try to fetch the full user object if we have a username
           if (username) {
             try {
-              const resp = await apiClient.get('/api/users/', { params: { username } });
-              const list = resp.data as PaginatedResponse<User>;
-              const found = list.results?.find((u) => u.username === username) || null;
+              const found = await fetchCurrentUser(serverUrl, token, username);
               if (found) set({ user: found });
             } catch {
               await SecureStore.deleteItemAsync(TOKEN_KEY);
@@ -144,9 +164,7 @@ export const useAuthStore = create<AuthState>((set) => ({
         // Try to fetch user when unlocking biometric
         if (username) {
           try {
-            const resp = await apiClient.get('/api/users/', { params: { username } });
-            const list = resp.data as PaginatedResponse<User>;
-            const found = list.results?.find((u) => u.username === username) || null;
+            const found = await fetchCurrentUser(serverUrl, token, username);
             if (found) set({ user: found });
           } catch {
             await SecureStore.deleteItemAsync(TOKEN_KEY);

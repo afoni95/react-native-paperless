@@ -6,7 +6,6 @@ import { useTranslation } from 'react-i18next';
 
 interface EmptyStateProps {
   message?: string;
-  icon?: string;
 }
 
 export const EmptyState: React.FC<EmptyStateProps> = ({ message }) => {

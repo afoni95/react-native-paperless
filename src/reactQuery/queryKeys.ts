@@ -45,3 +45,8 @@ export const logsQueryKeys = {
   all: ['logs-all'] as const,
   detail: (logId: string, limit?: number) => ['log', logId, limit ?? null] as const,
 };
+
+export const workflowQueryKeys = {
+  all: ['workflows-all'] as const,
+  detail: (id: number) => ['workflow', id] as const,
+};

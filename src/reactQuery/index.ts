@@ -9,3 +9,4 @@ export * from './tasks';
 export * from './statistics';
 export * from './logs';
 export * from './usersGroups';
+export * from './workflows';

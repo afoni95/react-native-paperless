@@ -11,3 +11,4 @@ export { listLogs, getLog } from './logs';
 export { default as apiClient } from './client';
 export { usersApi } from './users';
 export { groupsApi } from './groups';
+export { workflowsApi } from './workflows';

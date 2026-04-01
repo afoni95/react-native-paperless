@@ -22,6 +22,7 @@ export const ManagementOverviewScreen: React.FC = () => {
   const showDocumentTypesScreen = can('view', 'documenttype');
   const showStoragePathsScreen = can('view', 'storagepath');
   const showCustomFieldsScreen = can('view', 'customfield');
+  const showWorkflowsScreen = can('view', 'workflow');
   const showTrashBinScreen = can('delete', 'document');
   const showLogEntriesScreen = can('view', 'logentry');
   const showTasksScreen = can('view', 'paperlesstask');
@@ -102,6 +103,17 @@ export const ManagementOverviewScreen: React.FC = () => {
               left={(props) => <List.Icon {...props} icon="form-textbox" />}
               right={(props) => <List.Icon {...props} icon="chevron-right" />}
               onPress={() => navigation.navigate('CustomFieldsList')}
+            />
+            <Divider />
+          </>
+        ) : null}
+        {showWorkflowsScreen ? (
+          <>
+            <List.Item
+              title={t('manage.workflows')}
+              left={(props) => <List.Icon {...props} icon="git" />}
+              right={(props) => <List.Icon {...props} icon="chevron-right" />}
+              onPress={() => navigation.navigate('WorkflowsList')}
             />
             <Divider />
           </>
