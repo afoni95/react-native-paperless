@@ -6,14 +6,19 @@
 
 import type {
   Correspondent,
+  CustomField,
   Document,
   DocumentNote,
   DocumentType,
   PaginatedResponse,
+  StoragePath,
   Statistics,
   Tag,
   TaskStatus,
+  Workflow,
 } from '@/types';
+import type { Group } from './groups';
+import type { User } from './users';
 
 /* ------------------------------------------------------------------ */
 /*  Tags                                                               */
@@ -476,6 +481,321 @@ const demoNotes: Record<number, DocumentNote[]> = {
 };
 
 /* ------------------------------------------------------------------ */
+/*  Users / Groups                                                     */
+/* ------------------------------------------------------------------ */
+
+export const demoGroups: Group[] = [
+  {
+    id: 1,
+    name: 'Administrators',
+    permissions: [
+      'view_document',
+      'change_document',
+      'delete_document',
+      'add_document',
+      'view_workflow',
+      'change_workflow',
+      'delete_workflow',
+      'add_workflow',
+      'view_user',
+      'change_user',
+      'add_user',
+      'delete_user',
+      'view_group',
+      'change_group',
+      'add_group',
+      'delete_group',
+    ],
+  },
+  {
+    id: 2,
+    name: 'Accounting',
+    permissions: ['view_document', 'change_document', 'add_document', 'view_tag', 'view_workflow'],
+  },
+  {
+    id: 3,
+    name: 'Read Only',
+    permissions: ['view_document', 'view_tag', 'view_correspondent', 'view_documenttype'],
+  },
+];
+
+export const demoUsers: User[] = [
+  {
+    id: 1,
+    username: 'demo',
+    email: 'demo@paperless.example',
+    first_name: 'Demo',
+    last_name: 'User',
+    is_active: true,
+    is_superuser: true,
+    is_staff: true,
+    is_mfa_enabled: false,
+    date_joined: '2025-01-01T08:00:00Z',
+    last_login: '2026-04-01T12:00:00Z',
+    groups: [1],
+    inherited_permissions: demoGroups[0].permissions,
+    user_permissions: [],
+  },
+  {
+    id: 2,
+    username: 'jane.manager',
+    email: 'jane.manager@paperless.example',
+    first_name: 'Jane',
+    last_name: 'Manager',
+    is_active: true,
+    is_superuser: false,
+    is_staff: true,
+    is_mfa_enabled: true,
+    date_joined: '2025-06-10T09:30:00Z',
+    last_login: '2026-03-30T09:15:00Z',
+    groups: [2],
+    inherited_permissions: demoGroups[1].permissions,
+    user_permissions: ['change_workflow'],
+  },
+  {
+    id: 3,
+    username: 'viewer',
+    email: 'viewer@paperless.example',
+    first_name: 'Read',
+    last_name: 'Only',
+    is_active: true,
+    is_superuser: false,
+    is_staff: false,
+    is_mfa_enabled: false,
+    date_joined: '2025-10-05T14:20:00Z',
+    last_login: '2026-03-28T16:00:00Z',
+    groups: [3],
+    inherited_permissions: demoGroups[2].permissions,
+    user_permissions: [],
+  },
+];
+
+/* ------------------------------------------------------------------ */
+/*  Storage Paths / Custom Fields                                      */
+/* ------------------------------------------------------------------ */
+
+export const demoStoragePaths: StoragePath[] = [
+  {
+    id: 1,
+    name: 'Finance/Invoices',
+    path: 'consume/finance/invoices',
+    match: 'invoice',
+    matching_algorithm: 3,
+    is_insensitive: true,
+    document_count: 4,
+    owner: 1,
+    user_can_change: true,
+    slug: 'finance-invoices',
+  },
+  {
+    id: 2,
+    name: 'Insurance',
+    path: 'consume/insurance',
+    match: 'insurance',
+    matching_algorithm: 3,
+    is_insensitive: true,
+    document_count: 2,
+    owner: 1,
+    user_can_change: true,
+    slug: 'insurance',
+  },
+  {
+    id: 3,
+    name: 'Utilities',
+    path: 'consume/utilities',
+    match: 'bill',
+    matching_algorithm: 5,
+    is_insensitive: true,
+    document_count: 2,
+    owner: 1,
+    user_can_change: true,
+    slug: 'utilities',
+  },
+];
+
+export const demoCustomFields: CustomField[] = [
+  {
+    id: 1,
+    name: 'Invoice Number',
+    data_type: 'string',
+    extra_data: null,
+    document_count: 3,
+  },
+  {
+    id: 2,
+    name: 'Due Date',
+    data_type: 'date',
+    extra_data: null,
+    document_count: 2,
+  },
+  {
+    id: 3,
+    name: 'Payment Status',
+    data_type: 'select',
+    extra_data: {
+      select_options: [
+        { id: 'pending', label: 'Pending' },
+        { id: 'paid', label: 'Paid' },
+        { id: 'overdue', label: 'Overdue' },
+      ],
+      default_currency: null,
+    },
+    document_count: 4,
+  },
+];
+
+/* ------------------------------------------------------------------ */
+/*  Workflows                                                          */
+/* ------------------------------------------------------------------ */
+
+export const demoWorkflows: Workflow[] = [
+  {
+    id: 1,
+    name: 'Auto Tag Invoices',
+    order: 10,
+    enabled: true,
+    triggers: [
+      {
+        id: 11,
+        sources: [],
+        type: 2,
+        filter_path: '*',
+        filter_filename: '*invoice*',
+        filter_mailrule: null,
+        matching_algorithm: 3,
+        match: 'invoice',
+        is_insensitive: true,
+        filter_has_tags: [],
+        filter_has_all_tags: [],
+        filter_has_not_tags: [],
+        filter_custom_field_query: null,
+        filter_has_not_correspondents: [],
+        filter_has_not_document_types: [],
+        filter_has_not_storage_paths: [],
+        filter_has_correspondent: null,
+        filter_has_document_type: 1,
+        filter_has_storage_path: 1,
+        schedule_offset_days: 0,
+        schedule_is_recurring: false,
+        schedule_recurring_interval_days: 1,
+        schedule_date_field: 'added',
+        schedule_date_custom_field: null,
+      },
+    ],
+    actions: [
+      {
+        id: 101,
+        type: 1,
+        assign_title: '{{correspondent}} - {{created_year}} Invoice',
+        assign_tags: [1],
+        assign_correspondent: 1,
+        assign_document_type: 1,
+        assign_storage_path: 1,
+        assign_owner: 1,
+        assign_view_users: [],
+        assign_view_groups: [2],
+        assign_change_users: [1],
+        assign_change_groups: [],
+        assign_custom_fields: [1, 2],
+        assign_custom_fields_values: {
+          1: 'AUTO',
+        },
+        remove_all_tags: false,
+        remove_tags: [],
+        remove_all_correspondents: false,
+        remove_correspondents: [],
+        remove_all_document_types: false,
+        remove_document_types: [],
+        remove_all_storage_paths: false,
+        remove_storage_paths: [],
+        remove_custom_fields: [],
+        remove_all_custom_fields: false,
+        remove_all_owners: false,
+        remove_owners: [],
+        remove_all_permissions: false,
+        remove_view_users: [],
+        remove_view_groups: [],
+        remove_change_users: [],
+        remove_change_groups: [],
+        email: null,
+        webhook: null,
+      },
+    ],
+  },
+  {
+    id: 2,
+    name: 'Cleanup Inbox Tags',
+    order: 20,
+    enabled: true,
+    triggers: [
+      {
+        id: 12,
+        sources: [],
+        type: 4,
+        filter_path: '*',
+        filter_filename: '',
+        filter_mailrule: null,
+        matching_algorithm: 0,
+        match: '',
+        is_insensitive: true,
+        filter_has_tags: [5],
+        filter_has_all_tags: [],
+        filter_has_not_tags: [],
+        filter_custom_field_query: null,
+        filter_has_not_correspondents: [],
+        filter_has_not_document_types: [],
+        filter_has_not_storage_paths: [],
+        filter_has_correspondent: null,
+        filter_has_document_type: null,
+        filter_has_storage_path: null,
+        schedule_offset_days: 7,
+        schedule_is_recurring: true,
+        schedule_recurring_interval_days: 7,
+        schedule_date_field: 'added',
+        schedule_date_custom_field: null,
+      },
+    ],
+    actions: [
+      {
+        id: 102,
+        type: 2,
+        assign_title: '',
+        assign_tags: [],
+        assign_correspondent: null,
+        assign_document_type: null,
+        assign_storage_path: null,
+        assign_owner: null,
+        assign_view_users: [],
+        assign_view_groups: [],
+        assign_change_users: [],
+        assign_change_groups: [],
+        assign_custom_fields: [],
+        assign_custom_fields_values: {},
+        remove_all_tags: false,
+        remove_tags: [5],
+        remove_all_correspondents: false,
+        remove_correspondents: [],
+        remove_all_document_types: false,
+        remove_document_types: [],
+        remove_all_storage_paths: false,
+        remove_storage_paths: [],
+        remove_custom_fields: [],
+        remove_all_custom_fields: false,
+        remove_all_owners: false,
+        remove_owners: [],
+        remove_all_permissions: false,
+        remove_view_users: [],
+        remove_view_groups: [],
+        remove_change_users: [],
+        remove_change_groups: [],
+        email: null,
+        webhook: null,
+      },
+    ],
+  },
+];
+
+/* ------------------------------------------------------------------ */
 /*  Statistics                                                         */
 /* ------------------------------------------------------------------ */
 
@@ -493,7 +813,7 @@ export const demoStatistics: Statistics = {
   document_type_count: demoDocumentTypes.length,
   current_asn: 1009,
   inbox_tag: 2,
-  storage_path_count: 0,
+  storage_path_count: demoStoragePaths.length,
 };
 
 /* ------------------------------------------------------------------ */
@@ -757,6 +1077,167 @@ export function matchDemoRoute(
   }
   if (dtMatch && m === 'DELETE') {
     return { status: 204, data: null };
+  }
+
+  /* ---- Users ---- */
+  if (path === '/api/users/' && m === 'GET') {
+    const page = Number(params?.page ?? 1);
+    const pageSize = Number(params?.page_size ?? 100);
+    const usernameQuery = String(params?.username ?? '').trim().toLowerCase();
+    const users = usernameQuery
+      ? demoUsers.filter((u) => u.username.toLowerCase() === usernameQuery)
+      : demoUsers;
+    return { status: 200, data: paginate(users, page, pageSize) };
+  }
+  if (path === '/api/users/' && m === 'POST') {
+    return { status: 201, data: { ...demoUsers[0], id: Date.now(), username: 'new-user' } };
+  }
+  const userMatch = path.match(/^\/api\/users\/(\d+)\/$/);
+  if (userMatch && m === 'GET') {
+    const user = demoUsers.find((u) => u.id === Number(userMatch[1]));
+    return user ? { status: 200, data: user } : { status: 404, data: { detail: 'Not found.' } };
+  }
+  if (userMatch && m === 'PATCH') {
+    const user = demoUsers.find((u) => u.id === Number(userMatch[1]));
+    return user ? { status: 200, data: user } : { status: 404, data: { detail: 'Not found.' } };
+  }
+  if (userMatch && m === 'DELETE') {
+    return { status: 204, data: null };
+  }
+
+  /* ---- Groups ---- */
+  if (path === '/api/groups/' && m === 'GET') {
+    const page = Number(params?.page ?? 1);
+    const pageSize = Number(params?.page_size ?? 100);
+    return { status: 200, data: paginate(demoGroups, page, pageSize) };
+  }
+  if (path === '/api/groups/' && m === 'POST') {
+    return { status: 201, data: { ...demoGroups[0], id: Date.now(), name: 'New Group' } };
+  }
+  const groupMatch = path.match(/^\/api\/groups\/(\d+)\/$/);
+  if (groupMatch && m === 'GET') {
+    const group = demoGroups.find((g) => g.id === Number(groupMatch[1]));
+    return group
+      ? { status: 200, data: group }
+      : { status: 404, data: { detail: 'Not found.' } };
+  }
+  if (groupMatch && m === 'PATCH') {
+    const group = demoGroups.find((g) => g.id === Number(groupMatch[1]));
+    return group
+      ? { status: 200, data: group }
+      : { status: 404, data: { detail: 'Not found.' } };
+  }
+  if (groupMatch && m === 'DELETE') {
+    return { status: 204, data: null };
+  }
+
+  /* ---- Storage Paths ---- */
+  if (path === '/api/storage_paths/' && m === 'GET') {
+    const page = Number(params?.page ?? 1);
+    const pageSize = Number(params?.page_size ?? 100);
+    return { status: 200, data: paginate(demoStoragePaths, page, pageSize) };
+  }
+  if (path === '/api/storage_paths/' && m === 'POST') {
+    return {
+      status: 201,
+      data: {
+        ...demoStoragePaths[0],
+        id: Date.now(),
+        name: 'New Storage Path',
+        path: 'consume/new-path',
+        slug: 'new-storage-path',
+      },
+    };
+  }
+  const storagePathMatch = path.match(/^\/api\/storage_paths\/(\d+)\/$/);
+  if (storagePathMatch && m === 'GET') {
+    const sp = demoStoragePaths.find((s) => s.id === Number(storagePathMatch[1]));
+    return sp ? { status: 200, data: sp } : { status: 404, data: { detail: 'Not found.' } };
+  }
+  if (storagePathMatch && m === 'PATCH') {
+    const sp = demoStoragePaths.find((s) => s.id === Number(storagePathMatch[1]));
+    return sp ? { status: 200, data: sp } : { status: 404, data: { detail: 'Not found.' } };
+  }
+  if (storagePathMatch && m === 'DELETE') {
+    return { status: 204, data: null };
+  }
+
+  /* ---- Custom Fields ---- */
+  if (path === '/api/custom_fields/' && m === 'GET') {
+    const page = Number(params?.page ?? 1);
+    const pageSize = Number(params?.page_size ?? 100);
+    return { status: 200, data: paginate(demoCustomFields, page, pageSize) };
+  }
+  if (path === '/api/custom_fields/' && m === 'POST') {
+    return {
+      status: 201,
+      data: {
+        ...demoCustomFields[0],
+        id: Date.now(),
+        name: 'New Custom Field',
+      },
+    };
+  }
+  const customFieldMatch = path.match(/^\/api\/custom_fields\/(\d+)\/$/);
+  if (customFieldMatch && m === 'GET') {
+    const cf = demoCustomFields.find((c) => c.id === Number(customFieldMatch[1]));
+    return cf ? { status: 200, data: cf } : { status: 404, data: { detail: 'Not found.' } };
+  }
+  if (customFieldMatch && m === 'PATCH') {
+    const cf = demoCustomFields.find((c) => c.id === Number(customFieldMatch[1]));
+    return cf ? { status: 200, data: cf } : { status: 404, data: { detail: 'Not found.' } };
+  }
+  if (customFieldMatch && m === 'DELETE') {
+    return { status: 204, data: null };
+  }
+
+  /* ---- Workflows ---- */
+  if (path === '/api/workflows/' && m === 'GET') {
+    const page = Number(params?.page ?? 1);
+    const pageSize = Number(params?.page_size ?? 100);
+    return { status: 200, data: paginate(demoWorkflows, page, pageSize) };
+  }
+  if (path === '/api/workflows/' && m === 'POST') {
+    return {
+      status: 201,
+      data: {
+        ...demoWorkflows[0],
+        id: Date.now(),
+        name: 'New Workflow',
+      },
+    };
+  }
+  const workflowMatch = path.match(/^\/api\/workflows\/(\d+)\/$/);
+  if (workflowMatch && m === 'GET') {
+    const workflow = demoWorkflows.find((w) => w.id === Number(workflowMatch[1]));
+    return workflow
+      ? { status: 200, data: workflow }
+      : { status: 404, data: { detail: 'Not found.' } };
+  }
+  if (workflowMatch && m === 'PATCH') {
+    const workflow = demoWorkflows.find((w) => w.id === Number(workflowMatch[1]));
+    return workflow
+      ? { status: 200, data: workflow }
+      : { status: 404, data: { detail: 'Not found.' } };
+  }
+  if (workflowMatch && m === 'DELETE') {
+    return { status: 204, data: null };
+  }
+
+  /* ---- Trash Bin ---- */
+  if (path === '/api/trash/' && m === 'GET') {
+    const trashedDocs = baseDocs.filter((d) => !!d.deleted_at);
+    const page = Number(params?.page ?? 1);
+    const pageSize = Number(params?.page_size ?? 100);
+    return { status: 200, data: paginate(trashedDocs, page, pageSize) };
+  }
+  if (path === '/api/trash/' && m === 'POST') {
+    return { status: 200, data: null };
+  }
+
+  const reprocessDocMatch = path.match(/^\/api\/documents\/(\d+)\/reprocess\/$/);
+  if (reprocessDocMatch && m === 'POST') {
+    return { status: 200, data: 'demo-reprocess-task-id' };
   }
 
   /* ---- Tasks ---- */
