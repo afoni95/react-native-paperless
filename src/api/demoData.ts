@@ -1083,7 +1083,9 @@ export function matchDemoRoute(
   if (path === '/api/users/' && m === 'GET') {
     const page = Number(params?.page ?? 1);
     const pageSize = Number(params?.page_size ?? 100);
-    const usernameQuery = String(params?.username ?? '').trim().toLowerCase();
+    const usernameQuery = String(params?.username ?? '')
+      .trim()
+      .toLowerCase();
     const users = usernameQuery
       ? demoUsers.filter((u) => u.username.toLowerCase() === usernameQuery)
       : demoUsers;
@@ -1117,15 +1119,11 @@ export function matchDemoRoute(
   const groupMatch = path.match(/^\/api\/groups\/(\d+)\/$/);
   if (groupMatch && m === 'GET') {
     const group = demoGroups.find((g) => g.id === Number(groupMatch[1]));
-    return group
-      ? { status: 200, data: group }
-      : { status: 404, data: { detail: 'Not found.' } };
+    return group ? { status: 200, data: group } : { status: 404, data: { detail: 'Not found.' } };
   }
   if (groupMatch && m === 'PATCH') {
     const group = demoGroups.find((g) => g.id === Number(groupMatch[1]));
-    return group
-      ? { status: 200, data: group }
-      : { status: 404, data: { detail: 'Not found.' } };
+    return group ? { status: 200, data: group } : { status: 404, data: { detail: 'Not found.' } };
   }
   if (groupMatch && m === 'DELETE') {
     return { status: 204, data: null };
