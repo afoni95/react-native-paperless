@@ -6,7 +6,6 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { WorkflowTrigger, TriggerType } from '@/types/workflows';
 import { ManageStackParamList } from '@/navigation/types';
 import { triggerTypeOptions } from '@/utils/workflowHelpers';
-import { NonSearchableDropdown } from '@/components/NonSearchableDropdown';
 import { SearchableDropdown, MultiSelectChips } from '@/components';
 import {
   useAllCorrespondents,
@@ -198,11 +197,12 @@ export const TriggerEditScreen: React.FC<Props> = ({ route, navigation }) => {
       contentContainerStyle={screenStyles.content}
       keyboardShouldPersistTaps="handled"
     >
-      <NonSearchableDropdown
+      <SearchableDropdown
         label={t('workflows.triggerType')}
         items={triggerTypeOptionsTranslated}
         selectedId={type}
         allowClear={false}
+        searchable={false}
         onSelect={(val) => setType((val as TriggerType) ?? TriggerType.DocumentAdded)}
       />
 
@@ -304,11 +304,12 @@ export const TriggerEditScreen: React.FC<Props> = ({ route, navigation }) => {
               dateFieldItems.find((item) => item.value === scheduleDateField)?.id ?? null;
 
             return (
-              <NonSearchableDropdown
+              <SearchableDropdown
                 label={t('workflows.scheduleDateField')}
                 items={dateFieldItems}
                 selectedId={selectedDateFieldId}
                 allowClear={false}
+                searchable={false}
                 onSelect={(id) => {
                   const item = dateFieldItems.find((i) => i.id === id);
                   setScheduleDateField(
@@ -324,11 +325,12 @@ export const TriggerEditScreen: React.FC<Props> = ({ route, navigation }) => {
           })()}
 
           {scheduleDateField === 'custom_field' && (
-            <NonSearchableDropdown
+            <SearchableDropdown
               label={t('workflows.scheduleDateCustomField')}
               items={customFields}
               selectedId={scheduleDateCustomField}
               allowClear={false}
+              searchable={false}
               onSelect={(id) => setScheduleDateCustomField(id)}
             />
           )}

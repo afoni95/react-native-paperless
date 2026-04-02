@@ -15,7 +15,6 @@ import {
   useAllTags,
   useUsers,
 } from '@/reactQuery';
-import { NonSearchableDropdown } from '@/components/NonSearchableDropdown';
 import { screenStyles, buttonStyles } from '@/theme/commonStyles';
 
 type Props = NativeStackScreenProps<ManageStackParamList, 'ActionEdit'>;
@@ -170,11 +169,12 @@ export const ActionEditScreen: React.FC<Props> = ({ route, navigation }) => {
       contentContainerStyle={screenStyles.content}
       keyboardShouldPersistTaps="handled"
     >
-      <NonSearchableDropdown
+      <SearchableDropdown
         label={t('workflows.actionType')}
         items={actionTypeOptionsTranslated}
         selectedId={type}
         allowClear={false}
+        searchable={false}
         onSelect={(val) => setType((val as ActionType) ?? ActionType.Assignment)}
       />
 
