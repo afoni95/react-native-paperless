@@ -4,18 +4,18 @@ export const getTriggerTypeName = (type: TriggerType | number): string => {
   switch (type) {
     case TriggerType.ConsumptionStarted:
     case 1:
-      return 'Consumption Started';
+      return 'workflows.triggerConsumptionStarted';
     case TriggerType.DocumentAdded:
     case 2:
-      return 'Document Added';
+      return 'workflows.triggerDocumentAdded';
     case TriggerType.DocumentUpdated:
     case 3:
-      return 'Document Updated';
+      return 'workflows.triggerDocumentUpdated';
     case TriggerType.Scheduled:
     case 4:
-      return 'Scheduled';
+      return 'workflows.triggerScheduled';
     default:
-      return 'Unknown';
+      return 'common.none';
   }
 };
 
@@ -23,12 +23,12 @@ export const getActionTypeName = (type: ActionType | number): string => {
   switch (type) {
     case ActionType.Assignment:
     case 1:
-      return 'Assignment';
+      return 'workflows.actionAssignment';
     case ActionType.Removal:
     case 2:
-      return 'Removal';
+      return 'workflows.actionRemoval';
     default:
-      return 'Unknown';
+      return 'common.none';
   }
 };
 

@@ -3,18 +3,19 @@ import { View, ScrollView, StyleSheet, Modal, Pressable, Dimensions } from 'reac
 import { Searchbar, List, useTheme } from 'react-native-paper';
 import { useTranslation } from 'react-i18next';
 
-interface SearchableDropdownItem {
+export interface SearchableDropdownItem {
   id: number;
   name: string;
 }
 
-interface SearchableDropdownProps {
+export interface SearchableDropdownProps {
   items: SearchableDropdownItem[];
   selectedId: number | null;
   onSelect: (id: number | null) => void;
   placeholder?: string;
   label?: string;
   allowClear?: boolean;
+  searchable?: boolean;
 }
 
 export const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
@@ -24,6 +25,7 @@ export const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
   placeholder,
   label,
   allowClear = true,
+  searchable = true,
 }) => {
   const theme = useTheme();
   const { t } = useTranslation();
@@ -40,9 +42,10 @@ export const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
   const selectedItem = items.find((item) => item.id === selectedId);
 
   const filteredItems = useMemo(() => {
+    if (!searchable) return items;
     if (!searchQuery) return items;
     return items.filter((item) => item.name.toLowerCase().includes(searchQuery.toLowerCase()));
-  }, [items, searchQuery]);
+  }, [items, searchQuery, searchable]);
 
   const handleOpen = () => {
     triggerRef.current?.measureInWindow((x, y, width, height) => {
@@ -105,13 +108,15 @@ export const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
               },
             ]}
           >
-            <Searchbar
-              placeholder={t('common.search')}
-              value={searchQuery}
-              onChangeText={setSearchQuery}
-              style={styles.searchBar}
-              inputStyle={styles.searchInput}
-            />
+            {searchable ? (
+              <Searchbar
+                placeholder={t('common.search')}
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+                style={styles.searchBar}
+                inputStyle={styles.searchInput}
+              />
+            ) : null}
 
             {allowClear && selectedId !== null && (
               <List.Item

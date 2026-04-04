@@ -42,7 +42,7 @@ export const MainTabs: React.FC = () => {
           name="DocumentsTab"
           component={DocumentsStack}
           options={{
-            title: t('documents.title'),
+            title: t('documents.pluralEntity'),
             tabBarIcon: ({ color, size }) => (
               <MaterialCommunityIcons name="file-document-multiple" color={color} size={size} />
             ),

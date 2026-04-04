@@ -229,7 +229,7 @@ export const DocumentDetailScreen: React.FC<Props> = ({ route, navigation }) => 
         {isEditing ? (
           <>
             <TextInput
-              label={t('documents.title')}
+              label={t('documents.singularEntity')}
               value={editTitle}
               onChangeText={setEditTitle}
               mode="outlined"

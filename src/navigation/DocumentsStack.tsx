@@ -16,7 +16,7 @@ export const DocumentsStack: React.FC = () => {
       <Stack.Screen
         name="DocumentList"
         component={DocumentListScreen}
-        options={{ title: t('documents.title') }}
+        options={{ title: t('documents.pluralEntity') }}
       />
       <Stack.Screen
         name="DocumentDetail"

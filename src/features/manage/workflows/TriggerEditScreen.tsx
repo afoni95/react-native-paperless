@@ -6,7 +6,6 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { WorkflowTrigger, TriggerType } from '@/types/workflows';
 import { ManageStackParamList } from '@/navigation/types';
 import { triggerTypeOptions } from '@/utils/workflowHelpers';
-import { NonSearchableDropdown } from '@/components/NonSearchableDropdown';
 import { SearchableDropdown, MultiSelectChips } from '@/components';
 import {
   useAllCorrespondents,
@@ -15,6 +14,7 @@ import {
   useAllTags,
 } from '@/reactQuery';
 import { customFieldsApi } from '@/api/customFields';
+import { screenStyles, buttonStyles } from '@/theme/commonStyles';
 
 type Props = NativeStackScreenProps<ManageStackParamList, 'TriggerEdit'>;
 
@@ -193,15 +193,16 @@ export const TriggerEditScreen: React.FC<Props> = ({ route, navigation }) => {
 
   return (
     <ScrollView
-      style={[styles.container, { backgroundColor: theme.colors.background }]}
-      contentContainerStyle={styles.content}
+      style={[screenStyles.container, { backgroundColor: theme.colors.background }]}
+      contentContainerStyle={screenStyles.content}
       keyboardShouldPersistTaps="handled"
     >
-      <NonSearchableDropdown
+      <SearchableDropdown
         label={t('workflows.triggerType')}
         items={triggerTypeOptionsTranslated}
         selectedId={type}
         allowClear={false}
+        searchable={false}
         onSelect={(val) => setType((val as TriggerType) ?? TriggerType.DocumentAdded)}
       />
 
@@ -303,11 +304,12 @@ export const TriggerEditScreen: React.FC<Props> = ({ route, navigation }) => {
               dateFieldItems.find((item) => item.value === scheduleDateField)?.id ?? null;
 
             return (
-              <NonSearchableDropdown
+              <SearchableDropdown
                 label={t('workflows.scheduleDateField')}
                 items={dateFieldItems}
                 selectedId={selectedDateFieldId}
                 allowClear={false}
+                searchable={false}
                 onSelect={(id) => {
                   const item = dateFieldItems.find((i) => i.id === id);
                   setScheduleDateField(
@@ -323,11 +325,12 @@ export const TriggerEditScreen: React.FC<Props> = ({ route, navigation }) => {
           })()}
 
           {scheduleDateField === 'custom_field' && (
-            <NonSearchableDropdown
+            <SearchableDropdown
               label={t('workflows.scheduleDateCustomField')}
               items={customFields}
               selectedId={scheduleDateCustomField}
               allowClear={false}
+              searchable={false}
               onSelect={(id) => setScheduleDateCustomField(id)}
             />
           )}
@@ -410,7 +413,7 @@ export const TriggerEditScreen: React.FC<Props> = ({ route, navigation }) => {
         </>
       ) : null}
 
-      <Button mode="contained" onPress={handleSave} style={styles.saveButton}>
+      <Button mode="contained" onPress={handleSave} style={buttonStyles.saveButton}>
         {t('common.apply')}
       </Button>
 
@@ -418,7 +421,7 @@ export const TriggerEditScreen: React.FC<Props> = ({ route, navigation }) => {
         mode="outlined"
         textColor={theme.colors.error}
         onPress={handleDelete}
-        style={styles.deleteButton}
+        style={buttonStyles.deleteButton}
       >
         {t('common.delete')}
       </Button>
@@ -427,12 +430,6 @@ export const TriggerEditScreen: React.FC<Props> = ({ route, navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  content: {
-    padding: 16,
-  },
   segmented: {
     marginBottom: 16,
   },
@@ -444,11 +441,5 @@ const styles = StyleSheet.create({
   },
   switchContainer: {
     marginBottom: 12,
-  },
-  saveButton: {
-    marginTop: 24,
-  },
-  deleteButton: {
-    marginTop: 12,
   },
 });

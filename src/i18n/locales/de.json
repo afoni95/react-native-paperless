@@ -72,7 +72,8 @@
     }
   },
   "documents": {
-    "title": "Dokumente",
+    "singularEntity": "Dokument",
+    "pluralEntity": "Dokumente",
     "detail": "Dokumentdetails",
     "noDocuments": "Keine Dokumente gefunden",
     "search": "Dokumente suchen...",

@@ -3,46 +3,50 @@ import { View, ScrollView, StyleSheet, Alert } from 'react-native';
 import { TextInput, Button, Switch, Text, useTheme } from 'react-native-paper';
 import { useTranslation } from 'react-i18next';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+
 import { MATCHING_ALGORITHMS, MatchingAlgorithm } from '@/types';
 import { LoadingScreen, ConfirmDialog, HasPermission } from '@/components';
 import { ManageStackParamList } from '@/navigation/types';
-import { useDocumentType, useUpsertDocumentType, useDeleteDocumentType } from '@/reactQuery';
+import { useStoragePath, useUpsertStoragePath, useDeleteStoragePath } from '@/reactQuery';
+import { screenStyles, formStyles, buttonStyles } from '@/theme/commonStyles';
 
-type Props = NativeStackScreenProps<ManageStackParamList, 'DocumentTypeEdit'>;
+type Props = NativeStackScreenProps<ManageStackParamList, 'StoragePathEdit'>;
 
-export const DocumentTypeEditScreen: React.FC<Props> = ({ route, navigation }) => {
+export const StoragePathEditScreen: React.FC<Props> = ({ route, navigation }) => {
   const theme = useTheme();
   const { t } = useTranslation();
-  const documentTypeId = route.params?.documentTypeId;
-  const isNew = !documentTypeId;
+  const storagePathId = route.params?.storagePathId;
+  const isNew = !storagePathId;
 
   const [name, setName] = useState('');
+  const [path, setPath] = useState('');
   const [match, setMatch] = useState('');
   const [matchingAlgorithm, setMatchingAlgorithm] = useState<MatchingAlgorithm>(6);
   const [isInsensitive, setIsInsensitive] = useState(true);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
-  const { data: docType, isLoading } = useDocumentType(documentTypeId!, !!documentTypeId);
+  const { data: storagePath, isLoading } = useStoragePath(storagePathId!, !!storagePathId);
 
   useEffect(() => {
-    if (docType) {
-      setName(docType.name);
-      setMatch(docType.match || '');
-      setMatchingAlgorithm(docType.matching_algorithm as MatchingAlgorithm);
-      setIsInsensitive(docType.is_insensitive);
+    if (storagePath) {
+      setName(storagePath.name);
+      setPath(storagePath.path);
+      setMatch(storagePath.match || '');
+      setMatchingAlgorithm(storagePath.matching_algorithm as MatchingAlgorithm);
+      setIsInsensitive(storagePath.is_insensitive);
     }
-  }, [docType]);
+  }, [storagePath]);
 
-  const saveMutation = useUpsertDocumentType({
+  const saveMutation = useUpsertStoragePath({
     onSuccess: () => {
       navigation.goBack();
     },
-    onError: () => {
+    onError: (_err) => {
       Alert.alert(t('common.error'), t('common.somethingWentWrong'));
     },
   });
 
-  const deleteMutation = useDeleteDocumentType({
+  const deleteMutation = useDeleteStoragePath({
     onSuccess: () => {
       navigation.goBack();
     },
@@ -57,78 +61,90 @@ export const DocumentTypeEditScreen: React.FC<Props> = ({ route, navigation }) =
 
   return (
     <ScrollView
-      style={[styles.container, { backgroundColor: theme.colors.background }]}
+      style={[screenStyles.container, { backgroundColor: theme.colors.background }]}
       contentContainerStyle={styles.content}
       keyboardShouldPersistTaps="handled"
     >
       <TextInput
-        label={t('documentTypes.name')}
+        label={t('storagePaths.name')}
         value={name}
         onChangeText={setName}
         mode="outlined"
-        style={styles.input}
+        style={formStyles.input}
       />
 
       <TextInput
-        label={t('documentTypes.match')}
+        label={t('storagePaths.pathTemplate')}
+        value={path}
+        onChangeText={setPath}
+        mode="outlined"
+        multiline
+        numberOfLines={3}
+        style={formStyles.input}
+        placeholder="{correspondent}/{document_type}/{created_year}"
+      />
+
+      <TextInput
+        label={t('storagePaths.match')}
         value={match}
         onChangeText={setMatch}
         mode="outlined"
-        style={styles.input}
+        style={formStyles.input}
       />
 
-      <Text variant="labelLarge" style={[styles.label, { color: theme.colors.onBackground }]}>
-        {t('documentTypes.matchingAlgorithm')}
+      <Text variant="labelLarge" style={[formStyles.label, { color: theme.colors.onBackground }]}>
+        {t('storagePaths.matchingAlgorithm')}
       </Text>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.algoRow}>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={formStyles.algoRow}>
         {(Object.entries(MATCHING_ALGORITHMS) as [string, string][]).map(([key, label]) => (
           <Button
             key={key}
             mode={matchingAlgorithm === Number(key) ? 'contained' : 'outlined'}
             compact
             onPress={() => setMatchingAlgorithm(Number(key) as MatchingAlgorithm)}
-            style={styles.algoButton}
+            style={formStyles.algoButton}
           >
             {label}
           </Button>
         ))}
       </ScrollView>
 
-      <View style={styles.switchRow}>
-        <Text variant="bodyLarge">{t('documentTypes.caseInsensitive')}</Text>
+      <View style={formStyles.switchRow}>
+        <Text variant="bodyLarge">{t('storagePaths.caseInsensitive')}</Text>
         <Switch value={isInsensitive} onValueChange={setIsInsensitive} />
       </View>
 
-      <HasPermission action={isNew ? 'add' : 'change'} resource="documenttype">
+      <HasPermission action={isNew ? 'add' : 'change'} resource="storagepath">
         <Button
           mode="contained"
           onPress={() =>
             saveMutation.mutate({
-              id: documentTypeId,
+              id: storagePathId,
               name,
+              path,
               match,
               matching_algorithm: matchingAlgorithm,
               is_insensitive: isInsensitive,
             })
           }
           loading={saveMutation.isPending}
-          disabled={!name.trim() || saveMutation.isPending}
+          disabled={!name.trim() || !path.trim() || saveMutation.isPending}
           style={styles.saveButton}
-          contentStyle={styles.saveButtonContent}
+          contentStyle={buttonStyles.saveButtonContent}
         >
           {t('common.save')}
         </Button>
       </HasPermission>
 
       {!isNew && (
-        <HasPermission action="delete" resource="documenttype">
+        <HasPermission action="delete" resource="storagepath">
           <Button
             mode="outlined"
             icon="delete"
             textColor={theme.colors.error}
             onPress={() => setShowDeleteDialog(true)}
-            style={styles.deleteButton}
-            contentStyle={styles.saveButtonContent}
+            style={buttonStyles.deleteButton}
+            contentStyle={buttonStyles.saveButtonContent}
           >
             {t('common.delete')}
           </Button>
@@ -138,11 +154,13 @@ export const DocumentTypeEditScreen: React.FC<Props> = ({ route, navigation }) =
       <ConfirmDialog
         visible={showDeleteDialog}
         title={t('common.delete')}
-        message={t('documentTypes.deleteConfirm')}
+        message={t('storagePaths.deleteConfirm')}
         destructive
         onConfirm={() => {
           setShowDeleteDialog(false);
-          deleteMutation.mutate(documentTypeId!);
+          if (storagePathId) {
+            deleteMutation.mutate(storagePathId);
+          }
         }}
         onCancel={() => setShowDeleteDialog(false)}
       />
@@ -151,44 +169,12 @@ export const DocumentTypeEditScreen: React.FC<Props> = ({ route, navigation }) =
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
   content: {
     padding: 16,
-    paddingBottom: 32,
-  },
-  input: {
-    marginBottom: 12,
-  },
-  label: {
-    marginBottom: 8,
-    marginTop: 4,
-  },
-  algoRow: {
-    marginBottom: 16,
-  },
-  algoButton: {
-    marginRight: 4,
-  },
-  switchRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 12,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#e0e0e0',
+    paddingBottom: 40,
   },
   saveButton: {
-    marginTop: 24,
-    borderRadius: 8,
-  },
-  saveButtonContent: {
-    paddingVertical: 8,
-  },
-  deleteButton: {
     marginTop: 12,
     borderRadius: 8,
-    borderColor: '#d32f2f',
   },
 });

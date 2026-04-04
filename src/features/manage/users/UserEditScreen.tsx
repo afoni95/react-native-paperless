@@ -9,6 +9,7 @@ import type { ManageStackParamList } from '@/navigation/types';
 import { useUser, useUpsertUser, useGroups } from '@/reactQuery';
 import type { Group } from '@/api/groups';
 import { PermissionMatrix, HasPermission } from '@/components';
+import { screenStyles } from '@/theme/commonStyles';
 
 type NavigationProp = NativeStackNavigationProp<ManageStackParamList, 'UserEdit'>;
 
@@ -91,8 +92,8 @@ export const UserEditScreen: React.FC = () => {
   const groups: Group[] = groupsData?.results || [];
 
   return (
-    <ScrollView style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      <View style={styles.contentContainer}>
+    <ScrollView style={[screenStyles.container, { backgroundColor: theme.colors.background }]}>
+      <View style={screenStyles.contentWithBottom}>
         <TextInput
           label={t('auth.username')}
           value={username}
@@ -234,8 +235,6 @@ export const UserEditScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  contentContainer: { padding: 16, paddingBottom: 32 },
   input: { marginBottom: 16 },
   checkboxContainer: { marginBottom: 16 },
   checkboxRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 8 },

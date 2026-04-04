@@ -9,6 +9,7 @@ import { LoadingScreen, ConfirmDialog } from '@/components';
 import { ManageStackParamList } from '@/navigation/types';
 import { useWorkflow, useUpsertWorkflow, useDeleteWorkflow } from '@/reactQuery/workflows';
 import { getTriggerTypeName, getActionTypeName } from '@/utils/workflowHelpers';
+import { screenStyles, formStyles } from '@/theme/commonStyles';
 
 type Props = NativeStackScreenProps<ManageStackParamList, 'WorkflowEdit'>;
 
@@ -302,8 +303,8 @@ export const WorkflowEditScreen: React.FC<Props> = ({ route, navigation }) => {
 
   return (
     <ScrollView
-      style={[styles.container, { backgroundColor: theme.colors.background }]}
-      contentContainerStyle={styles.content}
+      style={[screenStyles.container, { backgroundColor: theme.colors.background }]}
+      contentContainerStyle={screenStyles.content}
       keyboardShouldPersistTaps="handled"
     >
       <TextInput
@@ -325,7 +326,7 @@ export const WorkflowEditScreen: React.FC<Props> = ({ route, navigation }) => {
         editable={!saveMutation.isPending}
       />
 
-      <View style={styles.switchRow}>
+      <View style={formStyles.switchRow}>
         <Text variant="bodyLarge">{t('workflows.enabled')}</Text>
         <Switch
           value={enabled}
@@ -342,7 +343,7 @@ export const WorkflowEditScreen: React.FC<Props> = ({ route, navigation }) => {
           triggers.map((trigger) => (
             <List.Item
               key={trigger.id}
-              title={getTriggerTypeName(trigger.type)}
+              title={t(getTriggerTypeName(trigger.type))}
               description={buildTriggerSummary(trigger)}
               right={() => (
                 <View style={styles.actionButtons}>
@@ -375,7 +376,7 @@ export const WorkflowEditScreen: React.FC<Props> = ({ route, navigation }) => {
           actions.map((action) => (
             <List.Item
               key={action.id}
-              title={getActionTypeName(action.type)}
+              title={t(getActionTypeName(action.type))}
               description={buildActionSummary(action)}
               right={() => (
                 <View style={styles.actionButtons}>
@@ -437,25 +438,11 @@ export const WorkflowEditScreen: React.FC<Props> = ({ route, navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  content: {
-    padding: 16,
-  },
   input: {
     marginBottom: 16,
   },
   section: {
     marginVertical: 16,
-  },
-  switchRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 12,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#e0e0e0',
   },
   addButton: {
     marginTop: 12,
