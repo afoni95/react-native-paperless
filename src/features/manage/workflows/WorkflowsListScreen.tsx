@@ -74,7 +74,9 @@ export const WorkflowsListScreen: React.FC<Props> = ({ navigation }) => {
 
   const getTriggerSummary = (workflow: Workflow): string => {
     if (workflow.triggers.length === 0) return t('workflows.noTriggers');
-    const triggerNames = workflow.triggers.map((trigger) => t(getTriggerTypeName(trigger.type))).join(', ');
+    const triggerNames = workflow.triggers
+      .map((trigger) => t(getTriggerTypeName(trigger.type)))
+      .join(', ');
     return triggerNames;
   };
 
