@@ -73,14 +73,14 @@ export const WorkflowsListScreen: React.FC<Props> = ({ navigation }) => {
   };
 
   const getTriggerSummary = (workflow: Workflow): string => {
-    if (workflow.triggers.length === 0) return 'No triggers';
-    const triggerNames = workflow.triggers.map((t) => getTriggerTypeName(t.type)).join(', ');
+    if (workflow.triggers.length === 0) return t('workflows.noTriggers');
+    const triggerNames = workflow.triggers.map((trigger) => t(getTriggerTypeName(trigger.type))).join(', ');
     return triggerNames;
   };
 
   const getActionSummary = (workflow: Workflow): string => {
-    if (workflow.actions.length === 0) return 'No actions';
-    const actionNames = workflow.actions.map((a) => getActionTypeName(a.type)).join(', ');
+    if (workflow.actions.length === 0) return t('workflows.noActions');
+    const actionNames = workflow.actions.map((a) => t(getActionTypeName(a.type))).join(', ');
     return actionNames;
   };
 

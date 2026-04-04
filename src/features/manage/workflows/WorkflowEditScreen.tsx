@@ -343,7 +343,7 @@ export const WorkflowEditScreen: React.FC<Props> = ({ route, navigation }) => {
           triggers.map((trigger) => (
             <List.Item
               key={trigger.id}
-              title={getTriggerTypeName(trigger.type)}
+              title={t(getTriggerTypeName(trigger.type))}
               description={buildTriggerSummary(trigger)}
               right={() => (
                 <View style={styles.actionButtons}>
@@ -376,7 +376,7 @@ export const WorkflowEditScreen: React.FC<Props> = ({ route, navigation }) => {
           actions.map((action) => (
             <List.Item
               key={action.id}
-              title={getActionTypeName(action.type)}
+              title={t(getActionTypeName(action.type))}
               description={buildActionSummary(action)}
               right={() => (
                 <View style={styles.actionButtons}>

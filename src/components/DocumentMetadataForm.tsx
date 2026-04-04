@@ -88,7 +88,7 @@ export const DocumentMetadataForm: React.FC<DocumentMetadataFormProps> = ({
       >
         <Card.Content>
           <TextInput
-            label={t('documents.title')}
+            label={t('documents.singularEntity')}
             value={title}
             onChangeText={onTitleChange}
             mode="outlined"
