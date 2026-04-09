@@ -816,6 +816,34 @@ export const demoStatistics: Statistics = {
   storage_path_count: demoStoragePaths.length,
 };
 
+export const demoLogs: Record<string, string[]> = {
+  paperless: [
+    '[2026-04-09 08:00:01] [INFO] Starting paperless-ngx services',
+    '[2026-04-09 08:00:03] [INFO] Connected to PostgreSQL database',
+    '[2026-04-09 08:00:04] [INFO] Loaded 2 workflow definitions',
+    '[2026-04-09 08:00:08] [INFO] Consumer queue is ready',
+    '[2026-04-09 08:02:17] [INFO] Processed document 1007: car_insurance_statement.pdf',
+    '[2026-04-09 08:02:18] [INFO] OCR completed in 1.9s for document 1007',
+    '[2026-04-09 08:05:42] [WARNING] Tag matcher fallback used for document 1008',
+    '[2026-04-09 08:06:10] [INFO] Scheduled task cleanup_inbox_tags queued',
+  ],
+  worker: [
+    '[2026-04-09 08:00:02] [INFO] Celery worker ready: concurrency=4',
+    '[2026-04-09 08:01:11] [INFO] Received task: documents.tasks.consume_file',
+    '[2026-04-09 08:01:14] [INFO] Task succeeded: documents.tasks.consume_file (2.7s)',
+    '[2026-04-09 08:03:55] [INFO] Received task: documents.tasks.index_document',
+    '[2026-04-09 08:03:56] [INFO] Task succeeded: documents.tasks.index_document (0.9s)',
+    '[2026-04-09 08:07:20] [WARNING] Retry requested for task workflows.tasks.run',
+    '[2026-04-09 08:07:23] [INFO] Task succeeded: workflows.tasks.run (2.1s)',
+  ],
+  audit: [
+    '[2026-04-09 08:00:10] [INFO] User demo authenticated from 127.0.0.1',
+    '[2026-04-09 08:02:24] [INFO] User demo viewed document 1004',
+    '[2026-04-09 08:04:49] [INFO] User demo updated tags for document 1002',
+    '[2026-04-09 08:06:55] [INFO] User demo opened manage/logs screen',
+  ],
+};
+
 /* ------------------------------------------------------------------ */
 /*  Helper: paginate an array                                          */
 /* ------------------------------------------------------------------ */
@@ -1005,6 +1033,27 @@ export function matchDemoRoute(
   /* ---- Search autocomplete ---- */
   if (path === '/api/search/autocomplete/' && m === 'GET') {
     return { status: 200, data: ['invoice', 'insurance', 'internet'] };
+  }
+
+  /* ---- Logs ---- */
+  if (path === '/api/logs/' && m === 'GET') {
+    return { status: 200, data: Object.keys(demoLogs) };
+  }
+
+  const logMatch = path.match(/^\/api\/logs\/([^/]+)\/$/);
+  if (logMatch && m === 'GET') {
+    const logId = decodeURIComponent(logMatch[1]);
+    const logLines = demoLogs[logId];
+    if (!logLines) {
+      return { status: 404, data: { detail: 'Not found.' } };
+    }
+
+    const limit = Number(params?.limit ?? 0);
+    if (Number.isFinite(limit) && limit > 0) {
+      return { status: 200, data: logLines.slice(-limit) };
+    }
+
+    return { status: 200, data: logLines };
   }
 
   /* ---- Tags ---- */

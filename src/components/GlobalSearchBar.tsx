@@ -34,7 +34,7 @@ export const GlobalSearchBar: React.FC = () => {
         setSuggestions(results);
         setShowSuggestions(results.length > 0);
       } catch (error) {
-        console.error('Failed to fetch autocomplete suggestions:', error);
+        if (__DEV__) console.error('Failed to fetch autocomplete suggestions:', error);
         setSuggestions([]);
       } finally {
         setIsLoading(false);

@@ -46,7 +46,7 @@ export const AuthenticatedImage: React.FC<AuthenticatedImageProps> = ({
         }
       } catch (err) {
         if (isMounted) {
-          console.warn('Failed to load image', uri, err);
+          if (__DEV__) console.warn('Failed to load image', uri, err);
           setError(true);
           setLoading(false);
         }
