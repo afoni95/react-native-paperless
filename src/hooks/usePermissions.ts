@@ -1,10 +1,17 @@
 import React from 'react';
 import type { User } from '@/api/users';
 import {
+  PERMISSION_ACTIONS,
+  PERMISSION_RESOURCES,
   buildPermissionName,
   getResourcePermissions as getResourcePermissionsUtil,
 } from '@/utils/permissions';
 import type { PermissionAction, PermissionResource } from '@/utils/permissions';
+import { useAuthStore } from '@/store/authStore';
+
+const DEMO_PERMISSIONS = PERMISSION_RESOURCES.flatMap((resource) =>
+  PERMISSION_ACTIONS.map((action) => buildPermissionName(action, resource)),
+);
 
 export type UsePermissionsOptions = {
   user?: User | null;
@@ -12,11 +19,13 @@ export type UsePermissionsOptions = {
 };
 
 export function usePermissions(options?: UsePermissionsOptions) {
+  const isDemo = useAuthStore((state) => state.isDemo);
   const optPermissions = options?.permissions ?? null;
   const userUp = options?.user?.user_permissions ?? null;
   const userInh = options?.user?.inherited_permissions ?? null;
 
   const permissions = React.useMemo(() => {
+    if (isDemo) return DEMO_PERMISSIONS;
     if (optPermissions) return optPermissions;
     if (userUp || userInh) {
       const up = userUp ?? [];
@@ -24,7 +33,7 @@ export function usePermissions(options?: UsePermissionsOptions) {
       return Array.from(new Set([...up, ...inh]));
     }
     return [] as string[];
-  }, [optPermissions, userUp, userInh]);
+  }, [isDemo, optPermissions, userUp, userInh]);
 
   const has = React.useCallback(
     (perm: string) => options?.user?.is_superuser || permissions.includes(perm),
