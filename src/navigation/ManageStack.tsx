@@ -24,6 +24,10 @@ import { UsersListScreen } from '@/features/manage/users/UsersListScreen';
 import { UserEditScreen } from '@/features/manage/users/UserEditScreen';
 import { GroupsListScreen } from '@/features/manage/groups/GroupsListScreen';
 import { GroupEditScreen } from '@/features/manage/groups/GroupEditScreen';
+import { MailAccountsListScreen } from '@/features/manage/mail-accounts/MailAccountsListScreen';
+import { MailAccountEditScreen } from '@/features/manage/mail-accounts/MailAccountEditScreen';
+import { MailRulesListScreen } from '@/features/manage/mail-rules/MailRulesListScreen';
+import { MailRuleEditScreen } from '@/features/manage/mail-rules/MailRuleEditScreen';
 import { ManageStackParamList } from './types';
 
 const Stack = createNativeStackNavigator<ManageStackParamList>();
@@ -168,6 +172,34 @@ export const ManageStack: React.FC = () => {
         component={GroupEditScreen}
         options={({ route }) => ({
           title: route.params?.groupId ? t('manage.editGroup') : t('manage.createGroup'),
+        })}
+      />
+      <Stack.Screen
+        name="MailAccountsList"
+        component={MailAccountsListScreen}
+        options={{ title: t('mailAccounts.title') }}
+      />
+      <Stack.Screen
+        name="MailAccountEdit"
+        component={MailAccountEditScreen}
+        options={({ route }) => ({
+          title: route.params?.mailAccountId
+            ? t('mailAccounts.editMailAccount')
+            : t('mailAccounts.createMailAccount'),
+        })}
+      />
+      <Stack.Screen
+        name="MailRulesList"
+        component={MailRulesListScreen}
+        options={{ title: t('mailRules.title') }}
+      />
+      <Stack.Screen
+        name="MailRuleEdit"
+        component={MailRuleEditScreen}
+        options={({ route }) => ({
+          title: route.params?.mailRuleId
+            ? t('mailRules.editMailRule')
+            : t('mailRules.createMailRule'),
         })}
       />
     </Stack.Navigator>

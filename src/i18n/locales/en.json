@@ -57,7 +57,17 @@
     "correspondents": "Correspondents",
     "documentTypes": "Document Types",
     "fileTypes": "File Types",
-    "characters": "Characters"
+    "characters": "Characters",
+    "mailAccounts": "Mail Accounts",
+    "processMail": "Process Mail",
+    "processMailQueued": "Queued mail processing for {{account}}. This may take a while depending on how many emails are found.",
+    "processMailNoLiveStatus": "Live progress is not exposed by this endpoint.",
+    "processMailFailed": "Failed to queue mail processing.",
+    "processMailCompleted": "Mail processing completed.",
+    "processMailTaskFailed": "Mail processing task failed.",
+    "processMailStillRunning": "Mail processing is still running. Check Background Tasks for live status.",
+    "processMailBackgroundTask": "Mail processing is running in the background and may take a while depending on how many emails are found.",
+    "noMailAccounts": "No mail accounts defined."
   },
   "search": {
     "placeholder": "Search documents, tags, and more...",
@@ -194,10 +204,102 @@
     "documentsUsingField": "{{count}} documents use this field",
     "unused": "Not in use"
   },
+  "mailAccounts": {
+    "title": "Mail Accounts",
+    "createMailAccount": "Create Mail Account",
+    "editMailAccount": "Edit Mail Account",
+    "name": "Name",
+    "imapServer": "IMAP Server",
+    "imapPort": "IMAP Port",
+    "imapSecurityLabel": "IMAP Security",
+    "imapSecurityValue": "Security: {{value}}",
+    "imapSecurity": {
+      "1": "No encryption",
+      "2": "SSL",
+      "3": "STARTTLS"
+    },
+    "username": "Username",
+    "password": "Password",
+    "characterSet": "Character Set",
+    "isToken": "Is AccessToken",
+    "owner": "Owner",
+    "accountType": "Account Type",
+    "expiration": "Expiration",
+    "expirationPlaceholder": "ISO date/time or leave empty",
+    "deleteConfirm": "Are you sure you want to delete this mail account?"
+  },
+  "mailRules": {
+    "title": "Mail Rules",
+    "createMailRule": "Create Mail Rule",
+    "editMailRule": "Edit Mail Rule",
+    "name": "Name",
+    "account": "Mail Account",
+    "enabled": "Enabled",
+    "disabled": "Disabled",
+    "folder": "Folder",
+    "maximumAge": "Maximum Age (days)",
+    "order": "Order",
+    "action": "Action",
+    "actionParameter": "Action Parameter",
+    "filtersSection": "Filters",
+    "filterFrom": "Filter From",
+    "filterTo": "Filter To",
+    "filterSubject": "Filter Subject",
+    "filterBody": "Filter Body",
+    "filterAttachmentFilenameInclude": "Attachment Filename Include",
+    "filterAttachmentFilenameExclude": "Attachment Filename Exclude",
+    "assignTitleFrom": "Assign Title From",
+    "assignTags": "Assign Tags",
+    "assignCorrespondentFrom": "Assign Correspondent From",
+    "assignCorrespondent": "Assign Correspondent",
+    "assignDocumentType": "Assign Document Type",
+    "assignOwnerFromRule": "Assign Owner from Rule",
+    "attachmentType": "Attachment Type",
+    "consumptionScope": "Consumption Scope",
+    "pdfLayout": "PDF Layout",
+    "owner": "Owner",
+    "deleteConfirm": "Are you sure you want to delete this mail rule?",
+    "actionOptions": {
+      "delete": "Delete",
+      "move": "Move to Folder",
+      "markRead": "Mark as Read",
+      "flag": "Flag Mail",
+      "tag": "Tag Mail"
+    },
+    "assignTitleOptions": {
+      "subject": "Use Subject",
+      "attachment": "Use Attachment Name",
+      "none": "No Assignment"
+    },
+    "assignCorrespondentFromOptions": {
+      "none": "None",
+      "mailAddress": "Use Mail Address",
+      "name": "Use Name",
+      "correspondent": "Use Correspondent"
+    },
+    "pdfLayoutOptions": {
+      "systemDefault": "System Default",
+      "textThenHtml": "Text then HTML",
+      "htmlThenText": "HTML then Text",
+      "htmlOnly": "HTML Only",
+      "textOnly": "Text Only"
+    },
+    "attachmentTypeOptions": {
+      "attachmentsOnly": "Attachments Only",
+      "allFiles": "All Files incl. Inline"
+    },
+    "consumptionScopeOptions": {
+      "attachmentsOnly": "Attachments Only",
+      "emlOnly": "Messages as .eml",
+      "emlAndAttachments": "Messages (.eml) + Attachments"
+    }
+  },
   "manage": {
     "title": "Manage",
     "users": "Users",
     "groups": "Groups",
+    "mailAccounts": "Mail Accounts",
+    "mailRules": "Mail Rules",
     "editUser": "Edit User",
     "createUser": "Create User",
     "editGroup": "Edit Group",

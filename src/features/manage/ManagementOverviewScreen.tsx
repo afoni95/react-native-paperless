@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { ScrollView, StyleSheet } from 'react-native';
 import { List, Divider, useTheme } from 'react-native-paper';
 import { useTranslation } from 'react-i18next';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -17,6 +17,8 @@ export const ManagementOverviewScreen: React.FC = () => {
 
   const showUsersScreen = can('view', 'user');
   const showGroupsScreen = can('view', 'group');
+  const showMailAccountsScreen = can('view', 'mailaccount');
+  const showMailRulesScreen = can('view', 'mailrule');
   const showTagsScreen = can('view', 'tag');
   const showCorrespondentsScreen = can('view', 'correspondent');
   const showDocumentTypesScreen = can('view', 'documenttype');
@@ -28,7 +30,7 @@ export const ManagementOverviewScreen: React.FC = () => {
   const showTasksScreen = can('view', 'paperlesstask');
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+    <ScrollView style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <List.Section>
         {showUsersScreen ? (
           <>
@@ -48,6 +50,28 @@ export const ManagementOverviewScreen: React.FC = () => {
               left={(props) => <List.Icon {...props} icon="account-group" />}
               right={(props) => <List.Icon {...props} icon="chevron-right" />}
               onPress={() => navigation.navigate('GroupsList')}
+            />
+            <Divider />
+          </>
+        ) : null}
+        {showMailAccountsScreen ? (
+          <>
+            <List.Item
+              title={t('manage.mailAccounts')}
+              left={(props) => <List.Icon {...props} icon="email-multiple" />}
+              right={(props) => <List.Icon {...props} icon="chevron-right" />}
+              onPress={() => navigation.navigate('MailAccountsList')}
+            />
+            <Divider />
+          </>
+        ) : null}
+        {showMailRulesScreen ? (
+          <>
+            <List.Item
+              title={t('manage.mailRules')}
+              left={(props) => <List.Icon {...props} icon="email-newsletter" />}
+              right={(props) => <List.Icon {...props} icon="chevron-right" />}
+              onPress={() => navigation.navigate('MailRulesList')}
             />
             <Divider />
           </>
@@ -158,7 +182,7 @@ export const ManagementOverviewScreen: React.FC = () => {
           onPress={() => navigation.navigate('Settings')}
         />
       </List.Section>
-    </View>
+    </ScrollView>
   );
 };
 

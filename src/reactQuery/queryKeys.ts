@@ -50,3 +50,13 @@ export const workflowQueryKeys = {
   all: ['workflows-all'] as const,
   detail: (id: number) => ['workflow', id] as const,
 };
+
+export const mailAccountQueryKeys = {
+  all: ['mail-accounts-all'] as const,
+  detail: (id: number) => ['mail-account', id] as const,
+};
+
+export const mailRuleQueryKeys = {
+  all: ['mail-rules-all'] as const,
+  detail: (id: number) => ['mail-rule', id] as const,
+};

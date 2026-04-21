@@ -57,7 +57,17 @@
     "correspondents": "Korrespondenten",
     "documentTypes": "Dokumenttypen",
     "fileTypes": "Dateitypen",
-    "characters": "Zeichen"
+    "characters": "Zeichen",
+    "mailAccounts": "E-Mail Konten",
+    "processMail": "E-Mails verarbeiten",
+    "processMailQueued": "E-Mail-Verarbeitung für {{account}} wurde gestartet. Dies kann je nach Anzahl gefundener E-Mails eine Weile dauern.",
+    "processMailNoLiveStatus": "Dieser Endpunkt liefert keinen Live-Fortschritt.",
+    "processMailFailed": "E-Mail-Verarbeitung konnte nicht gestartet werden.",
+    "processMailCompleted": "E-Mail-Verarbeitung abgeschlossen.",
+    "processMailTaskFailed": "E-Mail-Verarbeitungsaufgabe fehlgeschlagen.",
+    "processMailStillRunning": "E-Mail-Verarbeitung läuft noch. Prüfe Hintergrundaufgaben für den Live-Status.",
+    "processMailBackgroundTask": "Die E-Mail-Verarbeitung läuft im Hintergrund und kann je nach Anzahl gefundener E-Mails etwas dauern.",
+    "noMailAccounts": "Keine E-Mail Konten definiert."
   },
   "search": {
     "placeholder": "Dokumente, Tags und mehr durchsuchen...",
@@ -194,10 +204,102 @@
     "documentsUsingField": "{{count}} Dokumente verwenden dieses Feld",
     "unused": "Nicht in Verwendung"
   },
+  "mailAccounts": {
+    "title": "E-Mail Konten",
+    "createMailAccount": "E-Mail Konto erstellen",
+    "editMailAccount": "E-Mail Konto bearbeiten",
+    "name": "Name",
+    "imapServer": "IMAP-Server",
+    "imapPort": "IMAP-Port",
+    "imapSecurityLabel": "IMAP-Sicherheit",
+    "imapSecurityValue": "Sicherheit: {{value}}",
+    "imapSecurity": {
+      "1": "Keine Verschlüsselung",
+      "2": "SSL",
+      "3": "STARTTLS"
+    },
+    "username": "Benutzername",
+    "password": "Passwort",
+    "characterSet": "Zeichensatz",
+    "isToken": "Ist AccessToken",
+    "owner": "Besitzer",
+    "accountType": "Kontotyp",
+    "expiration": "Ablaufdatum",
+    "expirationPlaceholder": "ISO-Datum/Zeit oder leer lassen",
+    "deleteConfirm": "Möchten Sie dieses E-Mail Konto wirklich löschen?"
+  },
+  "mailRules": {
+    "title": "E-Mail Regeln",
+    "createMailRule": "E-Mail Regel erstellen",
+    "editMailRule": "E-Mail Regel bearbeiten",
+    "name": "Name",
+    "account": "E-Mail Konto",
+    "enabled": "Aktiviert",
+    "disabled": "Deaktiviert",
+    "folder": "Ordner",
+    "maximumAge": "Maximales Alter (Tage)",
+    "order": "Reihenfolge",
+    "action": "Aktion",
+    "actionParameter": "Aktionsparameter",
+    "filtersSection": "Filter",
+    "filterFrom": "Filter Von",
+    "filterTo": "Filter An",
+    "filterSubject": "Filter Betreff",
+    "filterBody": "Filter Inhalt",
+    "filterAttachmentFilenameInclude": "Anhang-Dateiname einschließen",
+    "filterAttachmentFilenameExclude": "Anhang-Dateiname ausschließen",
+    "assignTitleFrom": "Titel zuweisen aus",
+    "assignTags": "Tags zuweisen",
+    "assignCorrespondentFrom": "Korrespondent zuweisen aus",
+    "assignCorrespondent": "Korrespondent zuweisen",
+    "assignDocumentType": "Dokumenttyp zuweisen",
+    "assignOwnerFromRule": "Besitzer aus Regel zuweisen",
+    "attachmentType": "Anhangstyp",
+    "consumptionScope": "Verarbeitungsumfang",
+    "pdfLayout": "PDF-Layout",
+    "owner": "Besitzer",
+    "deleteConfirm": "Möchten Sie diese E-Mail Regel wirklich löschen?",
+    "actionOptions": {
+      "delete": "Löschen",
+      "move": "In Ordner verschieben",
+      "markRead": "Als gelesen markieren",
+      "flag": "E-Mail markieren",
+      "tag": "E-Mail taggen"
+    },
+    "assignTitleOptions": {
+      "subject": "Betreff verwenden",
+      "attachment": "Anhangsname verwenden",
+      "none": "Keine Zuweisung"
+    },
+    "assignCorrespondentFromOptions": {
+      "none": "Keine",
+      "mailAddress": "E-Mail-Adresse verwenden",
+      "name": "Name verwenden",
+      "correspondent": "Korrespondent verwenden"
+    },
+    "pdfLayoutOptions": {
+      "systemDefault": "Systemstandard",
+      "textThenHtml": "Text dann HTML",
+      "htmlThenText": "HTML dann Text",
+      "htmlOnly": "Nur HTML",
+      "textOnly": "Nur Text"
+    },
+    "attachmentTypeOptions": {
+      "attachmentsOnly": "Nur Anhänge",
+      "allFiles": "Alle Dateien inkl. Inline"
+    },
+    "consumptionScopeOptions": {
+      "attachmentsOnly": "Nur Anhänge",
+      "emlOnly": "Nachrichten als .eml",
+      "emlAndAttachments": "Nachrichten (.eml) + Anhänge"
+    }
+  },
   "manage": {
     "title": "Verwalten",
     "users": "Benutzer",
     "groups": "Gruppen",
+    "mailAccounts": "E-Mail Konten",
+    "mailRules": "E-Mail Regeln",
     "editUser": "Benutzer bearbeiten",
     "createUser": "Benutzer erstellen",
     "editGroup": "Gruppe bearbeiten",
