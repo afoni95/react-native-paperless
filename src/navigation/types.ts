@@ -48,6 +48,10 @@ export type ManageStackParamList = {
   UserEdit: { userId?: number };
   GroupsList: undefined;
   GroupEdit: { groupId?: number };
+  MailAccountsList: undefined;
+  MailAccountEdit: { mailAccountId?: number };
+  MailRulesList: undefined;
+  MailRuleEdit: { mailRuleId?: number };
   TagsList: undefined;
   TagEdit: { tagId?: number };
   CorrespondentsList: undefined;

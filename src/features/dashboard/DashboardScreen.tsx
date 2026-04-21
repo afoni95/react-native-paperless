@@ -1,11 +1,11 @@
 import React from 'react';
 import { ScrollView, View, StyleSheet, RefreshControl } from 'react-native';
-import { Card, Text, useTheme, Divider } from 'react-native-paper';
+import { Button, Card, Text, useTheme, Divider, Snackbar } from 'react-native-paper';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useTranslation } from 'react-i18next';
 import { LoadingScreen, ErrorBanner, GlobalSearchBar } from '@/components';
 import { useGlobalNavigationHelper } from '@/hooks';
-import { useStatistics } from '@/reactQuery';
+import { useAllMailAccounts, useProcessMailAccount, useStatistics } from '@/reactQuery';
 import { usePermissionContext } from '@/hooks/PermissionProvider';
 
 export const DashboardScreen: React.FC = () => {
@@ -13,13 +13,30 @@ export const DashboardScreen: React.FC = () => {
   const { t } = useTranslation();
   const { navigateTo } = useGlobalNavigationHelper();
   const { can } = usePermissionContext();
+const [snackbarMessage, setSnackbarMessage] = React.useState<string | null>(null);
 
   const showDocumentsTab = can('view', 'document');
   const showTagsList = can('view', 'tag');
   const showCorrespondentsList = can('view', 'correspondent');
   const showDocumentTypesList = can('view', 'documenttype');
+  const showMailAccounts = can('view', 'mailaccount');
+  const canProcessMailAccounts = can('change', 'mailaccount');
 
   const { data: stats, isLoading, isError, error, refetch, isRefetching } = useStatistics();
+  const { data: mailAccounts = [] } = useAllMailAccounts(showMailAccounts);
+
+  const processMailAccountMutation = useProcessMailAccount();
+
+  const handleProcessMailAccount = (accountId: number, accountName: string) => {
+    processMailAccountMutation.mutate(accountId, {
+      onSuccess: () => {
+        setSnackbarMessage(t('dashboard.processMailQueued', { account: accountName }));
+      },
+      onError: () => {
+        setSnackbarMessage(t('dashboard.processMailFailed'));
+      },
+    });
+  };
 
   if (isLoading) {
     return <LoadingScreen message={t('common.loading')} />;
@@ -37,17 +54,18 @@ export const DashboardScreen: React.FC = () => {
   }
 
   return (
-    <ScrollView
-      style={[styles.container, { backgroundColor: theme.colors.background }]}
-      contentContainerStyle={styles.content}
-      refreshControl={
-        <RefreshControl
-          refreshing={isRefetching}
-          onRefresh={refetch}
-          colors={[theme.colors.primary]}
-        />
-      }
-    >
+    <>
+      <ScrollView
+        style={[styles.container, { backgroundColor: theme.colors.background }]}
+        contentContainerStyle={styles.content}
+        refreshControl={
+          <RefreshControl
+            refreshing={isRefetching}
+            onRefresh={refetch}
+            colors={[theme.colors.primary]}
+          />
+        }
+      >
       <View style={styles.searchContainer}>
         <GlobalSearchBar />
       </View>
@@ -128,6 +146,49 @@ export const DashboardScreen: React.FC = () => {
         />
       </View>
 
+      {showMailAccounts && (
+        <Card style={[styles.mailAccountsCard, { backgroundColor: theme.colors.surface }]}>
+          <Card.Content>
+            <Text variant="titleMedium" style={{ marginBottom: 12 }}>
+              {t('dashboard.mailAccounts')}
+            </Text>
+
+            {mailAccounts.length === 0 ? (
+              <Text variant="bodyMedium" style={{ color: theme.colors.onSurfaceVariant }}>
+                {t('dashboard.noMailAccounts')}
+              </Text>
+            ) : (
+              mailAccounts.map((account, index) => {
+                return (
+                  <View key={account.id}>
+                    <View style={styles.mailAccountRow}>
+                      <View style={{ flex: 1 }}>
+                        <Text variant="titleSmall" style={{ color: theme.colors.onSurface }}>
+                          {account.name}
+                        </Text>
+                        <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant }}>
+                          {account.username}
+                        </Text>
+                      </View>
+                      <Button
+                        mode="contained-tonal"
+                        compact
+                        icon="refresh"
+                        onPress={() => handleProcessMailAccount(account.id, account.name)}
+                        disabled={!canProcessMailAccounts}
+                      >
+                        {t('dashboard.processMail')}
+                      </Button>
+                    </View>
+                    {index < mailAccounts.length - 1 && <Divider style={{ marginVertical: 8 }} />}
+                  </View>
+                );
+              })
+            )}
+          </Card.Content>
+        </Card>
+      )}
+
       {stats?.document_file_type_counts && stats.document_file_type_counts.length > 0 && (
         <Card style={[styles.fileTypesCard, { backgroundColor: theme.colors.surface }]}>
           <Card.Content>
@@ -155,7 +216,16 @@ export const DashboardScreen: React.FC = () => {
           </Card.Content>
         </Card>
       )}
-    </ScrollView>
+      </ScrollView>
+      <Snackbar
+        visible={!!snackbarMessage}
+        onDismiss={() => setSnackbarMessage(null)}
+        duration={5000}
+        style={{ marginBottom: 12 }}
+      >
+        {snackbarMessage ?? ''}
+      </Snackbar>
+    </>
   );
 };
 
@@ -232,6 +302,17 @@ const styles = StyleSheet.create({
   fileTypesCard: {
     marginTop: 8,
     borderRadius: 16,
+  },
+  mailAccountsCard: {
+    marginTop: 8,
+    marginBottom: 8,
+    borderRadius: 16,
+  },
+  mailAccountRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 12,
   },
   fileTypeRow: {
     flexDirection: 'row',

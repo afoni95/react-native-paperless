@@ -10,3 +10,5 @@ export * from './statistics';
 export * from './logs';
 export * from './usersGroups';
 export * from './workflows';
+export * from './mailAccounts';
+export * from './mailRules';
