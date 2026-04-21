@@ -172,7 +172,11 @@ export const LoginScreen: React.FC = () => {
     if (mfaRequired && mfaCode.length !== 6) return;
 
     // Magic demo credentials for UI testing without a server
-    if (url.trim() === '_demo_' && username === 'demo' && password === 'demo') {
+    if (
+      (url.trim() === '_demo_' || url.trim() === 'demo') &&
+      username === 'demo' &&
+      password === 'demo'
+    ) {
       if (biometricChecked) {
         const bioResult = await authenticateAsync({
           promptMessage: t('auth.biometricPrompt'),
