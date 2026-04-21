@@ -22,14 +22,7 @@ export const MailRulesListScreen: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [deleteTarget, setDeleteTarget] = useState<MailRule | null>(null);
 
-  const {
-    data: mailRules,
-    isLoading,
-    isError,
-    error,
-    refetch,
-    isRefetching,
-  } = useAllMailRules();
+  const { data: mailRules, isLoading, isError, error, refetch, isRefetching } = useAllMailRules();
 
   const { data: mailAccounts } = useAllMailAccounts();
 

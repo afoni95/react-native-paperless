@@ -102,7 +102,9 @@ export const MailAccountsListScreen: React.FC = () => {
             style={styles.listItem}
           />
         )}
-        contentContainerStyle={filteredMailAccounts.length === 0 ? styles.emptyContainer : undefined}
+        contentContainerStyle={
+          filteredMailAccounts.length === 0 ? styles.emptyContainer : undefined
+        }
         ListEmptyComponent={<EmptyState message={t('common.noResults')} />}
         refreshControl={
           <RefreshControl

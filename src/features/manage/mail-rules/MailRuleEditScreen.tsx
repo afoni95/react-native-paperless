@@ -4,7 +4,13 @@ import { Button, Switch, Text, TextInput, useTheme } from 'react-native-paper';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useTranslation } from 'react-i18next';
 
-import { ConfirmDialog, HasPermission, LoadingScreen, MultiSelectChips, SearchableDropdown } from '@/components';
+import {
+  ConfirmDialog,
+  HasPermission,
+  LoadingScreen,
+  MultiSelectChips,
+  SearchableDropdown,
+} from '@/components';
 import { ManageStackParamList } from '@/navigation/types';
 import {
   useDeleteMailRule,

@@ -1,11 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { mailAccountsApi } from '@/api';
-import {
-  MailAccount,
-  MailAccountCreatePayload,
-  MailAccountUpdatePayload,
-} from '@/types';
+import { MailAccount, MailAccountCreatePayload, MailAccountUpdatePayload } from '@/types';
 import { MutationHookOptions, QueryHookOptions } from '@/utils/reactQueryCommon';
 
 import { mailAccountQueryKeys } from './queryKeys';

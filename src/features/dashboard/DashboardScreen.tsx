@@ -13,7 +13,7 @@ export const DashboardScreen: React.FC = () => {
   const { t } = useTranslation();
   const { navigateTo } = useGlobalNavigationHelper();
   const { can } = usePermissionContext();
-const [snackbarMessage, setSnackbarMessage] = React.useState<string | null>(null);
+  const [snackbarMessage, setSnackbarMessage] = React.useState<string | null>(null);
 
   const showDocumentsTab = can('view', 'document');
   const showTagsList = can('view', 'tag');
@@ -66,156 +66,159 @@ const [snackbarMessage, setSnackbarMessage] = React.useState<string | null>(null
           />
         }
       >
-      <View style={styles.searchContainer}>
-        <GlobalSearchBar />
-      </View>
+        <View style={styles.searchContainer}>
+          <GlobalSearchBar />
+        </View>
 
-      <View style={styles.cardRow}>
-        <StatCard
-          title={t('dashboard.totalDocuments')}
-          value={stats?.documents_total ?? 0}
-          icon="file-document-outline"
-          color={theme.colors.primaryContainer}
-          textColor={theme.colors.onPrimaryContainer}
-          onPress={() => {
-            if (showDocumentsTab) {
-              navigateTo('documentList');
-            }
-          }}
-        />
-        <StatCard
-          title={t('dashboard.inbox')}
-          value={stats?.documents_inbox ?? 0}
-          icon="inbox-arrow-down"
-          color={theme.colors.tertiaryContainer}
-          textColor={theme.colors.onTertiaryContainer}
-          onPress={() => {
-            if (showDocumentsTab) {
-              navigateTo('documentList');
-            }
-          }}
-        />
-      </View>
+        <View style={styles.cardRow}>
+          <StatCard
+            title={t('dashboard.totalDocuments')}
+            value={stats?.documents_total ?? 0}
+            icon="file-document-outline"
+            color={theme.colors.primaryContainer}
+            textColor={theme.colors.onPrimaryContainer}
+            onPress={() => {
+              if (showDocumentsTab) {
+                navigateTo('documentList');
+              }
+            }}
+          />
+          <StatCard
+            title={t('dashboard.inbox')}
+            value={stats?.documents_inbox ?? 0}
+            icon="inbox-arrow-down"
+            color={theme.colors.tertiaryContainer}
+            textColor={theme.colors.onTertiaryContainer}
+            onPress={() => {
+              if (showDocumentsTab) {
+                navigateTo('documentList');
+              }
+            }}
+          />
+        </View>
 
-      <View style={styles.cardRow}>
-        <StatCard
-          title={t('dashboard.tags')}
-          value={stats?.tag_count ?? 0}
-          icon="tag-outline"
-          color={theme.colors.tertiaryContainer}
-          textColor={theme.colors.onTertiaryContainer}
-          onPress={() => {
-            if (showTagsList) {
-              navigateTo('tagsList');
-            }
-          }}
-        />
-        <StatCard
-          title={t('dashboard.correspondents')}
-          value={stats?.correspondent_count ?? 0}
-          icon="account-outline"
-          color={theme.colors.primaryContainer}
-          textColor={theme.colors.onPrimaryContainer}
-          onPress={() => {
-            if (showCorrespondentsList) {
-              navigateTo('correspondentsList');
-            }
-          }}
-        />
-      </View>
+        <View style={styles.cardRow}>
+          <StatCard
+            title={t('dashboard.tags')}
+            value={stats?.tag_count ?? 0}
+            icon="tag-outline"
+            color={theme.colors.tertiaryContainer}
+            textColor={theme.colors.onTertiaryContainer}
+            onPress={() => {
+              if (showTagsList) {
+                navigateTo('tagsList');
+              }
+            }}
+          />
+          <StatCard
+            title={t('dashboard.correspondents')}
+            value={stats?.correspondent_count ?? 0}
+            icon="account-outline"
+            color={theme.colors.primaryContainer}
+            textColor={theme.colors.onPrimaryContainer}
+            onPress={() => {
+              if (showCorrespondentsList) {
+                navigateTo('correspondentsList');
+              }
+            }}
+          />
+        </View>
 
-      <View style={styles.cardRow}>
-        <StatCard
-          title={t('dashboard.documentTypes')}
-          value={stats?.document_type_count ?? 0}
-          icon="clipboard-text-outline"
-          color={theme.colors.primaryContainer}
-          textColor={theme.colors.onPrimaryContainer}
-          onPress={() => {
-            if (showDocumentTypesList) {
-              navigateTo('documentTypesList');
-            }
-          }}
-        />
-        <StatCard
-          title={t('dashboard.characters')}
-          value={formatNumber(stats?.character_count ?? 0)}
-          icon="format-letter-case"
-          color={theme.colors.tertiaryContainer}
-          textColor={theme.colors.onTertiaryContainer}
-        />
-      </View>
+        <View style={styles.cardRow}>
+          <StatCard
+            title={t('dashboard.documentTypes')}
+            value={stats?.document_type_count ?? 0}
+            icon="clipboard-text-outline"
+            color={theme.colors.primaryContainer}
+            textColor={theme.colors.onPrimaryContainer}
+            onPress={() => {
+              if (showDocumentTypesList) {
+                navigateTo('documentTypesList');
+              }
+            }}
+          />
+          <StatCard
+            title={t('dashboard.characters')}
+            value={formatNumber(stats?.character_count ?? 0)}
+            icon="format-letter-case"
+            color={theme.colors.tertiaryContainer}
+            textColor={theme.colors.onTertiaryContainer}
+          />
+        </View>
 
-      {showMailAccounts && (
-        <Card style={[styles.mailAccountsCard, { backgroundColor: theme.colors.surface }]}>
-          <Card.Content>
-            <Text variant="titleMedium" style={{ marginBottom: 12 }}>
-              {t('dashboard.mailAccounts')}
-            </Text>
-
-            {mailAccounts.length === 0 ? (
-              <Text variant="bodyMedium" style={{ color: theme.colors.onSurfaceVariant }}>
-                {t('dashboard.noMailAccounts')}
+        {showMailAccounts && (
+          <Card style={[styles.mailAccountsCard, { backgroundColor: theme.colors.surface }]}>
+            <Card.Content>
+              <Text variant="titleMedium" style={{ marginBottom: 12 }}>
+                {t('dashboard.mailAccounts')}
               </Text>
-            ) : (
-              mailAccounts.map((account, index) => {
-                return (
-                  <View key={account.id}>
-                    <View style={styles.mailAccountRow}>
-                      <View style={{ flex: 1 }}>
-                        <Text variant="titleSmall" style={{ color: theme.colors.onSurface }}>
-                          {account.name}
-                        </Text>
-                        <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant }}>
-                          {account.username}
-                        </Text>
-                      </View>
-                      <Button
-                        mode="contained-tonal"
-                        compact
-                        icon="refresh"
-                        onPress={() => handleProcessMailAccount(account.id, account.name)}
-                        disabled={!canProcessMailAccounts}
-                      >
-                        {t('dashboard.processMail')}
-                      </Button>
-                    </View>
-                    {index < mailAccounts.length - 1 && <Divider style={{ marginVertical: 8 }} />}
-                  </View>
-                );
-              })
-            )}
-          </Card.Content>
-        </Card>
-      )}
 
-      {stats?.document_file_type_counts && stats.document_file_type_counts.length > 0 && (
-        <Card style={[styles.fileTypesCard, { backgroundColor: theme.colors.surface }]}>
-          <Card.Content>
-            <Text variant="titleMedium" style={{ marginBottom: 12 }}>
-              {t('dashboard.fileTypes')}
-            </Text>
-            {stats.document_file_type_counts.map((ft, index) => (
-              <View key={ft.mime_type}>
-                <View style={styles.fileTypeRow}>
-                  <Text variant="bodyMedium" style={{ flex: 1, color: theme.colors.onSurface }}>
-                    {ft.mime_type}
-                  </Text>
-                  <Text
-                    variant="bodyMedium"
-                    style={{ color: theme.colors.primary, fontWeight: '600' }}
-                  >
-                    {ft.mime_type_count}
-                  </Text>
+              {mailAccounts.length === 0 ? (
+                <Text variant="bodyMedium" style={{ color: theme.colors.onSurfaceVariant }}>
+                  {t('dashboard.noMailAccounts')}
+                </Text>
+              ) : (
+                mailAccounts.map((account, index) => {
+                  return (
+                    <View key={account.id}>
+                      <View style={styles.mailAccountRow}>
+                        <View style={{ flex: 1 }}>
+                          <Text variant="titleSmall" style={{ color: theme.colors.onSurface }}>
+                            {account.name}
+                          </Text>
+                          <Text
+                            variant="bodySmall"
+                            style={{ color: theme.colors.onSurfaceVariant }}
+                          >
+                            {account.username}
+                          </Text>
+                        </View>
+                        <Button
+                          mode="contained-tonal"
+                          compact
+                          icon="refresh"
+                          onPress={() => handleProcessMailAccount(account.id, account.name)}
+                          disabled={!canProcessMailAccounts}
+                        >
+                          {t('dashboard.processMail')}
+                        </Button>
+                      </View>
+                      {index < mailAccounts.length - 1 && <Divider style={{ marginVertical: 8 }} />}
+                    </View>
+                  );
+                })
+              )}
+            </Card.Content>
+          </Card>
+        )}
+
+        {stats?.document_file_type_counts && stats.document_file_type_counts.length > 0 && (
+          <Card style={[styles.fileTypesCard, { backgroundColor: theme.colors.surface }]}>
+            <Card.Content>
+              <Text variant="titleMedium" style={{ marginBottom: 12 }}>
+                {t('dashboard.fileTypes')}
+              </Text>
+              {stats.document_file_type_counts.map((ft, index) => (
+                <View key={ft.mime_type}>
+                  <View style={styles.fileTypeRow}>
+                    <Text variant="bodyMedium" style={{ flex: 1, color: theme.colors.onSurface }}>
+                      {ft.mime_type}
+                    </Text>
+                    <Text
+                      variant="bodyMedium"
+                      style={{ color: theme.colors.primary, fontWeight: '600' }}
+                    >
+                      {ft.mime_type_count}
+                    </Text>
+                  </View>
+                  {index < stats.document_file_type_counts.length - 1 && (
+                    <Divider style={{ marginVertical: 4 }} />
+                  )}
                 </View>
-                {index < stats.document_file_type_counts.length - 1 && (
-                  <Divider style={{ marginVertical: 4 }} />
-                )}
-              </View>
-            ))}
-          </Card.Content>
-        </Card>
-      )}
+              ))}
+            </Card.Content>
+          </Card>
+        )}
       </ScrollView>
       <Snackbar
         visible={!!snackbarMessage}

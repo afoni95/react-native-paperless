@@ -1,11 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { mailRulesApi } from '@/api';
-import {
-  MailRule,
-  MailRuleCreatePayload,
-  MailRuleUpdatePayload,
-} from '@/types';
+import { MailRule, MailRuleCreatePayload, MailRuleUpdatePayload } from '@/types';
 import { MutationHookOptions, QueryHookOptions } from '@/utils/reactQueryCommon';
 
 import { mailRuleQueryKeys } from './queryKeys';
@@ -39,9 +35,7 @@ export const useMailRule = (
   });
 };
 
-export const useUpsertMailRule = (
-  options?: MutationHookOptions<MailRule, UpsertMailRuleInput>,
-) => {
+export const useUpsertMailRule = (options?: MutationHookOptions<MailRule, UpsertMailRuleInput>) => {
   const client = useQueryClient();
 
   return useMutation({

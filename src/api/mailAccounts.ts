@@ -1,5 +1,10 @@
 import apiClient from './client';
-import { MailAccount, MailAccountCreatePayload, MailAccountUpdatePayload, PaginatedResponse } from '@/types';
+import {
+  MailAccount,
+  MailAccountCreatePayload,
+  MailAccountUpdatePayload,
+  PaginatedResponse,
+} from '@/types';
 
 interface ProcessMailAccountResponse {
   result: string;

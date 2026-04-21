@@ -7,11 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { ConfirmDialog, HasPermission, LoadingScreen, SearchableDropdown } from '@/components';
 import { ManageStackParamList } from '@/navigation/types';
 import { useDeleteMailAccount, useMailAccount, useUpsertMailAccount, useUsers } from '@/reactQuery';
-import {
-  ImapSecurity,
-  MailAccountCreatePayload,
-  MailAccountUpdatePayload,
-} from '@/types';
+import { ImapSecurity, MailAccountCreatePayload, MailAccountUpdatePayload } from '@/types';
 import { buttonStyles, formStyles, screenStyles } from '@/theme/commonStyles';
 
 type Props = NativeStackScreenProps<ManageStackParamList, 'MailAccountEdit'>;
