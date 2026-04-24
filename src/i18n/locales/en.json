@@ -61,12 +61,7 @@
     "mailAccounts": "Mail Accounts",
     "processMail": "Process Mail",
     "processMailQueued": "Queued mail processing for {{account}}. This may take a while depending on how many emails are found.",
-    "processMailNoLiveStatus": "Live progress is not exposed by this endpoint.",
     "processMailFailed": "Failed to queue mail processing.",
-    "processMailCompleted": "Mail processing completed.",
-    "processMailTaskFailed": "Mail processing task failed.",
-    "processMailStillRunning": "Mail processing is still running. Check Background Tasks for live status.",
-    "processMailBackgroundTask": "Mail processing is running in the background and may take a while depending on how many emails are found.",
     "noMailAccounts": "No mail accounts defined."
   },
   "search": {
@@ -223,9 +218,6 @@
     "characterSet": "Character Set",
     "isToken": "Is AccessToken",
     "owner": "Owner",
-    "accountType": "Account Type",
-    "expiration": "Expiration",
-    "expirationPlaceholder": "ISO date/time or leave empty",
     "deleteConfirm": "Are you sure you want to delete this mail account?"
   },
   "mailRules": {
@@ -316,10 +308,39 @@
     "storagePaths": "Storage Paths",
     "customFields": "Custom Fields",
     "workflows": "Workflows",
+    "workflowsSubtitle": "Automate document processing rules",
     "settings": "Settings",
     "trashBin": "Trash Bin",
     "logs": "Logs",
-    "tasks": "Tasks"
+    "tasks": "Tasks",
+    "processedMail": "Processed Mail",
+    "mail": "Mail",
+    "mailSubtitle": "Manage mail accounts, rules and processed mail",
+    "display": "Display",
+    "displaySubtitle": "Theme, language and appearance settings",
+    "access": "Users & Access",
+    "accessSubtitle": "Manage users, groups and permissions",
+    "system": "System",
+    "systemSubtitle": "Logs, tasks and trash bin",
+    "masterData": "Master Data",
+    "masterDataSubtitle": "Tags, correspondents, document types and more",
+    "about": "About this App",
+    "aboutSubtitle": "Version info, license and privacy policy"
+  },
+  "about": {
+    "version": "Version",
+    "sourcecode": "Source Code",
+    "license": "License",
+    "privacyPolicy": "Privacy Policy"
+  },
+  "processedMail": {
+    "title": "Processed Mail",
+    "empty": "No processed mail entries",
+    "loadError": "Failed to load processed mail",
+    "deleteSuccess": "Entry deleted",
+    "deleteError": "Failed to delete entry",
+    "deleteConfirm": "Delete processed mail entry \"{{subject}}\"?",
+    "noSubject": "(no subject)"
   },
   "workflows": {
     "title": "Workflows",

@@ -62,9 +62,9 @@ npm run i18:unused
 - [X] Logs viewer
 - [X] Storage Paths CRUD
 - [X] Custom Fields CRUD
-- [ ] Mail Accounts CRUD
-- [ ] Mail Rules CRUD
-- [ ] Processed Mail view
+- [X] Mail Accounts CRUD
+- [X] Mail Rules CRUD
+- [X] Processed Mail view
 - [ ] Share Links CRUD
 - [X] Workflows
 - [X] Users/Groups management
@@ -79,7 +79,6 @@ npm run i18:unused
 - [ ] Bulk Edit Documents
 - [ ] Bulk Download Documents
 - [ ] Bulk Edit Objects
-- [ ] User Profile
 
 ### Enhancements
 
@@ -87,9 +86,7 @@ npm run i18:unused
 - [x] Theme support (light/dark/system)
 - [x] Biometric lock screen
 - [X] Object-level Permissions
-- [ ] Custom Field query filtering
-- [ ] More Like This search
-- [ ] WebSocket status updates
+- [ ] WebSocket status updates | Currently not possible due to Managed Expo limitation
 - [X] Upload: add storage_path & custom_fields support
 
 See the [open issues](https://github.com/afoni95/react-native-paperless/issues) for a full list of proposed features and known bugs.

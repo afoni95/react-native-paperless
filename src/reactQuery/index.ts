@@ -12,3 +12,4 @@ export * from './usersGroups';
 export * from './workflows';
 export * from './mailAccounts';
 export * from './mailRules';
+export * from './processedMail';

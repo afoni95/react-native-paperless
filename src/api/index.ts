@@ -14,3 +14,4 @@ export { groupsApi } from './groups';
 export { workflowsApi } from './workflows';
 export { mailAccountsApi } from './mailAccounts';
 export { mailRulesApi } from './mailRules';
+export { processedMailApi } from './processedMail';

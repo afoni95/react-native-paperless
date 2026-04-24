@@ -486,6 +486,19 @@ export type ApiStatus = {
   tasks: ApiStatusTasks;
 };
 
+export interface ProcessedMail {
+  id: number;
+  owner: number | null;
+  rule: number | null;
+  folder: string;
+  uid: string;
+  subject: string;
+  received: string;
+  processed: string;
+  status: string;
+  error: string | null;
+}
+
 export type {
   Workflow,
   WorkflowTrigger,
