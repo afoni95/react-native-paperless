@@ -2,32 +2,39 @@ import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useTranslation } from 'react-i18next';
 import { ManagementOverviewScreen } from '@/features/manage/ManagementOverviewScreen';
-import { SettingsScreen } from '@/features/manage/SettingsScreen';
-import { TasksListScreen } from '@/features/manage/TasksListScreen';
-import { TagsListScreen } from '@/features/manage/tags/TagsListScreen';
-import { TagEditScreen } from '@/features/manage/tags/TagEditScreen';
-import { CorrespondentsListScreen } from '@/features/manage/correspondents/CorrespondentsListScreen';
-import { CorrespondentEditScreen } from '@/features/manage/correspondents/CorrespondentEditScreen';
-import { DocumentTypesListScreen } from '@/features/manage/document-types/DocumentTypesListScreen';
-import { DocumentTypeEditScreen } from '@/features/manage/document-types/DocumentTypeEditScreen';
+import { SettingsScreen } from '@/features/manage/system/SettingsScreen';
+import { DisplayScreen } from '@/features/manage/DisplayScreen';
+import { TasksListScreen } from '@/features/manage/system/TasksListScreen';
+import { TagsListScreen } from '@/features/manage/master-data/tags/TagsListScreen';
+import { TagEditScreen } from '@/features/manage/master-data/tags/TagEditScreen';
+import { CorrespondentsListScreen } from '@/features/manage/master-data/correspondents/CorrespondentsListScreen';
+import { CorrespondentEditScreen } from '@/features/manage/master-data/correspondents/CorrespondentEditScreen';
+import { DocumentTypesListScreen } from '@/features/manage/master-data/document-types/DocumentTypesListScreen';
+import { DocumentTypeEditScreen } from '@/features/manage/master-data/document-types/DocumentTypeEditScreen';
 import { StoragePathsListScreen } from '@/features/manage/storage/StoragePathsListScreen';
 import { StoragePathEditScreen } from '@/features/manage/storage/StoragePathEditScreen';
-import { CustomFieldsListScreen } from '@/features/manage/custom-fields/CustomFieldsListScreen';
-import { CustomFieldEditScreen } from '@/features/manage/custom-fields/CustomFieldEditScreen';
+import { CustomFieldsListScreen } from '@/features/manage/master-data/custom-fields/CustomFieldsListScreen';
+import { CustomFieldEditScreen } from '@/features/manage/master-data/custom-fields/CustomFieldEditScreen';
 import { WorkflowsListScreen } from '@/features/manage/workflows/WorkflowsListScreen';
 import { WorkflowEditScreen } from '@/features/manage/workflows/WorkflowEditScreen';
 import { TriggerEditScreen } from '@/features/manage/workflows/TriggerEditScreen';
 import { ActionEditScreen } from '@/features/manage/workflows/ActionEditScreen';
-import { TrashBinScreen } from '@/features/manage/TrashBinScreen';
-import { LogsScreen } from '@/features/manage/LogsScreen';
-import { UsersListScreen } from '@/features/manage/users/UsersListScreen';
-import { UserEditScreen } from '@/features/manage/users/UserEditScreen';
-import { GroupsListScreen } from '@/features/manage/groups/GroupsListScreen';
-import { GroupEditScreen } from '@/features/manage/groups/GroupEditScreen';
-import { MailAccountsListScreen } from '@/features/manage/mail-accounts/MailAccountsListScreen';
-import { MailAccountEditScreen } from '@/features/manage/mail-accounts/MailAccountEditScreen';
-import { MailRulesListScreen } from '@/features/manage/mail-rules/MailRulesListScreen';
-import { MailRuleEditScreen } from '@/features/manage/mail-rules/MailRuleEditScreen';
+import { TrashBinScreen } from '@/features/manage/system/TrashBinScreen';
+import { LogsScreen } from '@/features/manage/system/LogsScreen';
+import { UsersListScreen } from '@/features/manage/access/users/UsersListScreen';
+import { UserEditScreen } from '@/features/manage/access/users/UserEditScreen';
+import { GroupsListScreen } from '@/features/manage/access/groups/GroupsListScreen';
+import { GroupEditScreen } from '@/features/manage/access/groups/GroupEditScreen';
+import { MailAccountsListScreen } from '@/features/manage/mail/mail-accounts/MailAccountsListScreen';
+import { MailAccountEditScreen } from '@/features/manage/mail/mail-accounts/MailAccountEditScreen';
+import { MailRulesListScreen } from '@/features/manage/mail/mail-rules/MailRulesListScreen';
+import { MailRuleEditScreen } from '@/features/manage/mail/mail-rules/MailRuleEditScreen';
+import { ProcessedMailScreen } from '@/features/manage/mail/processed-mail/ProcessedMailScreen';
+import { MailOverviewScreen } from '@/features/manage/mail/MailOverviewScreen';
+import { SystemOverviewScreen } from '@/features/manage/system/SystemOverviewScreen';
+import { MasterDataOverviewScreen } from '@/features/manage/master-data/MasterDataOverviewScreen';
+import { AccessOverviewScreen } from '@/features/manage/access/AccessOverviewScreen';
+import { AboutScreen } from '@/features/manage/AboutScreen';
 import { ManageStackParamList } from './types';
 
 const Stack = createNativeStackNavigator<ManageStackParamList>();
@@ -140,6 +147,27 @@ export const ManageStack: React.FC = () => {
         options={{ title: t('common.settings') }}
       />
       <Stack.Screen
+        name="Display"
+        component={DisplayScreen}
+        options={{ title: t('manage.display') }}
+      />
+      <Stack.Screen
+        name="SystemOverview"
+        component={SystemOverviewScreen}
+        options={{ title: t('manage.system') }}
+      />
+      <Stack.Screen
+        name="MasterDataOverview"
+        component={MasterDataOverviewScreen}
+        options={{ title: t('manage.masterData') }}
+      />
+      <Stack.Screen
+        name="AccessOverview"
+        component={AccessOverviewScreen}
+        options={{ title: t('manage.access') }}
+      />
+      <Stack.Screen name="About" component={AboutScreen} options={{ title: t('manage.about') }} />
+      <Stack.Screen
         name="TrashBin"
         component={TrashBinScreen}
         options={{ title: t('trash.title') }}
@@ -175,6 +203,11 @@ export const ManageStack: React.FC = () => {
         })}
       />
       <Stack.Screen
+        name="MailOverview"
+        component={MailOverviewScreen}
+        options={{ title: t('manage.mail') }}
+      />
+      <Stack.Screen
         name="MailAccountsList"
         component={MailAccountsListScreen}
         options={{ title: t('mailAccounts.title') }}
@@ -201,6 +234,11 @@ export const ManageStack: React.FC = () => {
             ? t('mailRules.editMailRule')
             : t('mailRules.createMailRule'),
         })}
+      />
+      <Stack.Screen
+        name="ProcessedMailList"
+        component={ProcessedMailScreen}
+        options={{ title: t('processedMail.title') }}
       />
     </Stack.Navigator>
   );

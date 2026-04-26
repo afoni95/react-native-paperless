@@ -61,12 +61,7 @@
     "mailAccounts": "E-Mail Konten",
     "processMail": "E-Mails verarbeiten",
     "processMailQueued": "E-Mail-Verarbeitung für {{account}} wurde gestartet. Dies kann je nach Anzahl gefundener E-Mails eine Weile dauern.",
-    "processMailNoLiveStatus": "Dieser Endpunkt liefert keinen Live-Fortschritt.",
     "processMailFailed": "E-Mail-Verarbeitung konnte nicht gestartet werden.",
-    "processMailCompleted": "E-Mail-Verarbeitung abgeschlossen.",
-    "processMailTaskFailed": "E-Mail-Verarbeitungsaufgabe fehlgeschlagen.",
-    "processMailStillRunning": "E-Mail-Verarbeitung läuft noch. Prüfe Hintergrundaufgaben für den Live-Status.",
-    "processMailBackgroundTask": "Die E-Mail-Verarbeitung läuft im Hintergrund und kann je nach Anzahl gefundener E-Mails etwas dauern.",
     "noMailAccounts": "Keine E-Mail Konten definiert."
   },
   "search": {
@@ -78,7 +73,13 @@
       "document": "Dokument",
       "correspondent": "Korrespondent",
       "document_type": "Dokumenttyp",
-      "tag": "Tag"
+      "tag": "Tag",
+      "storage_path": "Speicherpfad",
+      "mail_account": "E-Mail-Konto",
+      "mail_rule": "E-Mail-Regel",
+      "custom_field": "Benutzerdefiniertes Feld",
+      "workflow": "Workflow",
+      "user": "Benutzer"
     }
   },
   "documents": {
@@ -223,9 +224,6 @@
     "characterSet": "Zeichensatz",
     "isToken": "Ist AccessToken",
     "owner": "Besitzer",
-    "accountType": "Kontotyp",
-    "expiration": "Ablaufdatum",
-    "expirationPlaceholder": "ISO-Datum/Zeit oder leer lassen",
     "deleteConfirm": "Möchten Sie dieses E-Mail Konto wirklich löschen?"
   },
   "mailRules": {
@@ -316,10 +314,40 @@
     "storagePaths": "Speicherpfade",
     "customFields": "Benutzerdefinierte Felder",
     "workflows": "Workflows",
+    "workflowsSubtitle": "Dokumentenverarbeitung automatisieren",
     "settings": "Einstellungen",
     "trashBin": "Papierkorb",
     "logs": "Protokolle",
-    "tasks": "Aufgaben"
+    "tasks": "Aufgaben",
+    "processedMail": "Verarbeitete E-Mails",
+    "mail": "E-Mail",
+    "mailSubtitle": "E-Mail Konten, Regeln und verarbeitete E-Mails verwalten",
+    "display": "Anzeige",
+    "displaySubtitle": "Design, Sprache und Darstellungseinstellungen",
+    "access": "Benutzer & Zugang",
+    "accessSubtitle": "Benutzer, Gruppen und Berechtigungen verwalten",
+    "system": "System",
+    "systemSubtitle": "Protokolle, Aufgaben und Papierkorb",
+    "masterData": "Stammdaten",
+    "masterDataSubtitle": "Tags, Korrespondenten, Dokumenttypen und mehr",
+    "about": "Über diese App",
+    "aboutSubtitle": "Versionsinformationen, Lizenz und Datenschutz"
+  },
+  "about": {
+    "version": "Version",
+    "sourcecode": "Quellcode",
+    "license": "Lizenz",
+    "privacyPolicy": "Datenschutzerklärung"
+  },
+  "processedMail": {
+    "title": "Verarbeitete E-Mails",
+    "empty": "Keine verarbeiteten E-Mails",
+    "loadError": "Verarbeitete E-Mails konnten nicht geladen werden",
+    "deleteSuccess": "Eintrag gelöscht",
+    "deleteError": "Eintrag konnte nicht gelöscht werden",
+    "deleteConfirm": "Verarbeitete E-Mail \"{{subject}}\" löschen?",
+    "noSubject": "(kein Betreff)",
+    "deleteWarning": "Das Löschen von Einträgen kann dazu führen, dass Anhänge derselben E-Mail erneut importiert werden und Duplikate entstehen."
   },
   "workflows": {
     "title": "Workflows",

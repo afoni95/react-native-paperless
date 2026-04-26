@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { View, FlatList, StyleSheet, RefreshControl, Alert, Text } from 'react-native';
-import { List, useTheme, FAB, Switch, Snackbar } from 'react-native-paper';
+import { View, FlatList, StyleSheet, RefreshControl, Alert } from 'react-native';
+import { List, useTheme, FAB, Switch, Snackbar, Text } from 'react-native-paper';
 import { useTranslation } from 'react-i18next';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 

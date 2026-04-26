@@ -52,6 +52,7 @@ export type ManageStackParamList = {
   MailAccountEdit: { mailAccountId?: number };
   MailRulesList: undefined;
   MailRuleEdit: { mailRuleId?: number };
+  MailOverview: undefined;
   TagsList: undefined;
   TagEdit: { tagId?: number };
   CorrespondentsList: undefined;
@@ -79,12 +80,20 @@ export type ManageStackParamList = {
     action?: WorkflowAction;
   };
   Settings: undefined;
+  Display: undefined;
+  SystemOverview: undefined;
+  MasterDataOverview: undefined;
+  AccessOverview: undefined;
+  About: undefined;
   TrashBin: undefined;
   TasksList: undefined;
   LogsView: undefined;
+  ProcessedMailList: undefined;
 };
 
 export type DashboardStackParamList = {
   Dashboard: undefined;
   GlobalSearchResults: { query: string };
+  DocumentDetail: { documentId: number };
+  PdfViewer: { documentId: number };
 };
