@@ -48,7 +48,9 @@ export const ProcessedMailScreen: React.FC = () => {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      <Text style={{ marginHorizontal: 16, marginVertical: 16, fontSize: 16 }}>{t('processedMail.deleteWarning')}</Text>
+      <Text style={{ marginHorizontal: 16, marginVertical: 16, fontSize: 16 }}>
+        {t('processedMail.deleteWarning')}
+      </Text>
       <Divider />
       <FlatList
         data={items}

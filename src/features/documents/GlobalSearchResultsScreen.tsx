@@ -274,19 +274,16 @@ export const GlobalSearchResultsScreen: React.FC = () => {
           navigateTo('documentTypeEdit', { documentTypeId: item.id });
         break;
       case 'storage_path':
-        if (can('change', 'storagepath'))
-          navigateTo('storagePathEdit', { storagePathId: item.id });
+        if (can('change', 'storagepath')) navigateTo('storagePathEdit', { storagePathId: item.id });
         break;
       case 'mail_account':
-        if (can('change', 'mailaccount'))
-          navigateTo('mailAccountEdit', { mailAccountId: item.id });
+        if (can('change', 'mailaccount')) navigateTo('mailAccountEdit', { mailAccountId: item.id });
         break;
       case 'mail_rule':
         if (can('change', 'mailrule')) navigateTo('mailRuleEdit', { mailRuleId: item.id });
         break;
       case 'custom_field':
-        if (can('change', 'customfield'))
-          navigateTo('customFieldEdit', { customFieldId: item.id });
+        if (can('change', 'customfield')) navigateTo('customFieldEdit', { customFieldId: item.id });
         break;
       case 'workflow':
         if (can('change', 'workflow')) navigateTo('workflowEdit', { workflowId: item.id });

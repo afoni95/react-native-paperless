@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, FlatList, ActivityIndicator } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { useTheme, Text} from 'react-native-paper';
+import { useTheme, Text } from 'react-native-paper';
 import { useLogs, useLog } from '@/reactQuery';
 
 export const LogsScreen: React.FC = () => {

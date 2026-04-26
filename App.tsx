@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useColorScheme, View, StyleSheet } from 'react-native';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { StatusBar } from 'expo-status-bar';
-import { PaperProvider, Banner,Text, } from 'react-native-paper';
+import { PaperProvider, Banner, Text } from 'react-native-paper';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import NetInfo from '@react-native-community/netinfo';
