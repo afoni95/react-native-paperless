@@ -40,6 +40,10 @@ export const AboutScreen: React.FC = () => {
           onPress={() =>
             Linking.openURL('https://afoni95.github.io/react-native-paperless/PRIVACY_POLICY')
           }
+        /><Divider />
+        <List.Item
+          title={"Made in Germany"}
+          left={(props) => <List.Icon {...props} icon="flag" />}
         />
       </List.Section>
     </ScrollView>

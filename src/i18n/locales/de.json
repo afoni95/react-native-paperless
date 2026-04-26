@@ -73,7 +73,13 @@
       "document": "Dokument",
       "correspondent": "Korrespondent",
       "document_type": "Dokumenttyp",
-      "tag": "Tag"
+      "tag": "Tag",
+      "storage_path": "Speicherpfad",
+      "mail_account": "E-Mail-Konto",
+      "mail_rule": "E-Mail-Regel",
+      "custom_field": "Benutzerdefiniertes Feld",
+      "workflow": "Workflow",
+      "user": "Benutzer"
     }
   },
   "documents": {
@@ -340,7 +346,8 @@
     "deleteSuccess": "Eintrag gelöscht",
     "deleteError": "Eintrag konnte nicht gelöscht werden",
     "deleteConfirm": "Verarbeitete E-Mail \"{{subject}}\" löschen?",
-    "noSubject": "(kein Betreff)"
+    "noSubject": "(kein Betreff)",
+    "deleteWarning": "Das Löschen von Einträgen kann dazu führen, dass Anhänge derselben E-Mail erneut importiert werden und Duplikate entstehen."
   },
   "workflows": {
     "title": "Workflows",

@@ -1,3 +1,7 @@
+import { Group } from '@/api/groups';
+import { Workflow } from './workflows';
+import { User } from '@/api/users';
+
 export interface PaginatedResponse<T> {
   count: number;
   next: string | null;
@@ -418,18 +422,17 @@ export interface AutocompleteResponse {
 
 export interface GlobalSearchResult {
   correspondents: CorrespondentSearchResult[];
-  // custom_fields: any[];
+  custom_fields: CustomField[];
   document_types: DocumentTypeSearchResult[];
   documents: Document[];
-  // groups: any[];
-  // mail_accounts: any[];
-  // mail_rules: any[];
-  // saved_views: any[];
-  // storage_paths: any[];
+  groups: Group[];
+  mail_accounts: MailAccount[];
+  mail_rules: MailRule[];
+  storage_paths: StoragePath[];
   tags: TagSearchResult[];
   total: number;
-  // users: any[];
-  // workflows: any[];
+  users: User[];
+  workflows: Workflow[];
 }
 
 export type MatchingAlgorithm = 0 | 1 | 2 | 3 | 4 | 5 | 6;

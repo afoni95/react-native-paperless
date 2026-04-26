@@ -73,7 +73,13 @@
       "document": "Document",
       "correspondent": "Correspondent",
       "document_type": "Document Type",
-      "tag": "Tag"
+      "tag": "Tag",
+      "storage_path": "Storage Path",
+      "mail_account": "Mail Account",
+      "mail_rule": "Mail Rule",
+      "custom_field": "Custom Field",
+      "workflow": "Workflow",
+      "user": "User"
     }
   },
   "documents": {
@@ -340,7 +346,8 @@
     "deleteSuccess": "Entry deleted",
     "deleteError": "Failed to delete entry",
     "deleteConfirm": "Delete processed mail entry \"{{subject}}\"?",
-    "noSubject": "(no subject)"
+    "noSubject": "(no subject)",
+    "deleteWarning": "Deleting entries might reimport attachments of the same E-Mail causing duplicates."
   },
   "workflows": {
     "title": "Workflows",

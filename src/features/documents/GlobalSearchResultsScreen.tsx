@@ -13,7 +13,14 @@ import {
   TagSearchResult,
   CorrespondentSearchResult,
   DocumentTypeSearchResult,
+  StoragePath,
+  MailAccount,
+  MailRule,
+  CustomField,
 } from '@/types';
+import type { Workflow } from '@/types/workflows';
+import type { User } from '@/api/users';
+import type { Group } from '@/api/groups';
 import { DashboardStackParamList, MainTabsParamList } from '@/navigation/types';
 import { useGlobalSearch, useAllTags } from '@/reactQuery';
 import { useGlobalNavigationHelper } from '@/hooks';
@@ -30,8 +37,29 @@ interface SearchResultItem {
   id: number;
   name: string;
   subtitle?: string;
-  type: 'document' | 'tag' | 'correspondent' | 'document_type';
-  data: Document | TagSearchResult | CorrespondentSearchResult | DocumentTypeSearchResult;
+  type:
+    | 'document'
+    | 'tag'
+    | 'correspondent'
+    | 'document_type'
+    | 'storage_path'
+    | 'mail_account'
+    | 'mail_rule'
+    | 'custom_field'
+    | 'workflow'
+    | 'user';
+  data:
+    | Document
+    | TagSearchResult
+    | CorrespondentSearchResult
+    | DocumentTypeSearchResult
+    | StoragePath
+    | MailAccount
+    | MailRule
+    | CustomField
+    | Workflow
+    | User
+    | Group;
 }
 
 export const GlobalSearchResultsScreen: React.FC = () => {
@@ -46,6 +74,18 @@ export const GlobalSearchResultsScreen: React.FC = () => {
         return 'search.type.correspondent';
       case 'document_type':
         return 'search.type.document_type';
+      case 'storage_path':
+        return 'search.type.storage_path';
+      case 'mail_account':
+        return 'search.type.mail_account';
+      case 'mail_rule':
+        return 'search.type.mail_rule';
+      case 'custom_field':
+        return 'search.type.custom_field';
+      case 'workflow':
+        return 'search.type.workflow';
+      case 'user':
+        return 'search.type.user';
       default:
         return '';
     }
@@ -130,6 +170,83 @@ export const GlobalSearchResultsScreen: React.FC = () => {
         });
       }
 
+      // Add storage paths
+      if (results.storage_paths && results.storage_paths.length > 0) {
+        results.storage_paths.forEach((sp) => {
+          items.push({
+            id: sp.id,
+            name: sp.name,
+            subtitle: sp.path,
+            type: 'storage_path',
+            data: sp,
+          });
+        });
+      }
+
+      // Add mail accounts
+      if (results.mail_accounts && results.mail_accounts.length > 0) {
+        results.mail_accounts.forEach((account) => {
+          items.push({
+            id: account.id,
+            name: account.name,
+            subtitle: account.imap_server,
+            type: 'mail_account',
+            data: account,
+          });
+        });
+      }
+
+      // Add mail rules
+      if (results.mail_rules && results.mail_rules.length > 0) {
+        results.mail_rules.forEach((rule) => {
+          items.push({
+            id: rule.id,
+            name: rule.name,
+            subtitle: rule.folder,
+            type: 'mail_rule',
+            data: rule,
+          });
+        });
+      }
+
+      // Add custom fields
+      if (results.custom_fields && results.custom_fields.length > 0) {
+        results.custom_fields.forEach((field) => {
+          items.push({
+            id: field.id,
+            name: field.name,
+            subtitle: field.data_type,
+            type: 'custom_field',
+            data: field,
+          });
+        });
+      }
+
+      // Add workflows
+      if (results.workflows && results.workflows.length > 0) {
+        results.workflows.forEach((workflow) => {
+          items.push({
+            id: workflow.id,
+            name: workflow.name,
+            type: 'workflow',
+            data: workflow,
+          });
+        });
+      }
+
+      // Add users
+      if (results.users && results.users.length > 0) {
+        results.users.forEach((user) => {
+          items.push({
+            id: user.id,
+            name: user.username,
+            subtitle: user.email,
+            type: 'user',
+            data: user,
+          });
+        });
+      }
+
       return items;
     },
     [tags],
@@ -143,7 +260,7 @@ export const GlobalSearchResultsScreen: React.FC = () => {
   const handleResultPress = (item: SearchResultItem) => {
     switch (item.type) {
       case 'document':
-        if (can('view', 'document')) navigateTo('documentDetail', { documentId: item.id });
+        if (can('view', 'document')) navigation.navigate('DocumentDetail', { documentId: item.id });
         break;
       case 'tag':
         if (can('change', 'tag')) navigateTo('tagEdit', { tagId: item.id });
@@ -155,6 +272,27 @@ export const GlobalSearchResultsScreen: React.FC = () => {
       case 'document_type':
         if (can('change', 'documenttype'))
           navigateTo('documentTypeEdit', { documentTypeId: item.id });
+        break;
+      case 'storage_path':
+        if (can('change', 'storagepath'))
+          navigateTo('storagePathEdit', { storagePathId: item.id });
+        break;
+      case 'mail_account':
+        if (can('change', 'mailaccount'))
+          navigateTo('mailAccountEdit', { mailAccountId: item.id });
+        break;
+      case 'mail_rule':
+        if (can('change', 'mailrule')) navigateTo('mailRuleEdit', { mailRuleId: item.id });
+        break;
+      case 'custom_field':
+        if (can('change', 'customfield'))
+          navigateTo('customFieldEdit', { customFieldId: item.id });
+        break;
+      case 'workflow':
+        if (can('change', 'workflow')) navigateTo('workflowEdit', { workflowId: item.id });
+        break;
+      case 'user':
+        if (can('change', 'user')) navigateTo('userEdit', { userId: item.id });
         break;
     }
   };
@@ -169,6 +307,18 @@ export const GlobalSearchResultsScreen: React.FC = () => {
         return 'account';
       case 'document_type':
         return 'shape-plus';
+      case 'storage_path':
+        return 'folder-outline';
+      case 'mail_account':
+        return 'email-outline';
+      case 'mail_rule':
+        return 'email-check-outline';
+      case 'custom_field':
+        return 'form-textbox';
+      case 'workflow':
+        return 'sitemap';
+      case 'user':
+        return 'account-circle-outline';
       default:
         return 'magnify';
     }

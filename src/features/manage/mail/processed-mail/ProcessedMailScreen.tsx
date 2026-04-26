@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { View, FlatList, StyleSheet, RefreshControl } from 'react-native';
-import { List, useTheme, Snackbar, IconButton } from 'react-native-paper';
+import { List, useTheme, Snackbar, IconButton, Text, Divider } from 'react-native-paper';
 import { useTranslation } from 'react-i18next';
-
 import { LoadingScreen, EmptyState, ErrorBanner, ConfirmDialog } from '@/components';
 import { useProcessedMail, useDeleteProcessedMail } from '@/reactQuery';
 import { usePermissionContext } from '@/hooks/PermissionProvider';
@@ -49,6 +48,8 @@ export const ProcessedMailScreen: React.FC = () => {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+      <Text style={{ marginHorizontal: 16, marginVertical: 16, fontSize: 16 }}>{t('processedMail.deleteWarning')}</Text>
+      <Divider />
       <FlatList
         data={items}
         keyExtractor={(item) => String(item.id)}

@@ -15,6 +15,18 @@ type GlobalDestinationParams = {
   correspondentEdit: { correspondentId?: number };
   documentTypesList: undefined;
   documentTypeEdit: { documentTypeId?: number };
+  storagePathsList: undefined;
+  storagePathEdit: { storagePathId?: number };
+  mailAccountsList: undefined;
+  mailAccountEdit: { mailAccountId?: number };
+  mailRulesList: undefined;
+  mailRuleEdit: { mailRuleId?: number };
+  customFieldsList: undefined;
+  customFieldEdit: { customFieldId?: number };
+  workflowsList: undefined;
+  workflowEdit: { workflowId?: number };
+  usersList: undefined;
+  userEdit: { userId?: number };
   settings: undefined;
   trashBin: undefined;
   tasksList: undefined;
@@ -79,6 +91,60 @@ export const useGlobalNavigationHelper = () => {
           navigation.navigate('ManageTab', {
             screen: 'DocumentTypeEdit',
             params: params as GlobalDestinationParams['documentTypeEdit'],
+          });
+          return;
+        case 'storagePathsList':
+          navigation.navigate('ManageTab', { screen: 'StoragePathsList' });
+          return;
+        case 'storagePathEdit':
+          navigation.navigate('ManageTab', {
+            screen: 'StoragePathEdit',
+            params: params as GlobalDestinationParams['storagePathEdit'],
+          });
+          return;
+        case 'mailAccountsList':
+          navigation.navigate('ManageTab', { screen: 'MailAccountsList' });
+          return;
+        case 'mailAccountEdit':
+          navigation.navigate('ManageTab', {
+            screen: 'MailAccountEdit',
+            params: params as GlobalDestinationParams['mailAccountEdit'],
+          });
+          return;
+        case 'mailRulesList':
+          navigation.navigate('ManageTab', { screen: 'MailRulesList' });
+          return;
+        case 'mailRuleEdit':
+          navigation.navigate('ManageTab', {
+            screen: 'MailRuleEdit',
+            params: params as GlobalDestinationParams['mailRuleEdit'],
+          });
+          return;
+        case 'customFieldsList':
+          navigation.navigate('ManageTab', { screen: 'CustomFieldsList' });
+          return;
+        case 'customFieldEdit':
+          navigation.navigate('ManageTab', {
+            screen: 'CustomFieldEdit',
+            params: params as GlobalDestinationParams['customFieldEdit'],
+          });
+          return;
+        case 'workflowsList':
+          navigation.navigate('ManageTab', { screen: 'WorkflowsList' });
+          return;
+        case 'workflowEdit':
+          navigation.navigate('ManageTab', {
+            screen: 'WorkflowEdit',
+            params: params as GlobalDestinationParams['workflowEdit'],
+          });
+          return;
+        case 'usersList':
+          navigation.navigate('ManageTab', { screen: 'UsersList' });
+          return;
+        case 'userEdit':
+          navigation.navigate('ManageTab', {
+            screen: 'UserEdit',
+            params: params as GlobalDestinationParams['userEdit'],
           });
           return;
         case 'settings':

@@ -94,4 +94,6 @@ export type ManageStackParamList = {
 export type DashboardStackParamList = {
   Dashboard: undefined;
   GlobalSearchResults: { query: string };
+  DocumentDetail: { documentId: number };
+  PdfViewer: { documentId: number };
 };

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, ActivityIndicator } from 'react-native';
+import { View, FlatList, ActivityIndicator } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { useTheme } from 'react-native-paper';
+import { useTheme, Text} from 'react-native-paper';
 import { useLogs, useLog } from '@/reactQuery';
 
 export const LogsScreen: React.FC = () => {
@@ -37,7 +37,7 @@ export const LogsScreen: React.FC = () => {
         keyExtractor={(_, index) => index.toString()}
         renderItem={({ item }) => (
           <View style={{ marginBottom: 12 }}>
-            <Text style={{ color: theme.colors.onSurface }}>{item}</Text>
+            <Text>{item}</Text>
           </View>
         )}
       />
