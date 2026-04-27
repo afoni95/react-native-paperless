@@ -16,9 +16,9 @@ import type {
   Tag,
   TaskStatus,
   Workflow,
+  User,
+  Group
 } from '@/types';
-import type { Group } from './groups';
-import type { User } from './users';
 
 /* ------------------------------------------------------------------ */
 /*  Tags                                                               */

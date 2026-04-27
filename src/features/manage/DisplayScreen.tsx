@@ -2,7 +2,8 @@ import React from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 import { List, Divider, useTheme, RadioButton } from 'react-native-paper';
 import { useTranslation } from 'react-i18next';
-import { useSettingsStore, ThemeMode, Language } from '@/store/settingsStore';
+import { useSettingsStore } from '@/store/settingsStore';
+import type { ThemeMode, Language } from '@/types';
 
 export const DisplayScreen: React.FC = () => {
   const theme = useTheme();

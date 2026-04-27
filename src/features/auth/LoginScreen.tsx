@@ -20,7 +20,7 @@ import { authApi, MfaRequiredError, MFA_INVALID_ERROR } from '@/api/auth';
 import apiClient from '@/api/client';
 import { useAuthStore } from '@/store/authStore';
 import { PaginatedResponse, PaperlessApiError } from '@/types';
-import { User } from '@/api/users';
+import { User } from '@/types';
 import { pauseAsync } from '@/utils';
 
 const MFA_CODE_PATTERN = /^\d{6}$/;

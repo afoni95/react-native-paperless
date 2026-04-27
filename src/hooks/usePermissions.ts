@@ -1,5 +1,5 @@
 import React from 'react';
-import type { User } from '@/api/users';
+import type { User } from '@/types';
 import {
   PERMISSION_ACTIONS,
   PERMISSION_RESOURCES,

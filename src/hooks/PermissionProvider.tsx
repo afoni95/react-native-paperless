@@ -1,6 +1,6 @@
 import React from 'react';
 import type { ReactNode } from 'react';
-import type { User } from '@/api/users';
+import type { User } from '@/types';
 import type { PermissionAction, PermissionResource } from '@/utils/permissions';
 import { usePermissions } from './usePermissions';
 

@@ -57,12 +57,12 @@ export const documentsApi = {
     return `/api/documents/${id}/thumb/`;
   },
 
-  getDocumentMetadata: async (id: number) => {
+  getDocumentMetadata: async (id: number): Promise<unknown> => {
     const response = await apiClient.get(`/api/documents/${id}/metadata/`);
     return response.data;
   },
 
-  getDocumentSuggestions: async (id: number) => {
+  getDocumentSuggestions: async (id: number): Promise<unknown> => {
     const response = await apiClient.get(`/api/documents/${id}/suggestions/`);
     return response.data;
   },

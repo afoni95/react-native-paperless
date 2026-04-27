@@ -8,7 +8,7 @@ import { CustomField, DocumentCustomFieldValue } from '@/types';
 import { SearchableDropdown } from './SearchableDropdown';
 import { CustomFieldEditor } from './CustomFieldEditor';
 
-interface Props {
+interface CustomFieldsSectionProps {
   customFields: DocumentCustomFieldValue[];
   availableFields: CustomField[];
   customFieldsMap: Map<number, CustomField>;
@@ -19,7 +19,7 @@ interface Props {
   onChangeField: (fieldId: number, value: DocumentCustomFieldValue['value']) => void;
 }
 
-export const CustomFieldsSection: React.FC<Props> = ({
+export const CustomFieldsSection: React.FC<CustomFieldsSectionProps> = ({
   customFields,
   availableFields,
   customFieldsMap,

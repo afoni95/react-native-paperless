@@ -19,8 +19,7 @@ import {
   CustomField,
 } from '@/types';
 import type { Workflow } from '@/types/workflows';
-import type { User } from '@/api/users';
-import type { Group } from '@/api/groups';
+import type { User, Group } from '@/types';
 import { DashboardStackParamList, MainTabsParamList } from '@/navigation/types';
 import { useGlobalSearch, useAllTags } from '@/reactQuery';
 import { useGlobalNavigationHelper } from '@/hooks';

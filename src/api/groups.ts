@@ -1,34 +1,25 @@
 import apiClient from './client';
-
-export interface Group {
-  id: number;
-  name: string;
-  permissions: string[];
-}
-
-export interface GroupPayload {
-  name: string;
-  permissions?: string[];
-}
+import type { Group, GroupPayload } from '@/types';
+import type { PaginatedResponse } from '@/types';
 
 export const groupsApi = {
-  async list(params?: { page?: number; page_size?: number }) {
+  async list(params?: { page?: number; page_size?: number }): Promise<PaginatedResponse<Group>> {
     const { data } = await apiClient.get('/api/groups/', { params });
     return data;
   },
-  async retrieve(id: number) {
+  async retrieve(id: number): Promise<Group> {
     const { data } = await apiClient.get(`/api/groups/${id}/`);
     return data;
   },
-  async create(payload: GroupPayload) {
+  async create(payload: GroupPayload): Promise<Group> {
     const { data } = await apiClient.post('/api/groups/', payload);
     return data;
   },
-  async update(id: number, payload: Partial<GroupPayload>) {
+  async update(id: number, payload: Partial<GroupPayload>): Promise<Group> {
     const { data } = await apiClient.patch(`/api/groups/${id}/`, payload);
     return data;
   },
-  async remove(id: number) {
+  async remove(id: number): Promise<void> {
     await apiClient.delete(`/api/groups/${id}/`);
   },
 };
