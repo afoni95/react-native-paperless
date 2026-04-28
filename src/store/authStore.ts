@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import axios from 'axios';
-import type { User } from '@/api/users';
+import type { User } from '@/types';
 import * as SecureStore from 'expo-secure-store';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { TOKEN_KEY, SERVER_URL_KEY, BIOMETRIC_ENABLED_KEY, USERNAME_KEY } from './constants';

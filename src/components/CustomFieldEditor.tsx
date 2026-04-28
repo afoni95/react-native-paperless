@@ -6,14 +6,14 @@ import { useTranslation } from 'react-i18next';
 import { CustomField, DocumentCustomFieldValue } from '@/types';
 import { DocumentLinkEditor } from './DocumentLinkEditor';
 
-interface Props {
+interface CustomFieldEditorProps {
   entry: DocumentCustomFieldValue;
   fieldDefinition: CustomField | undefined;
   onRemove: (fieldId: number) => void;
   onChange: (fieldId: number, value: DocumentCustomFieldValue['value']) => void;
 }
 
-export const CustomFieldEditor: React.FC<Props> = ({
+export const CustomFieldEditor: React.FC<CustomFieldEditorProps> = ({
   entry,
   fieldDefinition,
   onRemove,

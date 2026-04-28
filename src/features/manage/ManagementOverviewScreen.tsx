@@ -6,7 +6,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
 import { ManageStackParamList } from '@/navigation/types';
 import { usePermissionContext } from '@/hooks/PermissionProvider';
-import { ManageCard } from '../../components/ManageCard';
+import { ManageCard } from '@/components/ManageCard';
 
 type NavigationProp = NativeStackNavigationProp<ManageStackParamList, 'ManageHome'>;
 

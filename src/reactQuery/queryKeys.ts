@@ -65,3 +65,13 @@ export const processedMailQueryKeys = {
   all: ['processed-mail-all'] as const,
   list: (params?: object) => ['processed-mail', params ?? {}] as const,
 };
+
+export const userQueryKeys = {
+  all: (params?: { page?: number; page_size?: number }) => ['users', params ?? {}] as const,
+  detail: (id: number) => ['user', id] as const,
+};
+
+export const groupQueryKeys = {
+  all: (params?: { page?: number; page_size?: number }) => ['groups', params ?? {}] as const,
+  detail: (id: number) => ['group', id] as const,
+};

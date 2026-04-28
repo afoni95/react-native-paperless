@@ -11,8 +11,8 @@ import { CorrespondentsListScreen } from '@/features/manage/master-data/correspo
 import { CorrespondentEditScreen } from '@/features/manage/master-data/correspondents/CorrespondentEditScreen';
 import { DocumentTypesListScreen } from '@/features/manage/master-data/document-types/DocumentTypesListScreen';
 import { DocumentTypeEditScreen } from '@/features/manage/master-data/document-types/DocumentTypeEditScreen';
-import { StoragePathsListScreen } from '@/features/manage/storage/StoragePathsListScreen';
-import { StoragePathEditScreen } from '@/features/manage/storage/StoragePathEditScreen';
+import { StoragePathsListScreen } from '@/features/manage/master-data/storage-paths/StoragePathsListScreen';
+import { StoragePathEditScreen } from '@/features/manage/master-data/storage-paths/StoragePathEditScreen';
 import { CustomFieldsListScreen } from '@/features/manage/master-data/custom-fields/CustomFieldsListScreen';
 import { CustomFieldEditScreen } from '@/features/manage/master-data/custom-fields/CustomFieldEditScreen';
 import { WorkflowsListScreen } from '@/features/manage/workflows/WorkflowsListScreen';

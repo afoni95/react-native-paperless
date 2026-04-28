@@ -1,9 +1,7 @@
 import { create } from 'zustand';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SETTINGS_KEY } from './constants';
-
-export type ThemeMode = 'light' | 'dark' | 'auto';
-export type Language = 'en' | 'de';
+import type { ThemeMode, Language } from '@/types';
 
 interface SettingsState {
   theme: ThemeMode;

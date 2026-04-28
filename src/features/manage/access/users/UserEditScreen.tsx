@@ -7,7 +7,7 @@ import type { RouteProp as NavRouteProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { ManageStackParamList } from '@/navigation/types';
 import { useUser, useUpsertUser, useGroups } from '@/reactQuery';
-import type { Group } from '@/api/groups';
+import type { Group } from '@/types';
 import { PermissionMatrix, HasPermission } from '@/components';
 import { screenStyles } from '@/theme/commonStyles';
 

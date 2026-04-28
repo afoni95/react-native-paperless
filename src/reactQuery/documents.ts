@@ -123,7 +123,7 @@ export const useUpdateDocument = (options?: MutationHookOptions<Document, Update
     mutationFn: ({ id, data }) => documentsApi.updateDocument(id, data),
     onSuccess: (document, variables, onMutateResult, context) => {
       client.setQueryData(documentQueryKeys.detail(document.id), document);
-      client.invalidateQueries({ queryKey: ['documents'] });
+      client.invalidateQueries({ queryKey: documentQueryKeys.all() });
       options?.onSuccess?.(document, variables, onMutateResult, context);
     },
   });
@@ -137,7 +137,7 @@ export const useDeleteDocument = (options?: MutationHookOptions<void, number>) =
     mutationFn: (id) => documentsApi.deleteDocument(id),
     onSuccess: (_, id, onMutateResult, context) => {
       client.removeQueries({ queryKey: documentQueryKeys.detail(id) });
-      client.invalidateQueries({ queryKey: ['documents'] });
+      client.invalidateQueries({ queryKey: documentQueryKeys.all() });
       options?.onSuccess?.(_, id, onMutateResult, context);
     },
   });
@@ -150,7 +150,7 @@ export const useUploadDocument = (options?: MutationHookOptions<string, Document
     ...options,
     mutationFn: (params) => documentsApi.uploadDocument(params),
     onSuccess: (result, variables, onMutateResult, context) => {
-      client.invalidateQueries({ queryKey: ['documents'] });
+      client.invalidateQueries({ queryKey: documentQueryKeys.all() });
       client.invalidateQueries({ queryKey: ['tasks-all'] });
       options?.onSuccess?.(result, variables, onMutateResult, context);
     },
@@ -198,7 +198,7 @@ export const useRestoreDocuments = (options?: MutationHookOptions<void, number[]
     mutationFn: (documentIds) => documentsApi.restoreDocuments(documentIds),
     onSuccess: (_, variables, onMutateResult, context) => {
       client.invalidateQueries({ queryKey: documentQueryKeys.trash });
-      client.invalidateQueries({ queryKey: ['documents'] });
+      client.invalidateQueries({ queryKey: documentQueryKeys.all() });
       options?.onSuccess?.(_, variables, onMutateResult, context);
     },
   });
@@ -212,7 +212,7 @@ export const useEmptyTrash = (options?: MutationHookOptions<void, number[] | und
     mutationFn: (documentIds) => documentsApi.emptyTrash(documentIds),
     onSuccess: (_, variables, onMutateResult, context) => {
       client.invalidateQueries({ queryKey: documentQueryKeys.trash });
-      client.invalidateQueries({ queryKey: ['documents'] });
+      client.invalidateQueries({ queryKey: documentQueryKeys.all() });
       options?.onSuccess?.(_, variables, onMutateResult, context);
     },
   });

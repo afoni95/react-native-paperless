@@ -7,7 +7,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
 
 import { documentsApi } from '@/api';
-import { useDebounce, useLookupMaps } from '@/hooks';
+import { useDebounce, useDocumentMetadata } from '@/hooks';
 import { usePermissionContext } from '@/hooks/PermissionProvider';
 import { Document, DocumentListParams, Tag } from '@/types';
 import {
@@ -44,7 +44,7 @@ export const DocumentListScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp>();
   const queryClient = useQueryClient();
   const { allTags, allCorrespondents, allDocTypes, tagsMap, correspondentsMap, docTypesMap } =
-    useLookupMaps();
+    useDocumentMetadata();
 
   const { can } = usePermissionContext();
 
