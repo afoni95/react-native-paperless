@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { customFieldsApi } from '@/api';
 import { CustomField } from '@/types';
 import { MutationHookOptions, QueryHookOptions } from '@/utils/reactQueryCommon';
+import { NetworkStatus, useNetworkStore } from '@/store/networkStore';
 
 import { customFieldQueryKeys } from './queryKeys';
 
@@ -12,10 +13,11 @@ export const useAllCustomFields = (
   isEnabled = true,
   options?: QueryHookOptions<CustomField[], typeof customFieldQueryKeys.all>,
 ) => {
+  const { status: networkStatus } = useNetworkStore();
   return useQuery({
     ...options,
     queryKey: customFieldQueryKeys.all,
-    enabled: isEnabled,
+    enabled: isEnabled && networkStatus === NetworkStatus.Online,
     queryFn: () => customFieldsApi.getAllCustomFields(),
   });
 };
@@ -25,10 +27,11 @@ export const useCustomField = (
   isEnabled = true,
   options?: QueryHookOptions<CustomField, ReturnType<typeof customFieldQueryKeys.detail>>,
 ) => {
+  const { status: networkStatus } = useNetworkStore();
   return useQuery({
     ...options,
     queryKey: customFieldQueryKeys.detail(id ?? -1),
-    enabled: isEnabled && id !== undefined,
+    enabled: isEnabled && networkStatus === NetworkStatus.Online && id !== undefined,
     queryFn: () => customFieldsApi.getCustomField(id!),
   });
 };

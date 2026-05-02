@@ -8,6 +8,8 @@ import { MATCHING_ALGORITHMS, MatchingAlgorithm } from '@/types';
 import { LoadingScreen, ConfirmDialog, HasPermission } from '@/components';
 import { ManageStackParamList } from '@/navigation/types';
 import { useTag, useUpsertTag, useDeleteTag } from '@/reactQuery';
+import { useOfflineQueueStore } from '@/store/offlineQueueStore';
+import { useNetworkStore, NetworkStatus } from '@/store/networkStore';
 import { screenStyles, formStyles, buttonStyles } from '@/theme/commonStyles';
 
 type Props = NativeStackScreenProps<ManageStackParamList, 'TagEdit'>;
@@ -61,6 +63,10 @@ export const TagEditScreen: React.FC<Props> = ({ route, navigation }) => {
       setIsInboxTag(tag.is_inbox_tag);
     }
   }, [tag]);
+
+  const { status } = useNetworkStore();
+  const isOffline = status !== NetworkStatus.Online;
+  const { addItem } = useOfflineQueueStore();
 
   const saveMutation = useUpsertTag({
     onSuccess: () => {
@@ -162,7 +168,15 @@ export const TagEditScreen: React.FC<Props> = ({ route, navigation }) => {
       <HasPermission action={isNew ? 'add' : 'change'} resource="tag">
         <Button
           mode="contained"
-          onPress={() =>
+          onPress={() => {
+            if (isNew && isOffline) {
+              addItem({
+                type: 'tag',
+                data: { name, color, match, isInsensitive },
+              });
+              navigation.goBack();
+              return;
+            }
             saveMutation.mutate({
               id: tagId,
               name,
@@ -171,8 +185,8 @@ export const TagEditScreen: React.FC<Props> = ({ route, navigation }) => {
               matching_algorithm: matchingAlgorithm,
               is_insensitive: isInsensitive,
               is_inbox_tag: isInboxTag,
-            })
-          }
+            });
+          }}
           loading={saveMutation.isPending}
           disabled={!name.trim() || saveMutation.isPending}
           style={buttonStyles.saveButton}

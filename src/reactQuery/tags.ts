@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { tagsApi } from '@/api';
 import { Tag } from '@/types';
 import { MutationHookOptions, QueryHookOptions } from '@/utils/reactQueryCommon';
+import { NetworkStatus, useNetworkStore } from '@/store/networkStore';
 
 import { tagQueryKeys } from './queryKeys';
 
@@ -12,10 +13,11 @@ export const useAllTags = (
   isEnabled = true,
   options?: QueryHookOptions<Tag[], typeof tagQueryKeys.all>,
 ) => {
+  const { status: networkStatus } = useNetworkStore();
   return useQuery({
     ...options,
     queryKey: tagQueryKeys.all,
-    enabled: isEnabled,
+    enabled: isEnabled && networkStatus === NetworkStatus.Online,
     queryFn: () => tagsApi.getAllTags(),
   });
 };
@@ -25,10 +27,11 @@ export const useTag = (
   isEnabled = true,
   options?: QueryHookOptions<Tag, ReturnType<typeof tagQueryKeys.detail>>,
 ) => {
+  const { status: networkStatus } = useNetworkStore();
   return useQuery({
     ...options,
     queryKey: tagQueryKeys.detail(id),
-    enabled: isEnabled,
+    enabled: isEnabled && networkStatus === NetworkStatus.Online,
     queryFn: () => tagsApi.getTag(id),
   });
 };

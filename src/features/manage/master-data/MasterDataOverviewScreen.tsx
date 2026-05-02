@@ -7,6 +7,7 @@ import { useNavigation } from '@react-navigation/native';
 import { ManageStackParamList } from '@/navigation/types';
 import { usePermissionContext } from '@/hooks/PermissionProvider';
 import { ManageCard } from '@/components/ManageCard';
+import { useNetworkStore, NetworkStatus } from '@/store/networkStore';
 
 type NavigationProp = NativeStackNavigationProp<ManageStackParamList, 'MasterDataOverview'>;
 
@@ -15,6 +16,10 @@ export const MasterDataOverviewScreen: React.FC = () => {
   const { t } = useTranslation();
   const navigation = useNavigation<NavigationProp>();
   const { can } = usePermissionContext();
+  const { status } = useNetworkStore();
+  const isOffline = status !== NetworkStatus.Online;
+
+  const offlineStyle = { color: theme.colors.error, fontWeight: '700' as const };
 
   return (
     <ScrollView
@@ -47,14 +52,18 @@ export const MasterDataOverviewScreen: React.FC = () => {
           <ManageCard
             icon="folder-multiple"
             title={t('manage.storagePaths')}
-            onPress={() => navigation.navigate('StoragePathsList')}
+            subtitle={isOffline ? t('common.offlineMode') : undefined}
+            subtitleStyle={isOffline ? offlineStyle : undefined}
+            onPress={() => !isOffline && navigation.navigate('StoragePathsList')}
           />
         ) : null}
         {can('view', 'customfield') ? (
           <ManageCard
             icon="form-textbox"
             title={t('manage.customFields')}
-            onPress={() => navigation.navigate('CustomFieldsList')}
+            subtitle={isOffline ? t('common.offlineMode') : undefined}
+            subtitleStyle={isOffline ? offlineStyle : undefined}
+            onPress={() => !isOffline && navigation.navigate('CustomFieldsList')}
           />
         ) : null}
       </View>

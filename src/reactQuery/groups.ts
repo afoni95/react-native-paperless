@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { groupsApi } from '@/api';
 import type { Group, GroupPayload, PaginatedResponse } from '@/types';
 import { MutationHookOptions, QueryHookOptions } from '@/utils/reactQueryCommon';
+import { NetworkStatus, useNetworkStore } from '@/store/networkStore';
 
 import { groupQueryKeys } from './queryKeys';
 
@@ -13,10 +14,11 @@ export const useGroups = (
   isEnabled = true,
   options?: QueryHookOptions<PaginatedResponse<Group>, ReturnType<typeof groupQueryKeys.all>>,
 ) => {
+  const { status: networkStatus } = useNetworkStore();
   return useQuery({
     ...options,
     queryKey: groupQueryKeys.all(params),
-    enabled: isEnabled,
+    enabled: isEnabled && networkStatus === NetworkStatus.Online,
     queryFn: () => groupsApi.list(params),
   });
 };
@@ -26,10 +28,11 @@ export const useGroup = (
   isEnabled = true,
   options?: QueryHookOptions<Group, ReturnType<typeof groupQueryKeys.detail>>,
 ) => {
+  const { status: networkStatus } = useNetworkStore();
   return useQuery({
     ...options,
     queryKey: groupQueryKeys.detail(id),
-    enabled: isEnabled && !!id,
+    enabled: isEnabled && networkStatus === NetworkStatus.Online && !!id,
     queryFn: () => groupsApi.retrieve(id),
   });
 };

@@ -15,4 +15,5 @@ export { DocumentMetadataForm } from './DocumentMetadataForm';
 export { DocumentMetadataDisplay } from './DocumentMetadataDisplay';
 export { PermissionMatrix } from './PermissionMatrix';
 export { HasPermission } from './HasPermission';
+export { ProcessingIndicator } from './GlobalProcessingBar';
 export type { FilterState } from './FilterSheet';

@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { mailAccountsApi } from '@/api';
 import { MailAccount, MailAccountCreatePayload, MailAccountUpdatePayload } from '@/types';
 import { MutationHookOptions, QueryHookOptions } from '@/utils/reactQueryCommon';
+import { NetworkStatus, useNetworkStore } from '@/store/networkStore';
 
 import { mailAccountQueryKeys } from './queryKeys';
 
@@ -14,10 +15,11 @@ export const useAllMailAccounts = (
   isEnabled = true,
   options?: QueryHookOptions<MailAccount[], typeof mailAccountQueryKeys.all>,
 ) => {
+  const { status: networkStatus } = useNetworkStore();
   return useQuery({
     ...options,
     queryKey: mailAccountQueryKeys.all,
-    enabled: isEnabled,
+    enabled: isEnabled && networkStatus === NetworkStatus.Online,
     queryFn: () => mailAccountsApi.getAllMailAccounts(),
   });
 };
@@ -27,10 +29,11 @@ export const useMailAccount = (
   isEnabled = true,
   options?: QueryHookOptions<MailAccount, ReturnType<typeof mailAccountQueryKeys.detail>>,
 ) => {
+  const { status: networkStatus } = useNetworkStore();
   return useQuery({
     ...options,
     queryKey: mailAccountQueryKeys.detail(id),
-    enabled: isEnabled,
+    enabled: isEnabled && networkStatus === NetworkStatus.Online,
     queryFn: () => mailAccountsApi.getMailAccount(id),
   });
 };

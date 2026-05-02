@@ -8,15 +8,17 @@ import * as ImagePicker from 'expo-image-picker';
 
 import { DocumentMetadataForm } from '@/components';
 
-import { useAllTasks, useUploadDocument } from '@/reactQuery';
+import { taskQueryKeys, useAllTasks, useUploadDocument } from '@/reactQuery';
 import { coerceCustomFieldValueForSubmit } from '@/utils';
 import { useDocumentMetadata, useCustomFieldsForm } from '@/hooks';
+import { useGlobalNavigationHelper } from '@/hooks/useGlobalNavigationHelper';
 import { usePermissionContext } from '@/hooks/PermissionProvider';
 
 export const UploadScreen: React.FC = () => {
   const theme = useTheme();
   const { t } = useTranslation();
   const queryClient = useQueryClient();
+  const { navigateTo } = useGlobalNavigationHelper();
 
   // Metadata hooks
   const {
@@ -69,10 +71,6 @@ export const UploadScreen: React.FC = () => {
 
   // Poll all tasks from the server
   const { data: allServerTasks } = useAllTasks(true, { refetchInterval: 3000 });
-
-  const processingTasks = (allServerTasks || []).filter(
-    (task) => task.status === 'PENDING' || task.status === 'STARTED',
-  );
 
   // Detect task state transitions → show toasts
   useEffect(() => {
@@ -127,8 +125,9 @@ export const UploadScreen: React.FC = () => {
     onSuccess: () => {
       setSnackbar({ visible: true, message: t('upload.uploadSuccess'), type: 'success' });
       resetForm();
-      // Trigger an immediate refetch of all tasks so the bottom bar updates
-      queryClient.invalidateQueries({ queryKey: ['tasks-all'] });
+
+      queryClient.refetchQueries({ queryKey: taskQueryKeys.all, type: 'all' });
+      navigateTo('documentList');
     },
     onError: () => {
       Alert.alert(t('common.error'), t('upload.uploadError'));
@@ -295,25 +294,6 @@ export const UploadScreen: React.FC = () => {
         )}
       </ScrollView>
 
-      {/* Pinned bottom bar — task processing status */}
-      {processingTasks.length > 0 && (
-        <View style={[styles.bottomBar, { backgroundColor: theme.colors.secondaryContainer }]}>
-          <View style={styles.bottomBarContent}>
-            <Text
-              variant="bodyMedium"
-              style={{ color: theme.colors.onSecondaryContainer, flex: 1 }}
-            >
-              {t('upload.processingCount', { count: processingTasks.length })}
-            </Text>
-          </View>
-          <ProgressBar
-            indeterminate
-            color={theme.colors.secondary}
-            style={styles.bottomBarProgress}
-          />
-        </View>
-      )}
-
       {/* Toast snackbar for success / failure */}
       <Snackbar
         visible={snackbar.visible}
@@ -402,26 +382,6 @@ const styles = StyleSheet.create({
   },
   uploadButtonContent: {
     paddingVertical: 8,
-  },
-  bottomBar: {
-    paddingHorizontal: 16,
-    paddingTop: 12,
-    paddingBottom: 16,
-    borderTopLeftRadius: 16,
-    borderTopRightRadius: 16,
-    elevation: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: -2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-  },
-  bottomBarContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  bottomBarProgress: {
-    borderRadius: 4,
   },
   snackbar: {
     marginBottom: 8,

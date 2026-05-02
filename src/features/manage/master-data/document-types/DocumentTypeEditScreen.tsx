@@ -7,6 +7,8 @@ import { MATCHING_ALGORITHMS, MatchingAlgorithm } from '@/types';
 import { LoadingScreen, ConfirmDialog, HasPermission } from '@/components';
 import { ManageStackParamList } from '@/navigation/types';
 import { useDocumentType, useUpsertDocumentType, useDeleteDocumentType } from '@/reactQuery';
+import { useOfflineQueueStore } from '@/store/offlineQueueStore';
+import { useNetworkStore, NetworkStatus } from '@/store/networkStore';
 import { screenStyles, formStyles, buttonStyles } from '@/theme/commonStyles';
 
 type Props = NativeStackScreenProps<ManageStackParamList, 'DocumentTypeEdit'>;
@@ -33,6 +35,10 @@ export const DocumentTypeEditScreen: React.FC<Props> = ({ route, navigation }) =
       setIsInsensitive(docType.is_insensitive);
     }
   }, [docType]);
+
+  const { status } = useNetworkStore();
+  const isOffline = status !== NetworkStatus.Online;
+  const { addItem } = useOfflineQueueStore();
 
   const saveMutation = useUpsertDocumentType({
     onSuccess: () => {
@@ -103,15 +109,23 @@ export const DocumentTypeEditScreen: React.FC<Props> = ({ route, navigation }) =
       <HasPermission action={isNew ? 'add' : 'change'} resource="documenttype">
         <Button
           mode="contained"
-          onPress={() =>
+          onPress={() => {
+            if (isNew && isOffline) {
+              addItem({
+                type: 'documentType',
+                data: { name, match, isInsensitive },
+              });
+              navigation.goBack();
+              return;
+            }
             saveMutation.mutate({
               id: documentTypeId,
               name,
               match,
               matching_algorithm: matchingAlgorithm,
               is_insensitive: isInsensitive,
-            })
-          }
+            });
+          }}
           loading={saveMutation.isPending}
           disabled={!name.trim() || saveMutation.isPending}
           style={buttonStyles.saveButton}

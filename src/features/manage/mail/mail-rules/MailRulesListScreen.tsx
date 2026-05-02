@@ -10,6 +10,8 @@ import { usePermissionContext } from '@/hooks/PermissionProvider';
 import { ManageStackParamList } from '@/navigation/types';
 import { useAllMailRules, useDeleteMailRule, useAllMailAccounts } from '@/reactQuery';
 import { MailRule } from '@/types';
+import { useNetworkStore, NetworkStatus } from '@/store/networkStore';
+import { useOfflineNavigationTitle } from '@/hooks/useOfflineNavigationTitle';
 
 type NavigationProp = NativeStackNavigationProp<ManageStackParamList, 'MailRulesList'>;
 
@@ -21,6 +23,9 @@ export const MailRulesListScreen: React.FC = () => {
 
   const [searchQuery, setSearchQuery] = useState('');
   const [deleteTarget, setDeleteTarget] = useState<MailRule | null>(null);
+  const { status } = useNetworkStore();
+  const isOffline = status !== NetworkStatus.Online;
+  useOfflineNavigationTitle(t('manage.mailRules'));
 
   const { data: mailRules, isLoading, isError, error, refetch, isRefetching } = useAllMailRules();
 
@@ -109,7 +114,7 @@ export const MailRulesListScreen: React.FC = () => {
         keyboardShouldPersistTaps="handled"
       />
 
-      {canAddMailRule && (
+      {canAddMailRule && !isOffline && (
         <FAB
           icon="plus"
           style={[styles.fab, { backgroundColor: theme.colors.primary }]}

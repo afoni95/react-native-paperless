@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, StyleProp, TextStyle } from 'react-native';
 import { Surface, TouchableRipple, Text, useTheme } from 'react-native-paper';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
@@ -7,10 +7,17 @@ interface ManageCardProps {
   icon: string;
   title: string;
   subtitle?: string;
+  subtitleStyle?: StyleProp<TextStyle>;
   onPress: () => void;
 }
 
-export const ManageCard: React.FC<ManageCardProps> = ({ icon, title, subtitle, onPress }) => {
+export const ManageCard: React.FC<ManageCardProps> = ({
+  icon,
+  title,
+  subtitle,
+  subtitleStyle,
+  onPress,
+}) => {
   const theme = useTheme();
   return (
     <Surface
@@ -31,7 +38,10 @@ export const ManageCard: React.FC<ManageCardProps> = ({ icon, title, subtitle, o
               {title}
             </Text>
             {subtitle ? (
-              <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant }}>
+              <Text
+                variant="bodySmall"
+                style={[{ color: theme.colors.onSurfaceVariant }, subtitleStyle]}
+              >
                 {subtitle}
               </Text>
             ) : null}

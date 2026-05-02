@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { processedMailApi } from '@/api';
 import { PaginatedResponse, ProcessedMail } from '@/types';
 import { MutationHookOptions, QueryHookOptions } from '@/utils/reactQueryCommon';
+import { NetworkStatus, useNetworkStore } from '@/store/networkStore';
 
 import { processedMailQueryKeys } from './queryKeys';
 
@@ -14,10 +15,11 @@ export const useProcessedMail = (
     ReturnType<typeof processedMailQueryKeys.list>
   >,
 ) => {
+  const { status: networkStatus } = useNetworkStore();
   return useQuery({
     ...options,
     queryKey: processedMailQueryKeys.list(params),
-    enabled: isEnabled,
+    enabled: isEnabled && networkStatus === NetworkStatus.Online,
     queryFn: () => processedMailApi.getProcessedMail(params),
   });
 };

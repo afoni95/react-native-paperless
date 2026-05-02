@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { mailRulesApi } from '@/api';
 import { MailRule, MailRuleCreatePayload, MailRuleUpdatePayload } from '@/types';
 import { MutationHookOptions, QueryHookOptions } from '@/utils/reactQueryCommon';
+import { NetworkStatus, useNetworkStore } from '@/store/networkStore';
 
 import { mailRuleQueryKeys } from './queryKeys';
 
@@ -14,10 +15,11 @@ export const useAllMailRules = (
   isEnabled = true,
   options?: QueryHookOptions<MailRule[], typeof mailRuleQueryKeys.all>,
 ) => {
+  const { status: networkStatus } = useNetworkStore();
   return useQuery({
     ...options,
     queryKey: mailRuleQueryKeys.all,
-    enabled: isEnabled,
+    enabled: isEnabled && networkStatus === NetworkStatus.Online,
     queryFn: () => mailRulesApi.getAllMailRules(),
   });
 };
@@ -27,10 +29,11 @@ export const useMailRule = (
   isEnabled = true,
   options?: QueryHookOptions<MailRule, ReturnType<typeof mailRuleQueryKeys.detail>>,
 ) => {
+  const { status: networkStatus } = useNetworkStore();
   return useQuery({
     ...options,
     queryKey: mailRuleQueryKeys.detail(id),
-    enabled: isEnabled,
+    enabled: isEnabled && networkStatus === NetworkStatus.Online,
     queryFn: () => mailRulesApi.getMailRule(id),
   });
 };

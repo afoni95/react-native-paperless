@@ -10,6 +10,8 @@ import { ManageStackParamList } from '@/navigation/types';
 import { CustomField, CUSTOM_FIELD_DATA_TYPES } from '@/types';
 import { LoadingScreen, EmptyState, ErrorBanner, ConfirmDialog } from '@/components';
 import { useAllCustomFields, useDeleteCustomField } from '@/reactQuery';
+import { useNetworkStore, NetworkStatus } from '@/store/networkStore';
+import { useOfflineNavigationTitle } from '@/hooks/useOfflineNavigationTitle';
 
 type NavigationProp = NativeStackNavigationProp<ManageStackParamList, 'CustomFieldsList'>;
 
@@ -20,6 +22,9 @@ export const CustomFieldsListScreen: React.FC = () => {
 
   const [searchQuery, setSearchQuery] = useState('');
   const [deleteTarget, setDeleteTarget] = useState<CustomField | null>(null);
+  const { status } = useNetworkStore();
+  const isOffline = status !== NetworkStatus.Online;
+  useOfflineNavigationTitle(t('manage.customFields'));
 
   const {
     data: customFields,
@@ -113,7 +118,7 @@ export const CustomFieldsListScreen: React.FC = () => {
         keyboardShouldPersistTaps="handled"
       />
 
-      {canAddCustomField && (
+      {canAddCustomField && !isOffline && (
         <FAB
           icon="plus"
           style={[styles.fab, { backgroundColor: theme.colors.primary }]}

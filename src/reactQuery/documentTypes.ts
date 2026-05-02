@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { documentTypesApi } from '@/api';
 import { DocumentType } from '@/types';
 import { MutationHookOptions, QueryHookOptions } from '@/utils/reactQueryCommon';
+import { NetworkStatus, useNetworkStore } from '@/store/networkStore';
 
 import { documentTypeQueryKeys } from './queryKeys';
 
@@ -12,10 +13,11 @@ export const useAllDocumentTypes = (
   isEnabled = true,
   options?: QueryHookOptions<DocumentType[], typeof documentTypeQueryKeys.all>,
 ) => {
+  const { status: networkStatus } = useNetworkStore();
   return useQuery({
     ...options,
     queryKey: documentTypeQueryKeys.all,
-    enabled: isEnabled,
+    enabled: isEnabled && networkStatus === NetworkStatus.Online,
     queryFn: () => documentTypesApi.getAllDocumentTypes(),
   });
 };
@@ -25,10 +27,11 @@ export const useDocumentType = (
   isEnabled = true,
   options?: QueryHookOptions<DocumentType, ReturnType<typeof documentTypeQueryKeys.detail>>,
 ) => {
+  const { status: networkStatus } = useNetworkStore();
   return useQuery({
     ...options,
     queryKey: documentTypeQueryKeys.detail(id),
-    enabled: isEnabled,
+    enabled: isEnabled && networkStatus === NetworkStatus.Online,
     queryFn: () => documentTypesApi.getDocumentType(id),
   });
 };

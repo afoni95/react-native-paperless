@@ -19,12 +19,23 @@
     "dark": "Dark",
     "auto": "System",
     "offline": "You are offline",
+    "offlineHint": "You can continue working. All changes will be synchronized once the connection is restored.",
     "somethingWentWrong": "Something went wrong",
     "server": "Server",
     "email": "Email",
     "leave": "Leave blank to keep current password",
     "apply": "Apply changes",
-    "showMore": "Show more"
+    "showMore": "Show more",
+    "offlineMode": "OFFLINE-MODE",
+    "disconnectedMode": "No connection to server",
+    "unavailableOffline": "Unavailable while offline",
+    "new": "New"
+  },
+  "settings": {
+    "testReconnect": "Test & Reconnect",
+    "reconnecting": "Reconnecting...",
+    "reconnectSuccess": "Reconnected successfully",
+    "reconnectFailed": "Could not connect. Check URL and credentials."
   },
   "auth": {
     "serverUrl": "Server URL",
@@ -47,7 +58,10 @@
     "biometricPrompt": "Authenticate to unlock Paperless",
     "biometricFallback": "Use passcode",
     "biometricFailed": "Authentication failed. Please try again.",
-    "biometricRetry": "Try Again"
+    "biometricRetry": "Try Again",
+    "offlineModeHint": "No server reachable. You can continue with your last session — documents will sync when back online.",
+    "onlineModeHint": "You can skip login and work offline — items will sync automatically once you connect to a server later.",
+    "enterOfflineMode": "Work Offline"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -133,7 +147,9 @@
     "selectCustomField": "Select",
     "removeCustomField": "Remove Custom Field",
     "noCustomFieldsSet": "Document currently has no custom fields",
-    "customFieldValue": "Value"
+    "customFieldValue": "Value",
+    "processingCount": "({{count}}) processing",
+    "documentCount": "{{count}} docs"
   },
   "upload": {
     "title": "Upload Document",
@@ -474,5 +490,30 @@
       "delete": "Delete",
       "view": "View"
     }
+  },
+  "offline": {
+    "pendingSync": "Pending Sync",
+    "pendingSyncSubtitle": "{{count}} item(s) waiting",
+    "syncNow": "Sync Now",
+    "syncFailed": "Sync failed",
+    "noItems": "Empty - no pending items",
+    "createOffline": "Save Offline",
+    "createDocument": "Create Document Offline",
+    "createTag": "Create Tag Offline",
+    "createCorrespondent": "Create Correspondent Offline",
+    "createDocumentType": "Create Document Type Offline",
+    "typeDocument": "Document",
+    "statusPending": "Pending",
+    "statusSyncing": "Syncing",
+    "statusFailed": "Failed",
+    "clearFailed": "Clear Failed",
+    "syncSuccess": "Sync complete",
+    "syncPartial": "{{count}} item(s) failed to sync",
+    "pendingItem": "Pending sync",
+    "embeddedInDocument": "Embedded in document",
+    "discard": "Discard",
+    "discardConfirm": "Remove this pending item? It will not be synced to the server.",
+    "alreadyQueued": "Already in your offline queue",
+    "noCachedItems": "No items available offline"
   }
 }

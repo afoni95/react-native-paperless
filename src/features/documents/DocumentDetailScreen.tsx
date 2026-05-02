@@ -227,14 +227,6 @@ export const DocumentDetailScreen: React.FC<Props> = ({ route, navigation }) => 
         </View>
 
         {isEditing ? (
-          <>
-            <TextInput
-              label={t('documents.singularEntity')}
-              value={editTitle}
-              onChangeText={setEditTitle}
-              mode="outlined"
-              style={styles.input}
-            />
             <DocumentMetadataForm
               title={editTitle}
               onTitleChange={setEditTitle}
@@ -268,7 +260,6 @@ export const DocumentDetailScreen: React.FC<Props> = ({ route, navigation }) => 
               showCreatedDate
               cardStyle={{ marginBottom: 12, borderRadius: 12 }}
             />
-          </>
         ) : (
           <DocumentMetadataDisplay
             title={doc.title}

@@ -11,6 +11,7 @@ import { useTranslation } from 'react-i18next';
 import { AppNavigator } from '@/navigation/AppNavigator';
 import { useAuthStore } from '@/store/authStore';
 import { useSettingsStore } from '@/store/settingsStore';
+import { useNetworkStore, NetworkStatus } from '@/store/networkStore';
 import { lightTheme, darkTheme } from '@/theme';
 import i18n from '@/i18n';
 
@@ -83,7 +84,14 @@ export default function App() {
 
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener((state) => {
-      setIsOffline(!(state.isConnected ?? true));
+      const connected = state.isConnected ?? true;
+      setIsOffline(!connected);
+      const { status, setStatus } = useNetworkStore.getState();
+      if (!connected && status === NetworkStatus.Online) {
+        setStatus(NetworkStatus.Disconnected);
+      } else if (connected && status === NetworkStatus.Disconnected) {
+        setStatus(NetworkStatus.Online);
+      }
     });
     return () => unsubscribe();
   }, []);
@@ -99,10 +107,13 @@ export default function App() {
               actions={[]}
               style={{ backgroundColor: paperTheme.colors.errorContainer }}
             >
-              <Text>{t('common.offline')}</Text>
+              <View>
+                <Text>{t('common.offline')}</Text>
+                <Text>{t('common.offlineHint')}</Text>
+              </View>
             </Banner>
             <AppNavigator />
-            <StatusBar style={isDark ? 'light' : 'dark'} />
+            <StatusBar hidden />
           </PaperProvider>
         </QueryClientProvider>
       </SafeAreaProvider>

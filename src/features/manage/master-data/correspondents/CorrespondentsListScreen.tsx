@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { View, FlatList, StyleSheet, RefreshControl } from 'react-native';
-import { Searchbar, FAB, List, useTheme } from 'react-native-paper';
+import { Searchbar, FAB, List, useTheme, IconButton } from 'react-native-paper';
 import { useTranslation } from 'react-i18next';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
@@ -9,6 +9,10 @@ import { LoadingScreen, EmptyState, ErrorBanner, ConfirmDialog } from '@/compone
 import { ManageStackParamList } from '@/navigation/types';
 import { useAllCorrespondents, useDeleteCorrespondent } from '@/reactQuery';
 import { usePermissionContext } from '@/hooks/PermissionProvider';
+import { useOfflineQueueStore, OfflineQueueItem } from '@/store/offlineQueueStore';
+import { useNetworkStore, NetworkStatus } from '@/store/networkStore';
+
+type EmbeddedDiscard = { docId: string; correspondentName: string };
 
 type NavigationProp = NativeStackNavigationProp<ManageStackParamList, 'CorrespondentsList'>;
 
@@ -19,6 +23,33 @@ export const CorrespondentsListScreen: React.FC = () => {
 
   const [searchQuery, setSearchQuery] = useState('');
   const [deleteTarget, setDeleteTarget] = useState<Correspondent | null>(null);
+  const [discardTarget, setDiscardTarget] = useState<OfflineQueueItem | null>(null);
+  const [embeddedDiscardTarget, setEmbeddedDiscardTarget] = useState<EmbeddedDiscard | null>(null);
+
+  const {
+    items: offlineItems,
+    removeItem: removeOfflineItem,
+    updateItemData,
+  } = useOfflineQueueStore();
+  const pendingCorrespondents = useMemo(
+    () => offlineItems.filter((i) => i.type === 'correspondent'),
+    [offlineItems],
+  );
+
+  const embeddedCorrespondents = useMemo(() => {
+    const pendingCorrNames = new Set(
+      pendingCorrespondents.map((i) => (i.data.name ?? '').toLowerCase()),
+    );
+    const results: { docId: string; correspondentName: string }[] = [];
+    for (const item of offlineItems) {
+      if (item.type === 'document' && item.data.correspondentName) {
+        if (!pendingCorrNames.has(item.data.correspondentName.toLowerCase())) {
+          results.push({ docId: item.id, correspondentName: item.data.correspondentName });
+        }
+      }
+    }
+    return results;
+  }, [offlineItems, pendingCorrespondents]);
 
   const {
     data: correspondents,
@@ -37,6 +68,8 @@ export const CorrespondentsListScreen: React.FC = () => {
 
   const { can } = usePermissionContext();
   const canAddCorrespondent = can('add', 'correspondent');
+  const { status } = useNetworkStore();
+  const isOffline = status !== NetworkStatus.Online;
 
   const filteredItems = useMemo(() => {
     if (!correspondents) return [];
@@ -67,6 +100,60 @@ export const CorrespondentsListScreen: React.FC = () => {
       <FlatList
         data={filteredItems}
         keyExtractor={(item) => String(item.id)}
+        ListHeaderComponent={
+          pendingCorrespondents.length > 0 || embeddedCorrespondents.length > 0 ? (
+            <View style={styles.pendingSection}>
+              {pendingCorrespondents.map((item) => (
+                <List.Item
+                  key={item.id}
+                  title={item.data.name ?? ''}
+                  description={t('offline.pendingItem')}
+                  left={(props) => (
+                    <List.Icon
+                      {...props}
+                      icon="account-clock-outline"
+                      color={theme.colors.tertiary}
+                    />
+                  )}
+                  right={() => (
+                    <IconButton
+                      icon="trash-can-outline"
+                      iconColor={theme.colors.error}
+                      size={20}
+                      onPress={() => setDiscardTarget(item)}
+                    />
+                  )}
+                  style={[styles.pendingItem, { backgroundColor: theme.colors.surfaceVariant }]}
+                  descriptionStyle={{ color: theme.colors.tertiary }}
+                />
+              ))}
+              {embeddedCorrespondents.map(({ docId, correspondentName }) => (
+                <List.Item
+                  key={`${docId}-${correspondentName}`}
+                  title={correspondentName}
+                  description={t('offline.pendingItem')}
+                  left={(props) => (
+                    <List.Icon
+                      {...props}
+                      icon="account-clock-outline"
+                      color={theme.colors.tertiary}
+                    />
+                  )}
+                  right={() => (
+                    <IconButton
+                      icon="trash-can-outline"
+                      iconColor={theme.colors.error}
+                      size={20}
+                      onPress={() => setEmbeddedDiscardTarget({ docId, correspondentName })}
+                    />
+                  )}
+                  style={[styles.pendingItem, { backgroundColor: theme.colors.surfaceVariant }]}
+                  descriptionStyle={{ color: theme.colors.tertiary }}
+                />
+              ))}
+            </View>
+          ) : null
+        }
         renderItem={({ item }) => (
           <List.Item
             title={item.name}
@@ -74,10 +161,13 @@ export const CorrespondentsListScreen: React.FC = () => {
             left={(props) => <List.Icon {...props} icon="account" />}
             right={(props) => <List.Icon {...props} icon="pencil" />}
             onPress={() =>
+              !isOffline &&
               can('change', 'correspondent') &&
               navigation.navigate('CorrespondentEdit', { correspondentId: item.id })
             }
-            onLongPress={() => can('delete', 'correspondent') && setDeleteTarget(item)}
+            onLongPress={() =>
+              !isOffline && can('delete', 'correspondent') && setDeleteTarget(item)
+            }
           />
         )}
         contentContainerStyle={filteredItems.length === 0 ? styles.emptyContainer : undefined}
@@ -112,6 +202,34 @@ export const CorrespondentsListScreen: React.FC = () => {
         }}
         onCancel={() => setDeleteTarget(null)}
       />
+
+      <ConfirmDialog
+        visible={!!discardTarget}
+        title={t('offline.discard')}
+        message={t('offline.discardConfirm')}
+        confirmLabel={t('offline.discard')}
+        destructive
+        onConfirm={() => {
+          if (discardTarget) removeOfflineItem(discardTarget.id);
+          setDiscardTarget(null);
+        }}
+        onCancel={() => setDiscardTarget(null)}
+      />
+
+      <ConfirmDialog
+        visible={!!embeddedDiscardTarget}
+        title={t('offline.discard')}
+        message={t('offline.discardConfirm')}
+        confirmLabel={t('offline.discard')}
+        destructive
+        onConfirm={() => {
+          if (embeddedDiscardTarget) {
+            updateItemData(embeddedDiscardTarget.docId, { correspondentName: undefined });
+          }
+          setEmbeddedDiscardTarget(null);
+        }}
+        onCancel={() => setEmbeddedDiscardTarget(null)}
+      />
     </View>
   );
 };
@@ -131,5 +249,13 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 16,
     bottom: 16,
+  },
+  pendingSection: {
+    marginBottom: 4,
+  },
+  pendingItem: {
+    marginHorizontal: 8,
+    marginBottom: 4,
+    borderRadius: 8,
   },
 });

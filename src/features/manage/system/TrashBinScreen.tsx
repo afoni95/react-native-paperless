@@ -11,6 +11,8 @@ import { ManageStackParamList } from '@/navigation/types';
 import { LoadingScreen, EmptyState, ErrorBanner, ConfirmDialog } from '@/components';
 import { usePermissionContext } from '@/hooks/PermissionProvider';
 import { useTrashDocuments, useRestoreDocuments, useEmptyTrash } from '@/reactQuery';
+import { useNetworkStore, NetworkStatus } from '@/store/networkStore';
+import { useOfflineNavigationTitle } from '@/hooks/useOfflineNavigationTitle';
 
 type NavigationProp = NativeStackNavigationProp<ManageStackParamList, 'TrashBin'>;
 
@@ -32,6 +34,9 @@ export const TrashBinScreen: React.FC = () => {
   const documents = trashData?.results ?? [];
 
   const { can } = usePermissionContext();
+  const { status } = useNetworkStore();
+  const isOffline = status !== NetworkStatus.Online;
+  useOfflineNavigationTitle(t('manage.trashBin'));
 
   const restoreMutation = useRestoreDocuments({
     onSuccess: async (_, ids) => {
@@ -73,7 +78,7 @@ export const TrashBinScreen: React.FC = () => {
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () =>
-        documents.length > 0 && can('delete', 'document') ? (
+        documents.length > 0 && can('delete', 'document') && !isOffline ? (
           <IconButton
             icon="trash-can-outline"
             iconColor={theme.colors.error}
@@ -82,8 +87,7 @@ export const TrashBinScreen: React.FC = () => {
           />
         ) : null,
     });
-  }, [navigation, documents.length, theme.colors.error, emptyMutation.isPending, can]);
-
+  }, [navigation, documents.length, theme.colors.error, emptyMutation.isPending, can, isOffline]);
   const formatDate = (dateString: string | null) => {
     if (!dateString) return '';
     return new Date(dateString).toLocaleDateString(i18n.language, {
@@ -111,7 +115,7 @@ export const TrashBinScreen: React.FC = () => {
           <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant }}>
             {documents.length === 1 ? '1 document' : `${documents.length} documents`}
           </Text>
-          {can('delete', 'document') && (
+          {can('delete', 'document') && !isOffline && (
             <Button
               mode="text"
               textColor={theme.colors.error}

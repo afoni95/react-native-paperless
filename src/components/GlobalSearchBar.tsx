@@ -8,7 +8,12 @@ import { useDebounce } from '@/hooks';
 import { documentsApi } from '@/api';
 import { MainTabsParamList } from '@/navigation/types';
 
-export const GlobalSearchBar: React.FC = () => {
+interface GlobalSearchBarProps {
+  disabled?: boolean;
+  placeholder?: string;
+}
+
+export const GlobalSearchBar: React.FC<GlobalSearchBarProps> = ({ disabled, placeholder }) => {
   const theme = useTheme();
   const { t } = useTranslation();
   const navigation = useNavigation<BottomTabNavigationProp<MainTabsParamList>>();
@@ -88,14 +93,19 @@ export const GlobalSearchBar: React.FC = () => {
   return (
     <View style={styles.container}>
       <Searchbar
-        placeholder={t('search.placeholder')}
-        value={searchQuery}
-        onChangeText={handleChangeText}
-        onSubmitEditing={() => handleSearch(searchQuery)}
-        onBlur={handleBlur}
-        onFocus={handleFocus}
-        loading={isLoading}
-        style={[styles.searchBar, { backgroundColor: theme.colors.surfaceVariant }]}
+        placeholder={placeholder ?? t('search.placeholder')}
+        value={disabled ? '' : searchQuery}
+        onChangeText={disabled ? undefined : handleChangeText}
+        onSubmitEditing={disabled ? undefined : () => handleSearch(searchQuery)}
+        onBlur={disabled ? undefined : handleBlur}
+        onFocus={disabled ? undefined : handleFocus}
+        loading={!disabled && isLoading}
+        editable={!disabled}
+        style={[
+          styles.searchBar,
+          { backgroundColor: theme.colors.surfaceVariant },
+          disabled && { opacity: 0.5 },
+        ]}
         elevation={1}
         icon="magnify"
         clearIcon="close"
