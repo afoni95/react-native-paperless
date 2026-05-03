@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { storagePathsApi } from '@/api';
 import { StoragePath } from '@/types';
 import { MutationHookOptions, QueryHookOptions } from '@/utils/reactQueryCommon';
+import { NetworkStatus, useNetworkStore } from '@/store/networkStore';
 
 import { storagePathQueryKeys } from './queryKeys';
 
@@ -12,10 +13,11 @@ export const useAllStoragePaths = (
   isEnabled = true,
   options?: QueryHookOptions<StoragePath[], typeof storagePathQueryKeys.all>,
 ) => {
+  const { status: networkStatus } = useNetworkStore();
   return useQuery({
     ...options,
     queryKey: storagePathQueryKeys.all,
-    enabled: isEnabled,
+    enabled: isEnabled && networkStatus === NetworkStatus.Online,
     queryFn: () => storagePathsApi.getAllStoragePaths(),
   });
 };
@@ -25,10 +27,11 @@ export const useStoragePath = (
   isEnabled = true,
   options?: QueryHookOptions<StoragePath, ReturnType<typeof storagePathQueryKeys.detail>>,
 ) => {
+  const { status: networkStatus } = useNetworkStore();
   return useQuery({
     ...options,
     queryKey: storagePathQueryKeys.detail(id),
-    enabled: isEnabled,
+    enabled: isEnabled && networkStatus === NetworkStatus.Online,
     queryFn: () => storagePathsApi.getStoragePath(id),
   });
 };

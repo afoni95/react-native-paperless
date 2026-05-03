@@ -36,6 +36,10 @@ import { MasterDataOverviewScreen } from '@/features/manage/master-data/MasterDa
 import { AccessOverviewScreen } from '@/features/manage/access/AccessOverviewScreen';
 import { AboutScreen } from '@/features/manage/AboutScreen';
 import { ManageStackParamList } from './types';
+import { PendingSyncScreen } from '@/features/manage/system/PendingSyncScreen';
+import { OfflineTagCreateScreen } from '@/features/manage/master-data/tags/OfflineTagCreateScreen';
+import { OfflineCorrespondentCreateScreen } from '@/features/manage/master-data/correspondents/OfflineCorrespondentCreateScreen';
+import { OfflineDocTypeCreateScreen } from '@/features/manage/master-data/document-types/OfflineDocTypeCreateScreen';
 
 const Stack = createNativeStackNavigator<ManageStackParamList>();
 
@@ -239,6 +243,26 @@ export const ManageStack: React.FC = () => {
         name="ProcessedMailList"
         component={ProcessedMailScreen}
         options={{ title: t('processedMail.title') }}
+      />
+      <Stack.Screen
+        name="PendingSync"
+        component={PendingSyncScreen}
+        options={{ title: t('offline.pendingSync') }}
+      />
+      <Stack.Screen
+        name="OfflineTagCreate"
+        component={OfflineTagCreateScreen}
+        options={{ title: t('offline.createTag') }}
+      />
+      <Stack.Screen
+        name="OfflineCorrespondentCreate"
+        component={OfflineCorrespondentCreateScreen}
+        options={{ title: t('offline.createCorrespondent') }}
+      />
+      <Stack.Screen
+        name="OfflineDocTypeCreate"
+        component={OfflineDocTypeCreateScreen}
+        options={{ title: t('offline.createDocumentType') }}
       />
     </Stack.Navigator>
   );

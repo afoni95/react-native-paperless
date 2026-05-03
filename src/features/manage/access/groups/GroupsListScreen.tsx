@@ -8,6 +8,8 @@ import { usePermissionContext } from '@/hooks/PermissionProvider';
 
 import type { ManageStackParamList } from '@/navigation/types';
 import { useGroups } from '@/reactQuery';
+import { useNetworkStore, NetworkStatus } from '@/store/networkStore';
+import { useOfflineNavigationTitle } from '@/hooks/useOfflineNavigationTitle';
 
 type NavigationProp = NativeStackNavigationProp<ManageStackParamList, 'GroupsList'>;
 
@@ -20,6 +22,9 @@ export const GroupsListScreen: React.FC = () => {
 
   const { can } = usePermissionContext();
   const canAddGroup = can('add', 'group');
+  const { status } = useNetworkStore();
+  const isOffline = status !== NetworkStatus.Online;
+  useOfflineNavigationTitle(t('manage.groups'));
 
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
@@ -38,7 +43,7 @@ export const GroupsListScreen: React.FC = () => {
           />
         ))}
       </List.Section>
-      {canAddGroup && (
+      {canAddGroup && !isOffline && (
         <FAB
           style={styles.fab}
           icon="plus"

@@ -21,9 +21,29 @@ export const PermissionProvider: React.FC<{
   permissions?: string[];
   children?: ReactNode;
 }> = ({ user, permissions, children }) => {
+  const grantAll = !user;
+
+  const allGranted = React.useMemo<PermissionContextValue>(
+    () => ({
+      permissions: [],
+      has: () => true,
+      hasAny: () => true,
+      hasAll: () => true,
+      can: () => true,
+      getResourcePermissions: () => ({ add: true, change: true, delete: true, view: true }),
+      ready: true,
+    }),
+    [],
+  );
+
   const perms = usePermissions(user ? { user } : permissions ? { permissions } : undefined);
   const value = React.useMemo(() => ({ ...perms, ready: true }), [perms]);
-  return <PermissionContext.Provider value={value}>{children}</PermissionContext.Provider>;
+
+  return (
+    <PermissionContext.Provider value={grantAll ? allGranted : value}>
+      {children}
+    </PermissionContext.Provider>
+  );
 };
 
 export function usePermissionContext(): PermissionContextValue {

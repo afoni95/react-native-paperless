@@ -3,10 +3,12 @@ import { ScrollView, View, StyleSheet, RefreshControl } from 'react-native';
 import { Button, Card, Text, useTheme, Divider, Snackbar } from 'react-native-paper';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useTranslation } from 'react-i18next';
-import { LoadingScreen, ErrorBanner, GlobalSearchBar } from '@/components';
+import { LoadingScreen, GlobalSearchBar } from '@/components';
 import { useGlobalNavigationHelper } from '@/hooks';
 import { useAllMailAccounts, useProcessMailAccount, useStatistics } from '@/reactQuery';
 import { usePermissionContext } from '@/hooks/PermissionProvider';
+import { useNetworkStore, NetworkStatus } from '@/store/networkStore';
+import { useOfflineQueueStore } from '@/store/offlineQueueStore';
 
 export const DashboardScreen: React.FC = () => {
   const theme = useTheme();
@@ -14,6 +16,10 @@ export const DashboardScreen: React.FC = () => {
   const { navigateTo } = useGlobalNavigationHelper();
   const { can } = usePermissionContext();
   const [snackbarMessage, setSnackbarMessage] = React.useState<string | null>(null);
+  const { status } = useNetworkStore();
+  // True only when user explicitly chose "Work Offline" with no prior server login
+  const tokenlessOffline = status === NetworkStatus.Offline;
+  const offlineItems = useOfflineQueueStore((s) => s.items);
 
   const showDocumentsTab = can('view', 'document');
   const showTagsList = can('view', 'tag');
@@ -22,7 +28,7 @@ export const DashboardScreen: React.FC = () => {
   const showMailAccounts = can('view', 'mailaccount');
   const canProcessMailAccounts = can('change', 'mailaccount');
 
-  const { data: stats, isLoading, isError, error, refetch, isRefetching } = useStatistics();
+  const { data: stats, isLoading, isError, refetch, isRefetching } = useStatistics();
   const { data: mailAccounts = [] } = useAllMailAccounts(showMailAccounts);
 
   const processMailAccountMutation = useProcessMailAccount();
@@ -43,14 +49,8 @@ export const DashboardScreen: React.FC = () => {
   }
 
   if (isError) {
-    return (
-      <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
-        <ErrorBanner
-          message={(error as Error)?.message ?? t('common.somethingWentWrong')}
-          onRetry={refetch}
-        />
-      </View>
-    );
+    // Silently show empty dashboard (no server reachable — offline mode)
+    // fall through to render with null stats
   }
 
   return (
@@ -67,13 +67,20 @@ export const DashboardScreen: React.FC = () => {
         }
       >
         <View style={styles.searchContainer}>
-          <GlobalSearchBar />
+          <GlobalSearchBar
+            disabled={tokenlessOffline}
+            placeholder={tokenlessOffline ? t('common.unavailableOffline') : undefined}
+          />
         </View>
 
         <View style={styles.cardRow}>
           <StatCard
             title={t('dashboard.totalDocuments')}
-            value={stats?.documents_total ?? 0}
+            value={
+              tokenlessOffline
+                ? offlineItems.filter((i) => i.type === 'document').length
+                : (stats?.documents_total ?? 0)
+            }
             icon="file-document-outline"
             color={theme.colors.primaryContainer}
             textColor={theme.colors.onPrimaryContainer}
@@ -85,12 +92,12 @@ export const DashboardScreen: React.FC = () => {
           />
           <StatCard
             title={t('dashboard.inbox')}
-            value={stats?.documents_inbox ?? 0}
+            value={tokenlessOffline ? 0 : (stats?.documents_inbox ?? 0)}
             icon="inbox-arrow-down"
             color={theme.colors.tertiaryContainer}
             textColor={theme.colors.onTertiaryContainer}
             onPress={() => {
-              if (showDocumentsTab) {
+              if (!tokenlessOffline && showDocumentsTab) {
                 navigateTo('documentList');
               }
             }}
@@ -100,7 +107,11 @@ export const DashboardScreen: React.FC = () => {
         <View style={styles.cardRow}>
           <StatCard
             title={t('dashboard.tags')}
-            value={stats?.tag_count ?? 0}
+            value={
+              tokenlessOffline
+                ? offlineItems.filter((i) => i.type === 'tag').length
+                : (stats?.tag_count ?? 0)
+            }
             icon="tag-outline"
             color={theme.colors.tertiaryContainer}
             textColor={theme.colors.onTertiaryContainer}
@@ -112,7 +123,11 @@ export const DashboardScreen: React.FC = () => {
           />
           <StatCard
             title={t('dashboard.correspondents')}
-            value={stats?.correspondent_count ?? 0}
+            value={
+              tokenlessOffline
+                ? offlineItems.filter((i) => i.type === 'correspondent').length
+                : (stats?.correspondent_count ?? 0)
+            }
             icon="account-outline"
             color={theme.colors.primaryContainer}
             textColor={theme.colors.onPrimaryContainer}
@@ -127,7 +142,11 @@ export const DashboardScreen: React.FC = () => {
         <View style={styles.cardRow}>
           <StatCard
             title={t('dashboard.documentTypes')}
-            value={stats?.document_type_count ?? 0}
+            value={
+              tokenlessOffline
+                ? offlineItems.filter((i) => i.type === 'documentType').length
+                : (stats?.document_type_count ?? 0)
+            }
             icon="clipboard-text-outline"
             color={theme.colors.primaryContainer}
             textColor={theme.colors.onPrimaryContainer}
@@ -139,7 +158,7 @@ export const DashboardScreen: React.FC = () => {
           />
           <StatCard
             title={t('dashboard.characters')}
-            value={formatNumber(stats?.character_count ?? 0)}
+            value={tokenlessOffline ? '-' : formatNumber(stats?.character_count ?? 0)}
             icon="format-letter-case"
             color={theme.colors.tertiaryContainer}
             textColor={theme.colors.onTertiaryContainer}
@@ -153,7 +172,11 @@ export const DashboardScreen: React.FC = () => {
                 {t('dashboard.mailAccounts')}
               </Text>
 
-              {mailAccounts.length === 0 ? (
+              {tokenlessOffline ? (
+                <Text variant="bodyMedium" style={{ color: theme.colors.onSurfaceVariant }}>
+                  {t('common.unavailableOffline')}
+                </Text>
+              ) : mailAccounts.length === 0 ? (
                 <Text variant="bodyMedium" style={{ color: theme.colors.onSurfaceVariant }}>
                   {t('dashboard.noMailAccounts')}
                 </Text>

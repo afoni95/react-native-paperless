@@ -8,6 +8,8 @@ import { MATCHING_ALGORITHMS, MatchingAlgorithm } from '@/types';
 import { LoadingScreen, ConfirmDialog, HasPermission } from '@/components';
 import { ManageStackParamList } from '@/navigation/types';
 import { useCorrespondent, useUpsertCorrespondent, useDeleteCorrespondent } from '@/reactQuery';
+import { useOfflineQueueStore } from '@/store/offlineQueueStore';
+import { useNetworkStore, NetworkStatus } from '@/store/networkStore';
 import { screenStyles, formStyles, buttonStyles } from '@/theme/commonStyles';
 
 type Props = NativeStackScreenProps<ManageStackParamList, 'CorrespondentEdit'>;
@@ -34,6 +36,10 @@ export const CorrespondentEditScreen: React.FC<Props> = ({ route, navigation }) 
       setIsInsensitive(correspondent.is_insensitive);
     }
   }, [correspondent]);
+
+  const { status } = useNetworkStore();
+  const isOffline = status !== NetworkStatus.Online;
+  const { addItem } = useOfflineQueueStore();
 
   const saveMutation = useUpsertCorrespondent({
     onSuccess: () => {
@@ -104,15 +110,23 @@ export const CorrespondentEditScreen: React.FC<Props> = ({ route, navigation }) 
       <HasPermission action={isNew ? 'add' : 'change'} resource="correspondent">
         <Button
           mode="contained"
-          onPress={() =>
+          onPress={() => {
+            if (isNew && isOffline) {
+              addItem({
+                type: 'correspondent',
+                data: { name, match, isInsensitive },
+              });
+              navigation.goBack();
+              return;
+            }
             saveMutation.mutate({
               id: correspondentId,
               name,
               match,
               matching_algorithm: matchingAlgorithm,
               is_insensitive: isInsensitive,
-            })
-          }
+            });
+          }}
           loading={saveMutation.isPending}
           disabled={!name.trim() || saveMutation.isPending}
           style={buttonStyles.saveButton}

@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { usersApi } from '@/api';
 import type { User, UserPayload, PaginatedResponse } from '@/types';
 import { MutationHookOptions, QueryHookOptions } from '@/utils/reactQueryCommon';
+import { NetworkStatus, useNetworkStore } from '@/store/networkStore';
 
 import { userQueryKeys } from './queryKeys';
 
@@ -13,10 +14,11 @@ export const useUsers = (
   isEnabled = true,
   options?: QueryHookOptions<PaginatedResponse<User>, ReturnType<typeof userQueryKeys.all>>,
 ) => {
+  const { status: networkStatus } = useNetworkStore();
   return useQuery({
     ...options,
     queryKey: userQueryKeys.all(params),
-    enabled: isEnabled,
+    enabled: isEnabled && networkStatus === NetworkStatus.Online,
     queryFn: () => usersApi.list(params),
   });
 };
@@ -26,10 +28,11 @@ export const useUser = (
   isEnabled = true,
   options?: QueryHookOptions<User, ReturnType<typeof userQueryKeys.detail>>,
 ) => {
+  const { status: networkStatus } = useNetworkStore();
   return useQuery({
     ...options,
     queryKey: userQueryKeys.detail(id),
-    enabled: isEnabled && !!id,
+    enabled: isEnabled && networkStatus === NetworkStatus.Online && !!id,
     queryFn: () => usersApi.retrieve(id),
   });
 };

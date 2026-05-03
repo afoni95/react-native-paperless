@@ -10,6 +10,8 @@ import { useAllWorkflows, useUpsertWorkflow, useDeleteWorkflow } from '@/reactQu
 import { usePermissionContext } from '@/hooks/PermissionProvider';
 import { ManageStackParamList } from '@/navigation/types';
 import { getTriggerTypeName, getActionTypeName } from '@/utils/workflowHelpers';
+import { useNetworkStore, NetworkStatus } from '@/store/networkStore';
+import { useOfflineNavigationTitle } from '@/hooks/useOfflineNavigationTitle';
 
 type Props = NativeStackScreenProps<ManageStackParamList, 'WorkflowsList'>;
 
@@ -20,6 +22,9 @@ export const WorkflowsListScreen: React.FC<Props> = ({ navigation }) => {
 
   const [snackbarVisible, setSnackbarVisible] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
+  const { status } = useNetworkStore();
+  const isOffline = status !== NetworkStatus.Online;
+  useOfflineNavigationTitle(t('manage.workflows'));
 
   const {
     data: workflows,
@@ -51,6 +56,11 @@ export const WorkflowsListScreen: React.FC<Props> = ({ navigation }) => {
   });
 
   const handleToggleEnabled = (workflow: Workflow) => {
+    if (isOffline) {
+      setSnackbarMessage(t('common.unavailableOffline'));
+      setSnackbarVisible(true);
+      return;
+    }
     updateMutation.mutate({
       id: workflow.id,
       enabled: !workflow.enabled,
@@ -62,6 +72,11 @@ export const WorkflowsListScreen: React.FC<Props> = ({ navigation }) => {
   };
 
   const handleDeleteWorkflow = (workflow: Workflow) => {
+    if (isOffline) {
+      setSnackbarMessage(t('common.unavailableOffline'));
+      setSnackbarVisible(true);
+      return;
+    }
     Alert.alert(t('common.confirm'), t('workflows.deleteConfirm', { name: workflow.name }), [
       { text: t('common.cancel'), onPress: () => {} },
       {
@@ -139,7 +154,7 @@ export const WorkflowsListScreen: React.FC<Props> = ({ navigation }) => {
         )}
       />
 
-      {can('add', 'workflow') && (
+      {can('add', 'workflow') && !isOffline && (
         <FAB
           icon="plus"
           style={[styles.fab, { bottom: 2, right: 2 }]}

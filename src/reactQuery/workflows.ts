@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { workflowsApi } from '@/api';
 import { Workflow, WorkflowCreatePayload, WorkflowUpdatePayload } from '@/types/workflows';
 import { MutationHookOptions, QueryHookOptions } from '@/utils/reactQueryCommon';
+import { NetworkStatus, useNetworkStore } from '@/store/networkStore';
 
 import { workflowQueryKeys } from './queryKeys';
 
@@ -12,10 +13,11 @@ export const useAllWorkflows = (
   isEnabled = true,
   options?: QueryHookOptions<Workflow[], typeof workflowQueryKeys.all>,
 ) => {
+  const { status: networkStatus } = useNetworkStore();
   return useQuery({
     ...options,
     queryKey: workflowQueryKeys.all,
-    enabled: isEnabled,
+    enabled: isEnabled && networkStatus === NetworkStatus.Online,
     queryFn: () => workflowsApi.getAllWorkflows(),
   });
 };
@@ -25,10 +27,11 @@ export const useWorkflow = (
   isEnabled = true,
   options?: QueryHookOptions<Workflow, ReturnType<typeof workflowQueryKeys.detail>>,
 ) => {
+  const { status: networkStatus } = useNetworkStore();
   return useQuery({
     ...options,
     queryKey: workflowQueryKeys.detail(id),
-    enabled: isEnabled,
+    enabled: isEnabled && networkStatus === NetworkStatus.Online,
     queryFn: () => workflowsApi.getWorkflow(id),
   });
 };

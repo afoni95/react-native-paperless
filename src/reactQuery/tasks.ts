@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { tasksApi } from '@/api';
 import { TaskStatus } from '@/types';
 import { MutationHookOptions, QueryHookOptions } from '@/utils/reactQueryCommon';
+import { NetworkStatus, useNetworkStore } from '@/store/networkStore';
 
 import { taskQueryKeys } from './queryKeys';
 
@@ -10,10 +11,11 @@ export const useAllTasks = (
   isEnabled = true,
   options?: QueryHookOptions<TaskStatus[], typeof taskQueryKeys.all>,
 ) => {
+  const { status: networkStatus } = useNetworkStore();
   return useQuery({
     ...options,
     queryKey: taskQueryKeys.all,
-    enabled: isEnabled,
+    enabled: isEnabled && networkStatus === NetworkStatus.Online,
     queryFn: () => tasksApi.getAllTasks(),
   });
 };
@@ -23,10 +25,11 @@ export const useTaskByTaskId = (
   isEnabled = true,
   options?: QueryHookOptions<TaskStatus[], ReturnType<typeof taskQueryKeys.byTaskId>>,
 ) => {
+  const { status: networkStatus } = useNetworkStore();
   return useQuery({
     ...options,
     queryKey: taskQueryKeys.byTaskId(taskId),
-    enabled: isEnabled && taskId.trim().length > 0,
+    enabled: isEnabled && networkStatus === NetworkStatus.Online && taskId.trim().length > 0,
     queryFn: () => tasksApi.getTask(taskId),
   });
 };

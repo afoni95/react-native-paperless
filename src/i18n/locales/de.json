@@ -19,12 +19,23 @@
     "dark": "Dunkel",
     "auto": "System",
     "offline": "Keine Verbindung",
+    "offlineHint": "Du kannst trotzdem weiterarbeiten. Alle Änderungen werden synchronisiert, sobald die Verbindung wiederhergestellt ist.",
     "somethingWentWrong": "Etwas ist schiefgelaufen",
     "server": "Server",
     "email": "E-Mail",
     "leave": "Leer lassen, um das aktuelle Passwort beizubehalten",
     "apply": "Änderungen anwenden",
-    "showMore": "Mehr anzeigen"
+    "showMore": "Mehr anzeigen",
+    "offlineMode": "OFFLINE-MODUS",
+    "disconnectedMode": "Keine Verbindung zum Server",
+    "unavailableOffline": "Im Offline-Modus nicht verfügbar",
+    "new": "Neu"
+  },
+  "settings": {
+    "testReconnect": "Testen & Verbinden",
+    "reconnecting": "Verbinde...",
+    "reconnectSuccess": "Erfolgreich verbunden",
+    "reconnectFailed": "Verbindung fehlgeschlagen. URL und Zugangsdaten prüfen."
   },
   "auth": {
     "serverUrl": "Server-URL",
@@ -47,7 +58,10 @@
     "biometricPrompt": "Authentifiziere dich, um Paperless Companion zu entsperren",
     "biometricFallback": "Passcode verwenden",
     "biometricFailed": "Authentifizierung fehlgeschlagen. Bitte erneut versuchen.",
-    "biometricRetry": "Erneut versuchen"
+    "biometricRetry": "Erneut versuchen",
+    "offlineModeHint": "Kein Server erreichbar. Du kannst mit deiner letzten Sitzung weitermachen – Dokumente werden synchronisiert, sobald du wieder online bist.",
+    "onlineModeHint": "Du kannst den Login überspringen und offline arbeiten – Elemente werden automatisch synchronisiert, sobald du dich später mit einem Server verbindest.",
+    "enterOfflineMode": "Offline weiterarbeiten"
   },
   "dashboard": {
     "title": "Übersicht",
@@ -133,7 +147,9 @@
     "selectCustomField": "Auswählen",
     "removeCustomField": "Benutzerdefiniertes Feld entfernen",
     "noCustomFieldsSet": "Dokument hat aktuell keine benutzerdefinierten Felder",
-    "customFieldValue": "Wert"
+    "customFieldValue": "Wert",
+    "processingCount": "({{count}}) werden verarbeitet",
+    "documentCount": "{{count}} Dokumente"
   },
   "upload": {
     "title": "Dokument Hochladen",
@@ -474,5 +490,30 @@
       "delete": "Löschen",
       "view": "Anzeigen"
     }
+  },
+  "offline": {
+    "pendingSync": "Ausstehende Synchronisierung",
+    "pendingSyncSubtitle": "{{count}} Element(e) ausstehend",
+    "syncNow": "Jetzt synchronisieren",
+    "syncFailed": "Synchronisierung fehlgeschlagen",
+    "noItems": "Leer - keine ausstehenden Elemente",
+    "createOffline": "Offline speichern",
+    "createDocument": "Dokument offline erstellen",
+    "createTag": "Tag offline erstellen",
+    "createCorrespondent": "Korrespondent offline erstellen",
+    "createDocumentType": "Dokumenttyp offline erstellen",
+    "typeDocument": "Dokument",
+    "statusPending": "Ausstehend",
+    "statusSyncing": "Synchronisiert",
+    "statusFailed": "Fehlgeschlagen",
+    "clearFailed": "Fehlgeschlagene löschen",
+    "syncSuccess": "Synchronisierung abgeschlossen",
+    "syncPartial": "{{count}} Element(e) konnten nicht synchronisiert werden",
+    "pendingItem": "Sync ausstehend",
+    "embeddedInDocument": "In Dokument eingebettet",
+    "discard": "Verwerfen",
+    "discardConfirm": "Dieses ausstehende Element entfernen? Es wird nicht mit dem Server synchronisiert.",
+    "alreadyQueued": "Bereits in der Offline-Warteschlange",
+    "noCachedItems": "Keine Elemente offline verfügbar"
   }
 }

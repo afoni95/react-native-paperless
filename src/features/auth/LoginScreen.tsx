@@ -19,9 +19,13 @@ import { useTranslation } from 'react-i18next';
 import { authApi, MfaRequiredError, MFA_INVALID_ERROR } from '@/api/auth';
 import apiClient from '@/api/client';
 import { useAuthStore } from '@/store/authStore';
+import { useNetworkStore, NetworkStatus } from '@/store/networkStore';
 import { PaginatedResponse, PaperlessApiError } from '@/types';
 import { User } from '@/types';
 import { pauseAsync } from '@/utils';
+import * as SecureStore from 'expo-secure-store';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { TOKEN_KEY, SERVER_URL_KEY } from '@/store/constants';
 
 const MFA_CODE_PATTERN = /^\d{6}$/;
 const CLIPBOARD_RETRY_DELAYS_MS = [300, 600, 1200];
@@ -31,7 +35,6 @@ export const LoginScreen: React.FC = () => {
   const { t } = useTranslation();
   const {
     login,
-    loginDemo,
     serverUrl,
     setServerUrl,
     biometricEnabled,
@@ -39,6 +42,7 @@ export const LoginScreen: React.FC = () => {
     setBiometricEnabled,
     setUsername: setStoredUsername,
   } = useAuthStore();
+  const { status } = useNetworkStore();
 
   const [url, setUrl] = useState(serverUrl);
   const [biometricAvailable, setBiometricAvailable] = useState(false);
@@ -170,29 +174,6 @@ export const LoginScreen: React.FC = () => {
   const handleLogin = async () => {
     if (!url || !username || !password) return;
     if (mfaRequired && mfaCode.length !== 6) return;
-
-    // Magic demo credentials for UI testing without a server
-    if (
-      (url.trim() === '_demo_' || url.trim() === 'demo') &&
-      username === 'demo' &&
-      password === 'demo'
-    ) {
-      if (biometricChecked) {
-        const bioResult = await authenticateAsync({
-          promptMessage: t('auth.biometricPrompt'),
-          cancelLabel: t('common.cancel'),
-          disableDeviceFallback: false,
-        });
-        if (!bioResult.success) {
-          setError(t('auth.biometricFailed'));
-          return;
-        }
-      }
-      await setBiometricEnabled(biometricChecked);
-      await setUsername('demo');
-      loginDemo();
-      return;
-    }
 
     setError('');
     setLoading(true);
@@ -397,6 +378,40 @@ export const LoginScreen: React.FC = () => {
           >
             {loading ? t('auth.loggingIn') : mfaRequired ? t('auth.mfaVerify') : t('auth.login')}
           </Button>
+
+          <View style={styles.offlineSection}>
+            <Text
+              variant="bodySmall"
+              style={[styles.offlineHint, { color: theme.colors.onSurfaceVariant }]}
+            >
+              {status !== NetworkStatus.Online
+                ? t('auth.offlineModeHint')
+                : t('auth.onlineModeHint')}
+            </Text>
+            <Button
+              mode="outlined"
+              icon="wifi-off"
+              onPress={async () => {
+                try {
+                  const [token, savedUrl] = await Promise.all([
+                    SecureStore.getItemAsync(TOKEN_KEY),
+                    AsyncStorage.getItem(SERVER_URL_KEY),
+                  ]);
+                  if (token && savedUrl) {
+                    await useAuthStore.getState().restoreSession();
+                  } else {
+                    useAuthStore.getState().enterOfflineMode();
+                  }
+                } catch {
+                  useAuthStore.getState().enterOfflineMode();
+                }
+              }}
+              style={[styles.offlineButton, { borderColor: theme.colors.error }]}
+              textColor={theme.colors.error}
+            >
+              {t('auth.enterOfflineMode')}
+            </Button>
+          </View>
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -464,5 +479,17 @@ const styles = StyleSheet.create({
     letterSpacing: 12,
     fontSize: 24,
     paddingHorizontal: 0,
+  },
+  offlineSection: {
+    marginTop: 8,
+  },
+  offlineHint: {
+    textAlign: 'center',
+    marginBottom: 4,
+    fontSize: 12,
+  },
+  offlineButton: {
+    marginTop: 8,
+    borderRadius: 8,
   },
 });

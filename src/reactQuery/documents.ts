@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { documentsApi } from '@/api';
 import {
@@ -10,7 +10,9 @@ import {
   GlobalSearchResult,
   PaginatedResponse,
 } from '@/types';
+import { InfiniteData } from '@tanstack/react-query';
 import { MutationHookOptions, QueryHookOptions } from '@/utils/reactQueryCommon';
+import { NetworkStatus, useNetworkStore } from '@/store/networkStore';
 
 import { documentQueryKeys } from './queryKeys';
 
@@ -24,15 +26,36 @@ type DeleteDocumentNoteInput = {
   noteId: number;
 };
 
+export const useInfiniteDocuments = (
+  params?: Omit<DocumentListParams, 'page'>,
+  isEnabled = true,
+) => {
+  const { status: networkStatus } = useNetworkStore();
+  return useInfiniteQuery<
+    PaginatedResponse<Document>,
+    Error,
+    InfiniteData<PaginatedResponse<Document>>,
+    ReturnType<typeof documentQueryKeys.all>,
+    number
+  >({
+    queryKey: documentQueryKeys.all(params),
+    enabled: isEnabled && networkStatus === NetworkStatus.Online,
+    queryFn: ({ pageParam = 1 }) => documentsApi.getDocuments({ ...params, page: pageParam }),
+    getNextPageParam: (lastPage, allPages) => (lastPage.next ? allPages.length + 1 : undefined),
+    initialPageParam: 1,
+  });
+};
+
 export const useDocuments = (
   params?: DocumentListParams,
   isEnabled = true,
   options?: QueryHookOptions<PaginatedResponse<Document>, ReturnType<typeof documentQueryKeys.all>>,
 ) => {
+  const { status: networkStatus } = useNetworkStore();
   return useQuery({
     ...options,
     queryKey: documentQueryKeys.all(params),
-    enabled: isEnabled,
+    enabled: isEnabled && networkStatus === NetworkStatus.Online,
     queryFn: () => documentsApi.getDocuments(params),
   });
 };
@@ -42,10 +65,11 @@ export const useDocument = (
   isEnabled = true,
   options?: QueryHookOptions<Document, ReturnType<typeof documentQueryKeys.detail>>,
 ) => {
+  const { status: networkStatus } = useNetworkStore();
   return useQuery({
     ...options,
     queryKey: documentQueryKeys.detail(id),
-    enabled: isEnabled,
+    enabled: isEnabled && networkStatus === NetworkStatus.Online,
     queryFn: () => documentsApi.getDocument(id),
   });
 };
@@ -55,10 +79,11 @@ export const useLinkedDocuments = (
   isEnabled = true,
   options?: QueryHookOptions<PaginatedResponse<Document>, ReturnType<typeof documentQueryKeys.all>>,
 ) => {
+  const { status: networkStatus } = useNetworkStore();
   return useQuery({
     ...options,
     queryKey: documentQueryKeys.all({ id__in: ids }),
-    enabled: isEnabled && ids.length > 0,
+    enabled: isEnabled && networkStatus === NetworkStatus.Online && ids.length > 0,
     queryFn: () => documentsApi.getDocuments({ id__in: ids, page_size: ids.length }),
   });
 };
@@ -68,10 +93,11 @@ export const useDocumentNotes = (
   isEnabled = true,
   options?: QueryHookOptions<DocumentNote[], ReturnType<typeof documentQueryKeys.notes>>,
 ) => {
+  const { status: networkStatus } = useNetworkStore();
   return useQuery({
     ...options,
     queryKey: documentQueryKeys.notes(documentId),
-    enabled: isEnabled,
+    enabled: isEnabled && networkStatus === NetworkStatus.Online,
     queryFn: () => documentsApi.getNotes(documentId),
   });
 };
@@ -80,10 +106,11 @@ export const useTrashDocuments = (
   isEnabled = true,
   options?: QueryHookOptions<PaginatedResponse<Document>, typeof documentQueryKeys.trash>,
 ) => {
+  const { status: networkStatus } = useNetworkStore();
   return useQuery({
     ...options,
     queryKey: documentQueryKeys.trash,
-    enabled: isEnabled,
+    enabled: isEnabled && networkStatus === NetworkStatus.Online,
     queryFn: () => documentsApi.getTrash(),
   });
 };
@@ -93,10 +120,11 @@ export const useGlobalSearch = (
   isEnabled = true,
   options?: QueryHookOptions<GlobalSearchResult, ReturnType<typeof documentQueryKeys.globalSearch>>,
 ) => {
+  const { status: networkStatus } = useNetworkStore();
   return useQuery({
     ...options,
     queryKey: documentQueryKeys.globalSearch(query),
-    enabled: isEnabled && query.trim().length > 0,
+    enabled: isEnabled && networkStatus === NetworkStatus.Online && query.trim().length > 0,
     queryFn: () => documentsApi.globalSearch(query),
   });
 };
@@ -107,10 +135,11 @@ export const useSearchAutocomplete = (
   isEnabled = true,
   options?: QueryHookOptions<string[], ReturnType<typeof documentQueryKeys.autocomplete>>,
 ) => {
+  const { status: networkStatus } = useNetworkStore();
   return useQuery({
     ...options,
     queryKey: documentQueryKeys.autocomplete(term, limit),
-    enabled: isEnabled && term.trim().length > 0,
+    enabled: isEnabled && networkStatus === NetworkStatus.Online && term.trim().length > 0,
     queryFn: () => documentsApi.searchAutocomplete(term, limit),
   });
 };

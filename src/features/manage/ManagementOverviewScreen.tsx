@@ -7,6 +7,8 @@ import { useNavigation } from '@react-navigation/native';
 import { ManageStackParamList } from '@/navigation/types';
 import { usePermissionContext } from '@/hooks/PermissionProvider';
 import { ManageCard } from '@/components/ManageCard';
+import { useNetworkStore, NetworkStatus } from '@/store/networkStore';
+import { useOfflineQueueStore } from '@/store/offlineQueueStore';
 
 type NavigationProp = NativeStackNavigationProp<ManageStackParamList, 'ManageHome'>;
 
@@ -15,6 +17,11 @@ export const ManagementOverviewScreen: React.FC = () => {
   const { t } = useTranslation();
   const navigation = useNavigation<NavigationProp>();
   const { can } = usePermissionContext();
+  const { status } = useNetworkStore();
+  const isOffline = status !== NetworkStatus.Online;
+  const pendingCount = useOfflineQueueStore((s) => s.pendingCount());
+
+  const offlineStyle = { color: theme.colors.error, fontWeight: '700' as const };
 
   const showMailSection =
     can('view', 'mailaccount') || can('view', 'mailrule') || can('view', 'processedmail');
@@ -58,7 +65,8 @@ export const ManagementOverviewScreen: React.FC = () => {
           <ManageCard
             icon="git"
             title={t('manage.workflows')}
-            subtitle={t('manage.workflowsSubtitle')}
+            subtitle={isOffline ? t('common.offlineMode') : t('manage.workflowsSubtitle')}
+            subtitleStyle={isOffline ? offlineStyle : undefined}
             onPress={() => navigation.navigate('WorkflowsList')}
           />
         </View>
@@ -69,8 +77,9 @@ export const ManagementOverviewScreen: React.FC = () => {
           <ManageCard
             icon="email"
             title={t('manage.mail')}
-            subtitle={t('manage.mailSubtitle')}
-            onPress={() => navigation.navigate('MailOverview')}
+            subtitle={isOffline ? t('common.offlineMode') : t('manage.mailSubtitle')}
+            subtitleStyle={isOffline ? offlineStyle : undefined}
+            onPress={() => !isOffline && navigation.navigate('MailOverview')}
           />
         </View>
       ) : null}
@@ -80,8 +89,9 @@ export const ManagementOverviewScreen: React.FC = () => {
           <ManageCard
             icon="account-multiple"
             title={t('manage.access')}
-            subtitle={t('manage.accessSubtitle')}
-            onPress={() => navigation.navigate('AccessOverview')}
+            subtitle={isOffline ? t('common.offlineMode') : t('manage.accessSubtitle')}
+            subtitleStyle={isOffline ? offlineStyle : undefined}
+            onPress={() => !isOffline && navigation.navigate('AccessOverview')}
           />
         </View>
       ) : null}
@@ -90,7 +100,14 @@ export const ManagementOverviewScreen: React.FC = () => {
         <ManageCard
           icon="cog"
           title={t('manage.system')}
-          subtitle={t('manage.systemSubtitle')}
+          subtitle={
+            pendingCount > 0
+              ? t('offline.pendingSyncSubtitle', { count: pendingCount })
+              : t('manage.systemSubtitle')
+          }
+          subtitleStyle={
+            pendingCount > 0 ? { color: 'orange', fontWeight: '700' as const } : undefined
+          }
           onPress={() => navigation.navigate('SystemOverview')}
         />
       </View>

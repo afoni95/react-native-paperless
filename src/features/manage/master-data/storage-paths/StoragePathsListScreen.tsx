@@ -10,6 +10,8 @@ import { ManageStackParamList } from '@/navigation/types';
 import { StoragePath } from '@/types';
 import { LoadingScreen, EmptyState, ErrorBanner, ConfirmDialog } from '@/components';
 import { useAllStoragePaths, useDeleteStoragePath } from '@/reactQuery';
+import { useNetworkStore, NetworkStatus } from '@/store/networkStore';
+import { useOfflineNavigationTitle } from '@/hooks/useOfflineNavigationTitle';
 
 type NavigationProp = NativeStackNavigationProp<ManageStackParamList, 'StoragePathsList'>;
 
@@ -20,6 +22,9 @@ export const StoragePathsListScreen: React.FC = () => {
 
   const [searchQuery, setSearchQuery] = useState('');
   const [deleteTarget, setDeleteTarget] = useState<StoragePath | null>(null);
+  const { status } = useNetworkStore();
+  const isOffline = status !== NetworkStatus.Online;
+  useOfflineNavigationTitle(t('manage.storagePaths'));
 
   const {
     data: storagePaths,
@@ -110,7 +115,7 @@ export const StoragePathsListScreen: React.FC = () => {
         keyboardShouldPersistTaps="handled"
       />
 
-      {canAddStoragePath && (
+      {canAddStoragePath && !isOffline && (
         <FAB
           icon="plus"
           style={[styles.fab, { backgroundColor: theme.colors.primary }]}

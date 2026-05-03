@@ -8,6 +8,8 @@ import { usePermissionContext } from '@/hooks/PermissionProvider';
 
 import type { ManageStackParamList } from '@/navigation/types';
 import { useUsers } from '@/reactQuery';
+import { useNetworkStore, NetworkStatus } from '@/store/networkStore';
+import { useOfflineNavigationTitle } from '@/hooks/useOfflineNavigationTitle';
 
 type NavigationProp = NativeStackNavigationProp<ManageStackParamList, 'UsersList'>;
 
@@ -20,6 +22,9 @@ export const UsersListScreen: React.FC = () => {
 
   const { can } = usePermissionContext();
   const canAddUser = can('add', 'user');
+  const { status } = useNetworkStore();
+  const isOffline = status !== NetworkStatus.Online;
+  useOfflineNavigationTitle(t('manage.users'));
 
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
@@ -39,7 +44,7 @@ export const UsersListScreen: React.FC = () => {
           />
         ))}
       </List.Section>
-      {canAddUser && (
+      {canAddUser && !isOffline && (
         <FAB
           style={styles.fab}
           icon="plus"

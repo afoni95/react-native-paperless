@@ -10,6 +10,8 @@ import { usePermissionContext } from '@/hooks/PermissionProvider';
 import { ManageStackParamList } from '@/navigation/types';
 import { useAllMailAccounts, useDeleteMailAccount } from '@/reactQuery';
 import { MailAccount } from '@/types';
+import { useNetworkStore, NetworkStatus } from '@/store/networkStore';
+import { useOfflineNavigationTitle } from '@/hooks/useOfflineNavigationTitle';
 
 type NavigationProp = NativeStackNavigationProp<ManageStackParamList, 'MailAccountsList'>;
 
@@ -21,6 +23,9 @@ export const MailAccountsListScreen: React.FC = () => {
 
   const [searchQuery, setSearchQuery] = useState('');
   const [deleteTarget, setDeleteTarget] = useState<MailAccount | null>(null);
+  const { status } = useNetworkStore();
+  const isOffline = status !== NetworkStatus.Online;
+  useOfflineNavigationTitle(t('manage.mailAccounts'));
 
   const {
     data: mailAccounts,
@@ -116,7 +121,7 @@ export const MailAccountsListScreen: React.FC = () => {
         keyboardShouldPersistTaps="handled"
       />
 
-      {canAddMailAccount && (
+      {canAddMailAccount && !isOffline && (
         <FAB
           icon="plus"
           style={[styles.fab, { backgroundColor: theme.colors.primary }]}

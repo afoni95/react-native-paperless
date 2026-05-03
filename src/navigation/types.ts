@@ -89,6 +89,10 @@ export type ManageStackParamList = {
   TasksList: undefined;
   LogsView: undefined;
   ProcessedMailList: undefined;
+  PendingSync: undefined;
+  OfflineTagCreate: undefined;
+  OfflineCorrespondentCreate: undefined;
+  OfflineDocTypeCreate: undefined;
 };
 
 export type DashboardStackParamList = {

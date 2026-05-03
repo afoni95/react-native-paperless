@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { correspondentsApi } from '@/api';
 import { Correspondent } from '@/types';
 import { MutationHookOptions, QueryHookOptions } from '@/utils/reactQueryCommon';
+import { NetworkStatus, useNetworkStore } from '@/store/networkStore';
 
 import { correspondentQueryKeys } from './queryKeys';
 
@@ -12,10 +13,11 @@ export const useAllCorrespondents = (
   isEnabled = true,
   options?: QueryHookOptions<Correspondent[], typeof correspondentQueryKeys.all>,
 ) => {
+  const { status: networkStatus } = useNetworkStore();
   return useQuery({
     ...options,
     queryKey: correspondentQueryKeys.all,
-    enabled: isEnabled,
+    enabled: isEnabled && networkStatus === NetworkStatus.Online,
     queryFn: () => correspondentsApi.getAllCorrespondents(),
   });
 };
@@ -25,10 +27,11 @@ export const useCorrespondent = (
   isEnabled = true,
   options?: QueryHookOptions<Correspondent, ReturnType<typeof correspondentQueryKeys.detail>>,
 ) => {
+  const { status: networkStatus } = useNetworkStore();
   return useQuery({
     ...options,
     queryKey: correspondentQueryKeys.detail(id),
-    enabled: isEnabled,
+    enabled: isEnabled && networkStatus === NetworkStatus.Online,
     queryFn: () => correspondentsApi.getCorrespondent(id),
   });
 };

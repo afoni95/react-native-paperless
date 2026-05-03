@@ -1,15 +1,19 @@
 import React, { useState, useMemo } from 'react';
 import { View, FlatList, StyleSheet, RefreshControl } from 'react-native';
-import { Searchbar, FAB, List, useTheme } from 'react-native-paper';
+import { Searchbar, FAB, List, useTheme, IconButton } from 'react-native-paper';
 import { useTranslation } from 'react-i18next';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { usePermissionContext } from '@/hooks/PermissionProvider';
+import { useNetworkStore, NetworkStatus } from '@/store/networkStore';
 
 import { ManageStackParamList } from '@/navigation/types';
 import { Tag } from '@/types';
 import { LoadingScreen, EmptyState, ErrorBanner, ConfirmDialog } from '@/components';
 import { useAllTags, useDeleteTag } from '@/reactQuery';
+import { useOfflineQueueStore, OfflineQueueItem } from '@/store/offlineQueueStore';
+
+type EmbeddedDiscard = { docId: string; tagName: string };
 
 type NavigationProp = NativeStackNavigationProp<ManageStackParamList, 'TagsList'>;
 
@@ -20,6 +24,31 @@ export const TagsListScreen: React.FC = () => {
 
   const [searchQuery, setSearchQuery] = useState('');
   const [deleteTarget, setDeleteTarget] = useState<Tag | null>(null);
+  const [discardTarget, setDiscardTarget] = useState<OfflineQueueItem | null>(null);
+  const [embeddedDiscardTarget, setEmbeddedDiscardTarget] = useState<EmbeddedDiscard | null>(null);
+
+  const {
+    items: offlineItems,
+    removeItem: removeOfflineItem,
+    updateItemData,
+  } = useOfflineQueueStore();
+  const pendingTags = useMemo(() => offlineItems.filter((i) => i.type === 'tag'), [offlineItems]);
+
+  // tags embedded inside offline document items
+  const embeddedTags = useMemo(() => {
+    const pendingTagNames = new Set(pendingTags.map((i) => (i.data.name ?? '').toLowerCase()));
+    const results: { docId: string; tagName: string }[] = [];
+    for (const item of offlineItems) {
+      if (item.type === 'document' && item.data.tagNames) {
+        for (const name of item.data.tagNames) {
+          if (!pendingTagNames.has(name.toLowerCase())) {
+            results.push({ docId: item.id, tagName: name });
+          }
+        }
+      }
+    }
+    return results;
+  }, [offlineItems, pendingTags]);
 
   const { data: tags, isLoading, isError, error, refetch, isRefetching } = useAllTags();
 
@@ -31,6 +60,8 @@ export const TagsListScreen: React.FC = () => {
 
   const { can } = usePermissionContext();
   const canAddTag = can('add', 'tag');
+  const { status } = useNetworkStore();
+  const isOffline = status !== NetworkStatus.Online;
 
   const filteredTags = useMemo(() => {
     if (!tags) return [];
@@ -61,6 +92,57 @@ export const TagsListScreen: React.FC = () => {
       <FlatList
         data={filteredTags}
         keyExtractor={(item) => String(item.id)}
+        ListHeaderComponent={
+          pendingTags.length > 0 || embeddedTags.length > 0 ? (
+            <View style={styles.pendingSection}>
+              {pendingTags.map((item) => (
+                <List.Item
+                  key={item.id}
+                  title={item.data.name ?? ''}
+                  description={t('offline.pendingItem')}
+                  left={() => (
+                    <View
+                      style={[
+                        styles.colorDot,
+                        { backgroundColor: item.data.color || theme.colors.tertiary },
+                      ]}
+                    />
+                  )}
+                  right={() => (
+                    <IconButton
+                      icon="trash-can-outline"
+                      iconColor={theme.colors.error}
+                      size={20}
+                      onPress={() => setDiscardTarget(item)}
+                    />
+                  )}
+                  style={[styles.pendingItem, { backgroundColor: theme.colors.surfaceVariant }]}
+                  descriptionStyle={{ color: theme.colors.tertiary }}
+                />
+              ))}
+              {embeddedTags.map(({ docId, tagName }) => (
+                <List.Item
+                  key={`${docId}-${tagName}`}
+                  title={tagName}
+                  description={t('offline.pendingItem')}
+                  left={() => (
+                    <View style={[styles.colorDot, { backgroundColor: theme.colors.tertiary }]} />
+                  )}
+                  right={() => (
+                    <IconButton
+                      icon="trash-can-outline"
+                      iconColor={theme.colors.error}
+                      size={20}
+                      onPress={() => setEmbeddedDiscardTarget({ docId, tagName })}
+                    />
+                  )}
+                  style={[styles.pendingItem, { backgroundColor: theme.colors.surfaceVariant }]}
+                  descriptionStyle={{ color: theme.colors.tertiary }}
+                />
+              ))}
+            </View>
+          ) : null
+        }
         renderItem={({ item }) => (
           <List.Item
             title={item.name}
@@ -74,9 +156,11 @@ export const TagsListScreen: React.FC = () => {
               </View>
             )}
             onPress={() =>
-              can('change', 'tag') && navigation.navigate('TagEdit', { tagId: item.id })
+              can('change', 'tag') &&
+              !isOffline &&
+              navigation.navigate('TagEdit', { tagId: item.id })
             }
-            onLongPress={() => can('delete', 'tag') && setDeleteTarget(item)}
+            onLongPress={() => can('delete', 'tag') && !isOffline && setDeleteTarget(item)}
             style={styles.listItem}
           />
         )}
@@ -111,6 +195,41 @@ export const TagsListScreen: React.FC = () => {
         }}
         onCancel={() => setDeleteTarget(null)}
       />
+
+      <ConfirmDialog
+        visible={!!discardTarget}
+        title={t('offline.discard')}
+        message={t('offline.discardConfirm')}
+        confirmLabel={t('offline.discard')}
+        destructive
+        onConfirm={() => {
+          if (discardTarget) removeOfflineItem(discardTarget.id);
+          setDiscardTarget(null);
+        }}
+        onCancel={() => setDiscardTarget(null)}
+      />
+
+      <ConfirmDialog
+        visible={!!embeddedDiscardTarget}
+        title={t('offline.discard')}
+        message={t('offline.discardConfirm')}
+        confirmLabel={t('offline.discard')}
+        destructive
+        onConfirm={() => {
+          if (embeddedDiscardTarget) {
+            const doc = offlineItems.find((i) => i.id === embeddedDiscardTarget.docId);
+            if (doc) {
+              updateItemData(doc.id, {
+                tagNames: (doc.data.tagNames ?? []).filter(
+                  (n) => n !== embeddedDiscardTarget.tagName,
+                ),
+              });
+            }
+          }
+          setEmbeddedDiscardTarget(null);
+        }}
+        onCancel={() => setEmbeddedDiscardTarget(null)}
+      />
     </View>
   );
 };
@@ -144,5 +263,13 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 16,
     bottom: 16,
+  },
+  pendingSection: {
+    marginBottom: 4,
+  },
+  pendingItem: {
+    marginHorizontal: 8,
+    marginBottom: 4,
+    borderRadius: 8,
   },
 });

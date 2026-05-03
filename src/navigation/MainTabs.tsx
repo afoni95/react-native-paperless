@@ -4,11 +4,14 @@ import { useTranslation } from 'react-i18next';
 import { Button, useTheme } from 'react-native-paper';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { UploadScreen } from '@/features/documents/UploadScreen';
+import { OfflineCreateScreen } from '@/features/documents/OfflineCreateScreen';
 import { DocumentsStack } from './DocumentsStack';
 import { ManageStack } from './ManageStack';
 import { MainTabsParamList } from './types';
 import { DashboardStack } from './DashboardStack';
 import { usePermissionContext } from '@/hooks/PermissionProvider';
+import { useNetworkStore, NetworkStatus } from '@/store/networkStore';
+import { useOfflineQueueStore } from '@/store/offlineQueueStore';
 
 const Tab = createBottomTabNavigator<MainTabsParamList>();
 
@@ -16,6 +19,8 @@ export const MainTabs: React.FC = () => {
   const { t } = useTranslation();
   const theme = useTheme();
   const { can } = usePermissionContext();
+  const { status } = useNetworkStore();
+  const pendingCount = useOfflineQueueStore((s) => s.pendingCount());
 
   const showDocumentsTab = can('view', 'document');
   const showUploadTab = can('add', 'document');
@@ -55,16 +60,18 @@ export const MainTabs: React.FC = () => {
         <Tab.Screen
           key="UploadTab"
           name="UploadTab"
-          component={UploadScreen}
+          component={status === NetworkStatus.Online ? UploadScreen : OfflineCreateScreen}
           options={({ navigation }) => ({
             title: t('upload.title'),
-            tabBarStyle: { display: showUploadTab ? 'none' : 'none' },
             headerShown: true,
-            headerLeft: ({ tintColor }) => (
-              <Button disabled={!navigation.canGoBack()} onPress={() => navigation.goBack()}>
-                <MaterialCommunityIcons size={32} color={tintColor} name="arrow-left" />{' '}
-              </Button>
-            ),
+            headerLeft:
+              status !== NetworkStatus.Online
+                ? undefined
+                : ({ tintColor }) => (
+                  <Button disabled={!navigation.canGoBack()} onPress={() => navigation.goBack()}>
+                    <MaterialCommunityIcons size={32} color={tintColor} name="arrow-left" />{' '}
+                  </Button>
+                ),
             tabBarIcon: ({ color, size }) => (
               <MaterialCommunityIcons name="upload" color={color} size={size + 8} />
             ),
@@ -83,12 +90,13 @@ export const MainTabs: React.FC = () => {
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="application-cog" color={color} size={size} />
           ),
+          tabBarBadge: pendingCount > 0 ? pendingCount : undefined,
         }}
       />,
     );
 
     return arr;
-  }, [showDocumentsTab, showUploadTab, t]);
+  }, [showDocumentsTab, showUploadTab, status, pendingCount, t]);
 
   return (
     <Tab.Navigator

@@ -1,12 +1,23 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { View, FlatList, StyleSheet, RefreshControl, TouchableOpacity } from 'react-native';
-import { Searchbar, Text, Chip, useTheme, Card, Checkbox, Button } from 'react-native-paper';
-import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import {
+  Searchbar,
+  Text,
+  Chip,
+  useTheme,
+  Card,
+  Checkbox,
+  Button,
+  List,
+  IconButton,
+} from 'react-native-paper';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
 
 import { documentsApi } from '@/api';
+import { useInfiniteDocuments, documentQueryKeys } from '@/reactQuery';
 import { useDebounce, useDocumentMetadata } from '@/hooks';
 import { usePermissionContext } from '@/hooks/PermissionProvider';
 import { Document, DocumentListParams, Tag } from '@/types';
@@ -18,10 +29,12 @@ import {
   FilterSheet,
   AuthenticatedImage,
   ConfirmDialog,
+  ProcessingIndicator,
 } from '@/components';
 import type { FilterState } from '@/components';
 import { formatDate } from '@/utils';
 import { DocumentsStackParamList } from '@/navigation/types';
+import { useOfflineQueueStore, OfflineQueueItem } from '@/store/offlineQueueStore';
 
 type NavigationProp = NativeStackNavigationProp<DocumentsStackParamList, 'DocumentList'>;
 
@@ -60,6 +73,13 @@ export const DocumentListScreen: React.FC = () => {
   });
   const [deleteTarget, setDeleteTarget] = useState<Document | null>(null);
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
+  const [discardTarget, setDiscardTarget] = useState<OfflineQueueItem | null>(null);
+
+  const { items: offlineItems, removeItem: removeOfflineItem } = useOfflineQueueStore();
+  const pendingDocuments = useMemo(
+    () => offlineItems.filter((i) => i.type === 'document'),
+    [offlineItems],
+  );
 
   const debouncedSearch = useDebounce(searchText, 400);
 
@@ -68,7 +88,7 @@ export const DocumentListScreen: React.FC = () => {
       return Promise.allSettled(ids.map((id) => documentsApi.deleteDocument(id)));
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['documents'] });
+      queryClient.invalidateQueries({ queryKey: documentQueryKeys.all() });
       setDeleteTarget(null);
       setSelectedIds(new Set());
     },
@@ -107,16 +127,7 @@ export const DocumentListScreen: React.FC = () => {
     error,
     refetch,
     isRefetching,
-  } = useInfiniteQuery({
-    queryKey: ['documents', queryParams],
-    queryFn: async ({ pageParam = 1 }) => {
-      return documentsApi.getDocuments({ ...queryParams, page: pageParam as number });
-    },
-    getNextPageParam: (lastPage, allPages) => {
-      return lastPage.next ? allPages.length + 1 : undefined;
-    },
-    initialPageParam: 1,
-  });
+  } = useInfiniteDocuments(queryParams);
 
   const documents = useMemo(() => data?.pages.flatMap((page) => page.results) ?? [], [data]);
 
@@ -276,8 +287,9 @@ export const DocumentListScreen: React.FC = () => {
           variant="labelSmall"
           style={{ color: theme.colors.onSurfaceVariant, marginLeft: 'auto' }}
         >
-          {totalCount} docs
+          {t('documents.documentCount', { count: totalCount })}
         </Text>
+        <ProcessingIndicator />
       </View>
 
       {showSortOptions && (
@@ -336,6 +348,33 @@ export const DocumentListScreen: React.FC = () => {
         keyExtractor={(item) => String(item.id)}
         contentContainerStyle={documents.length === 0 ? styles.emptyContainer : styles.listContent}
         ListEmptyComponent={<EmptyState message={t('documents.noDocuments')} />}
+        ListHeaderComponent={
+          pendingDocuments.length > 0 ? (
+            <View style={styles.pendingSection}>
+              {pendingDocuments.map((item) => (
+                <List.Item
+                  key={item.id}
+                  title={item.data.title ?? item.data.fileName ?? t('offline.typeDocument')}
+                  description={t('offline.pendingItem')}
+                  left={(props) => (
+                    <List.Icon {...props} icon="clock-outline" color={theme.colors.tertiary} />
+                  )}
+                  right={() => (
+                    <IconButton
+                      icon="trash-can-outline"
+                      iconColor={theme.colors.error}
+                      size={20}
+                      onPress={() => setDiscardTarget(item)}
+                    />
+                  )}
+                  style={[styles.pendingItem, { backgroundColor: theme.colors.surfaceVariant }]}
+                  titleStyle={{ color: theme.colors.onSurfaceVariant }}
+                  descriptionStyle={{ color: theme.colors.tertiary }}
+                />
+              ))}
+            </View>
+          ) : null
+        }
         refreshControl={
           <RefreshControl
             refreshing={isRefetching}
@@ -390,6 +429,18 @@ export const DocumentListScreen: React.FC = () => {
         }}
         onCancel={() => setDeleteTarget(null)}
       />
+      <ConfirmDialog
+        visible={!!discardTarget}
+        title={t('offline.discard')}
+        message={t('offline.discardConfirm')}
+        confirmLabel={t('offline.discard')}
+        destructive
+        onConfirm={() => {
+          if (discardTarget) removeOfflineItem(discardTarget.id);
+          setDiscardTarget(null);
+        }}
+        onCancel={() => setDiscardTarget(null)}
+      />
     </View>
   );
 };
@@ -424,6 +475,14 @@ const styles = StyleSheet.create({
   },
   emptyContainer: {
     flexGrow: 1,
+  },
+  pendingSection: {
+    marginBottom: 8,
+  },
+  pendingItem: {
+    marginHorizontal: 12,
+    marginBottom: 4,
+    borderRadius: 8,
   },
   rowContainer: {
     flexDirection: 'row',

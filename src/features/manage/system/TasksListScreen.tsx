@@ -7,6 +7,7 @@ import { TaskStatus } from '@/types';
 import { LoadingScreen, EmptyState, ErrorBanner } from '@/components';
 import { useAllTasks, useAcknowledgeTasks } from '@/reactQuery';
 import { usePermissionContext } from '@/hooks/PermissionProvider';
+import { useOfflineNavigationTitle } from '@/hooks/useOfflineNavigationTitle';
 
 export const TasksListScreen: React.FC = () => {
   const theme = useTheme();
@@ -15,6 +16,7 @@ export const TasksListScreen: React.FC = () => {
 
   const [snackbarVisible, setSnackbarVisible] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
+  useOfflineNavigationTitle(t('manage.tasks'));
 
   const { data: tasks, isLoading, isError, error, refetch, isRefetching } = useAllTasks();
 

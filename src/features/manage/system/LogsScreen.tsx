@@ -3,11 +3,13 @@ import { View, FlatList, ActivityIndicator } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useTheme, Text } from 'react-native-paper';
 import { useLogs, useLog } from '@/reactQuery';
+import { useOfflineNavigationTitle } from '@/hooks/useOfflineNavigationTitle';
 
 export const LogsScreen: React.FC = () => {
   const { t } = useTranslation();
   const theme = useTheme();
   const [selectedLog, setSelectedLog] = useState<string | null>(null);
+  useOfflineNavigationTitle(t('manage.logs'));
 
   const { data: availableLogs, isLoading: logsLoading } = useLogs();
 
