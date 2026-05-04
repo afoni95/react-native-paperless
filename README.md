@@ -14,7 +14,7 @@ A React Native mobile application for [Paperless-ngx](https://docs.paperless-ngx
 
 ## About the Project
 
-React Native Paperless is an open-source mobile client for the Paperless-ngx document management system. It allows you to browse, search, upload, and manage your documents on the go from any Android device. The app communicates with your self-hosted Paperless-ngx server via its REST API.
+A mobile client for Paperless-ngx. Browse, search, upload, and manage your documents from your Android device. Connects directly to your self-hosted Paperless-ngx instance via its REST API.
 
 ## Prerequisites
 
@@ -45,8 +45,8 @@ npm run lint:fix
 # Run type check
 npm run typecheck
 
-# Run  i18n check
-npm run i18:unused
+# Run i18n check
+npm run i18n:unused
 ```
 
 ## Roadmap
