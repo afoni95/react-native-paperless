@@ -146,7 +146,7 @@ export const TagsListScreen: React.FC = () => {
         renderItem={({ item }) => (
           <List.Item
             title={item.name}
-            description={t('tags.documents', { count: item.document_count })}
+            description={t('common.documentCount', { count: item.document_count })}
             left={() => (
               <View style={[styles.colorDot, { backgroundColor: item.color || '#ccc' }]} />
             )}

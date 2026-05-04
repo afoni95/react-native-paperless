@@ -331,7 +331,7 @@ export const DocumentListScreen: React.FC = () => {
                 }}
                 compact
               >
-                {t('documents.delete')}
+                {t('common.delete')}
               </Button>
             )}
           </View>
@@ -404,13 +404,13 @@ export const DocumentListScreen: React.FC = () => {
       {/* Delete confirmation dialog */}
       <ConfirmDialog
         visible={!!deleteTarget}
-        title={t('documents.delete')}
+        title={t('common.delete')}
         message={
           deleteTarget?.id === -1
             ? t('documents.deleteBulkConfirm', { count: selectedIds.size })
             : t('documents.deleteConfirm', { title: deleteTarget?.title ?? '' })
         }
-        confirmLabel={t('documents.delete')}
+        confirmLabel={t('common.delete')}
         destructive
         onConfirm={() => {
           if (deleteTarget) {

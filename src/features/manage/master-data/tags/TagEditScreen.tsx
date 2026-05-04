@@ -97,7 +97,7 @@ export const TagEditScreen: React.FC<Props> = ({ route, navigation }) => {
       keyboardShouldPersistTaps="handled"
     >
       <TextInput
-        label={t('tags.name')}
+        label={t('common.name')}
         value={name}
         onChangeText={setName}
         mode="outlined"
@@ -131,7 +131,7 @@ export const TagEditScreen: React.FC<Props> = ({ route, navigation }) => {
       />
 
       <TextInput
-        label={t('tags.match')}
+        label={t('common.matchPattern')}
         value={match}
         onChangeText={setMatch}
         mode="outlined"
@@ -139,7 +139,7 @@ export const TagEditScreen: React.FC<Props> = ({ route, navigation }) => {
       />
 
       <Text variant="labelLarge" style={[formStyles.label, { color: theme.colors.onBackground }]}>
-        {t('tags.matchingAlgorithm')}
+        {t('common.matchingAlgorithm')}
       </Text>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={formStyles.algoRow}>
         {(Object.entries(MATCHING_ALGORITHMS) as [string, string][]).map(([key, label]) => (
@@ -156,7 +156,7 @@ export const TagEditScreen: React.FC<Props> = ({ route, navigation }) => {
       </ScrollView>
 
       <View style={formStyles.switchRow}>
-        <Text variant="bodyLarge">{t('tags.caseInsensitive')}</Text>
+        <Text variant="bodyLarge">{t('common.caseInsensitive')}</Text>
         <Switch value={isInsensitive} onValueChange={setIsInsensitive} />
       </View>
 

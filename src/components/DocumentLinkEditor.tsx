@@ -103,7 +103,7 @@ export const DocumentLinkEditor: React.FC<DocumentLinkEditorProps> = ({ value, o
       )}
 
       <Searchbar
-        placeholder={t('documents.searchDocuments')}
+        placeholder={t('documents.search')}
         value={search}
         onChangeText={setSearch}
         style={[styles.searchBar, { backgroundColor: theme.colors.surfaceVariant }]}

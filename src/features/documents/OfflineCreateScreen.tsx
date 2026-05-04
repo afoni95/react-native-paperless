@@ -386,7 +386,7 @@ export const OfflineCreateScreen: React.FC = () => {
           <Dialog.Title>{t('offline.createTag')}</Dialog.Title>
           <Dialog.Content>
             <PaperTextInput
-              label={t('tags.name')}
+              label={t('common.name')}
               value={newTagInput}
               onChangeText={setNewTagInput}
               mode="outlined"
@@ -457,7 +457,7 @@ export const OfflineCreateScreen: React.FC = () => {
           <Dialog.Title>{t('offline.createCorrespondent')}</Dialog.Title>
           <Dialog.Content>
             <PaperTextInput
-              label={t('correspondents.name')}
+              label={t('common.name')}
               value={newCorrInput}
               onChangeText={setNewCorrInput}
               mode="outlined"
@@ -528,7 +528,7 @@ export const OfflineCreateScreen: React.FC = () => {
           <Dialog.Title>{t('offline.createDocumentType')}</Dialog.Title>
           <Dialog.Content>
             <PaperTextInput
-              label={t('documentTypes.name')}
+              label={t('common.name')}
               value={newDtInput}
               onChangeText={setNewDtInput}
               mode="outlined"

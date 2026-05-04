@@ -84,7 +84,7 @@ export const StoragePathsListScreen: React.FC = () => {
               <View>
                 <Text style={styles.pathPreview}>{item.path}</Text>
                 <Text style={styles.documentCount}>
-                  {t('storagePaths.documents', { count: item.document_count })}
+                  {t('common.documentCount', { count: item.document_count })}
                 </Text>
               </View>
             }

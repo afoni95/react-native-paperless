@@ -85,7 +85,7 @@ export const MailRulesListScreen: React.FC = () => {
                   {t('mailRules.account')}: {accountMap.get(item.account) ?? item.account}
                 </Text>
                 <Text style={styles.metaText}>
-                  {item.enabled ? t('mailRules.enabled') : t('mailRules.disabled')}
+                  {item.enabled ? t('common.enabled') : t('common.disabled')}
                 </Text>
               </View>
             }

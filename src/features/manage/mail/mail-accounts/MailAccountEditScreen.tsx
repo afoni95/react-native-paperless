@@ -134,7 +134,7 @@ export const MailAccountEditScreen: React.FC<Props> = ({ route, navigation }) =>
       keyboardShouldPersistTaps="handled"
     >
       <TextInput
-        label={t('mailAccounts.name')}
+        label={t('common.name')}
         value={name}
         onChangeText={setName}
         mode="outlined"
@@ -210,8 +210,8 @@ export const MailAccountEditScreen: React.FC<Props> = ({ route, navigation }) =>
         items={userOptions}
         selectedId={ownerId}
         onSelect={setOwnerId}
-        label={t('mailAccounts.owner')}
-        placeholder={t('mailAccounts.owner')}
+        label={t('common.owner')}
+        placeholder={t('common.owner')}
       />
 
       <HasPermission action={isNew ? 'add' : 'change'} resource="mailaccount">

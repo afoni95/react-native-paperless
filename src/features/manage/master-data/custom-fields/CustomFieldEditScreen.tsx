@@ -60,7 +60,7 @@ export const CustomFieldEditScreen: React.FC<Props> = ({ route, navigation }) =>
       keyboardShouldPersistTaps="handled"
     >
       <TextInput
-        label={t('customFields.name')}
+        label={t('common.name')}
         value={name}
         onChangeText={setName}
         mode="outlined"

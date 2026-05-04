@@ -237,7 +237,7 @@ export const TriggerEditScreen: React.FC<Props> = ({ route, navigation }) => {
           />
 
           <TextInput
-            label={t('workflows.matchingAlgorithm')}
+            label={t('common.matchingAlgorithm')}
             value={matchingAlgorithm.toString()}
             onChangeText={(val) => setMatchingAlgorithm(parseInt(val, 10) || 0)}
             mode="outlined"
@@ -247,7 +247,7 @@ export const TriggerEditScreen: React.FC<Props> = ({ route, navigation }) => {
 
           <View style={styles.switchContainer}>
             <List.Item
-              title={t('workflows.isInsensitive')}
+              title={t('common.caseInsensitive')}
               left={() => (
                 <Checkbox
                   status={isInsensitive ? 'checked' : 'unchecked'}

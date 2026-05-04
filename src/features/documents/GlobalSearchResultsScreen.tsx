@@ -396,7 +396,7 @@ export const GlobalSearchResultsScreen: React.FC = () => {
           style={styles.errorIcon}
         />
         <Text style={[styles.emptyText, { color: theme.colors.onSurfaceVariant }]}>
-          {t('search.noResults') || 'No results found'}
+          {t('common.noResults') || 'No results found'}
         </Text>
       </View>
     );

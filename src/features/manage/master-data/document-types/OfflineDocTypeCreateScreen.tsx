@@ -29,7 +29,7 @@ export const OfflineDocTypeCreateScreen: React.FC = () => {
       </Text>
 
       <TextInput
-        label={t('documentTypes.name')}
+        label={t('common.name')}
         value={name}
         onChangeText={setName}
         mode="outlined"

@@ -238,7 +238,7 @@ export const MailRuleEditScreen: React.FC<Props> = ({ route, navigation }) => {
       keyboardShouldPersistTaps="handled"
     >
       <TextInput
-        label={t('mailRules.name')}
+        label={t('common.name')}
         value={name}
         onChangeText={setName}
         mode="outlined"
@@ -255,7 +255,7 @@ export const MailRuleEditScreen: React.FC<Props> = ({ route, navigation }) => {
       />
 
       <View style={formStyles.switchRow}>
-        <Text variant="bodyLarge">{t('mailRules.enabled')}</Text>
+        <Text variant="bodyLarge">{t('common.enabled')}</Text>
         <Switch value={enabled} onValueChange={setEnabled} />
       </View>
 
@@ -277,7 +277,7 @@ export const MailRuleEditScreen: React.FC<Props> = ({ route, navigation }) => {
       />
 
       <TextInput
-        label={t('mailRules.order')}
+        label={t('common.order')}
         value={orderText}
         onChangeText={setOrderText}
         mode="outlined"
@@ -494,8 +494,8 @@ export const MailRuleEditScreen: React.FC<Props> = ({ route, navigation }) => {
         items={userOptions}
         selectedId={ownerId}
         onSelect={setOwnerId}
-        label={t('mailRules.owner')}
-        placeholder={t('mailRules.owner')}
+        label={t('common.owner')}
+        placeholder={t('common.owner')}
       />
 
       <HasPermission action={isNew ? 'add' : 'change'} resource="mailrule">

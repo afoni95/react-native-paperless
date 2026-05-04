@@ -308,7 +308,7 @@ export const WorkflowEditScreen: React.FC<Props> = ({ route, navigation }) => {
       keyboardShouldPersistTaps="handled"
     >
       <TextInput
-        label={t('workflows.name')}
+        label={t('common.name')}
         value={name}
         onChangeText={setName}
         mode="outlined"
@@ -317,7 +317,7 @@ export const WorkflowEditScreen: React.FC<Props> = ({ route, navigation }) => {
       />
 
       <TextInput
-        label={t('workflows.order')}
+        label={t('common.order')}
         value={order}
         onChangeText={setOrder}
         mode="outlined"
@@ -327,7 +327,7 @@ export const WorkflowEditScreen: React.FC<Props> = ({ route, navigation }) => {
       />
 
       <View style={formStyles.switchRow}>
-        <Text variant="bodyLarge">{t('workflows.enabled')}</Text>
+        <Text variant="bodyLarge">{t('common.enabled')}</Text>
         <Switch
           value={enabled}
           onValueChange={setEnabled}

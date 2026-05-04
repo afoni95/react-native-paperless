@@ -43,7 +43,7 @@ export const OfflineTagCreateScreen: React.FC = () => {
       </Text>
 
       <TextInput
-        label={t('tags.name')}
+        label={t('common.name')}
         value={name}
         onChangeText={setName}
         mode="outlined"

@@ -157,7 +157,7 @@ export const CorrespondentsListScreen: React.FC = () => {
         renderItem={({ item }) => (
           <List.Item
             title={item.name}
-            description={`${t('correspondents.documents', { count: item.document_count })}`}
+            description={`${t('common.documentCount', { count: item.document_count })}`}
             left={(props) => <List.Icon {...props} icon="account" />}
             right={(props) => <List.Icon {...props} icon="pencil" />}
             onPress={() =>

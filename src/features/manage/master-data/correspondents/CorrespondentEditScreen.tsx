@@ -70,7 +70,7 @@ export const CorrespondentEditScreen: React.FC<Props> = ({ route, navigation }) 
       keyboardShouldPersistTaps="handled"
     >
       <TextInput
-        label={t('correspondents.name')}
+        label={t('common.name')}
         value={name}
         onChangeText={setName}
         mode="outlined"
@@ -78,7 +78,7 @@ export const CorrespondentEditScreen: React.FC<Props> = ({ route, navigation }) 
       />
 
       <TextInput
-        label={t('correspondents.match')}
+        label={t('common.matchPattern')}
         value={match}
         onChangeText={setMatch}
         mode="outlined"
@@ -86,7 +86,7 @@ export const CorrespondentEditScreen: React.FC<Props> = ({ route, navigation }) 
       />
 
       <Text variant="labelLarge" style={[formStyles.label, { color: theme.colors.onBackground }]}>
-        {t('correspondents.matchingAlgorithm')}
+        {t('common.matchingAlgorithm')}
       </Text>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={formStyles.algoRow}>
         {(Object.entries(MATCHING_ALGORITHMS) as [string, string][]).map(([key, label]) => (
@@ -103,7 +103,7 @@ export const CorrespondentEditScreen: React.FC<Props> = ({ route, navigation }) 
       </ScrollView>
 
       <View style={formStyles.switchRow}>
-        <Text variant="bodyLarge">{t('correspondents.caseInsensitive')}</Text>
+        <Text variant="bodyLarge">{t('common.caseInsensitive')}</Text>
         <Switch value={isInsensitive} onValueChange={setIsInsensitive} />
       </View>
 

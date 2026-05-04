@@ -29,7 +29,7 @@ export const OfflineCorrespondentCreateScreen: React.FC = () => {
       </Text>
 
       <TextInput
-        label={t('correspondents.name')}
+        label={t('common.name')}
         value={name}
         onChangeText={setName}
         mode="outlined"
