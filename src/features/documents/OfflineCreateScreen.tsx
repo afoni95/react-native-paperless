@@ -358,7 +358,11 @@ export const OfflineCreateScreen: React.FC = () => {
                   <Checkbox.Item
                     key={tag}
                     label={tag}
-                    status={tagNames.some((n) => n.toLowerCase() === tag.toLowerCase()) ? 'checked' : 'unchecked'}
+                    status={
+                      tagNames.some((n) => n.toLowerCase() === tag.toLowerCase())
+                        ? 'checked'
+                        : 'unchecked'
+                    }
                     onPress={() => toggleTag(tag)}
                   />
                 ))

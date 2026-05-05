@@ -227,39 +227,39 @@ export const DocumentDetailScreen: React.FC<Props> = ({ route, navigation }) => 
         </View>
 
         {isEditing ? (
-            <DocumentMetadataForm
-              title={editTitle}
-              onTitleChange={setEditTitle}
-              correspondent={editCorrespondent}
-              onCorrespondentChange={setEditCorrespondent}
-              documentType={editDocType}
-              onDocumentTypeChange={setEditDocType}
-              storagePath={editStoragePath}
-              onStoragePathChange={setEditStoragePath}
-              tags={editTags}
-              onTagsChange={setEditTags}
-              asn={editAsn}
-              onAsnChange={setEditAsn}
-              createdDate={editCreated}
-              onCreatedDateChange={setEditCreated}
-              customFields={editCustomFields}
-              onCustomFieldsChange={setEditCustomFields}
-              fieldToAdd={customFieldToAdd}
-              onFieldToAddChange={setCustomFieldToAdd}
-              onAddField={addSelectedCustomField}
-              onRemoveField={removeCustomField}
-              onChangeField={updateCustomFieldValue}
-              allCorrespondents={(allCorrespondents || []).map((c) => ({ id: c.id, name: c.name }))}
-              allDocumentTypes={(allDocTypes || []).map((dt) => ({ id: dt.id, name: dt.name }))}
-              allStoragePaths={(allStoragePaths || []).map((sp) => ({ id: sp.id, name: sp.name }))}
-              allTags={allTags || []}
-              allCustomFields={allCustomFields || []}
-              customFieldsMap={customFieldsMap}
-              availableCustomFields={availableCustomFieldsToAdd}
-              showAsn
-              showCreatedDate
-              cardStyle={{ marginBottom: 12, borderRadius: 12 }}
-            />
+          <DocumentMetadataForm
+            title={editTitle}
+            onTitleChange={setEditTitle}
+            correspondent={editCorrespondent}
+            onCorrespondentChange={setEditCorrespondent}
+            documentType={editDocType}
+            onDocumentTypeChange={setEditDocType}
+            storagePath={editStoragePath}
+            onStoragePathChange={setEditStoragePath}
+            tags={editTags}
+            onTagsChange={setEditTags}
+            asn={editAsn}
+            onAsnChange={setEditAsn}
+            createdDate={editCreated}
+            onCreatedDateChange={setEditCreated}
+            customFields={editCustomFields}
+            onCustomFieldsChange={setEditCustomFields}
+            fieldToAdd={customFieldToAdd}
+            onFieldToAddChange={setCustomFieldToAdd}
+            onAddField={addSelectedCustomField}
+            onRemoveField={removeCustomField}
+            onChangeField={updateCustomFieldValue}
+            allCorrespondents={(allCorrespondents || []).map((c) => ({ id: c.id, name: c.name }))}
+            allDocumentTypes={(allDocTypes || []).map((dt) => ({ id: dt.id, name: dt.name }))}
+            allStoragePaths={(allStoragePaths || []).map((sp) => ({ id: sp.id, name: sp.name }))}
+            allTags={allTags || []}
+            allCustomFields={allCustomFields || []}
+            customFieldsMap={customFieldsMap}
+            availableCustomFields={availableCustomFieldsToAdd}
+            showAsn
+            showCreatedDate
+            cardStyle={{ marginBottom: 12, borderRadius: 12 }}
+          />
         ) : (
           <DocumentMetadataDisplay
             title={doc.title}
