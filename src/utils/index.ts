@@ -73,9 +73,17 @@ export function coerceCustomFieldValueForSubmit(
   return value;
 }
 
+export function sanitizeColor(color: string | null | undefined, fallback = '#e0e0e0'): string {
+  if (!color) return fallback;
+  const raw = color.startsWith('#') ? color : '#' + color;
+  const digits = raw.slice(1).replace(/[^0-9a-fA-F]/g, '').slice(0, 6);
+  if (digits.length === 0) return fallback;
+  return '#' + digits.padEnd(6, '0');
+}
+
 export function getContrastTextColor(hexColor: string): string {
   if (!hexColor) return '#000000';
-  const hex = hexColor.replace('#', '');
+  const hex = sanitizeColor(hexColor).replace('#', '');
   const r = parseInt(hex.substring(0, 2), 16);
   const g = parseInt(hex.substring(2, 4), 16);
   const b = parseInt(hex.substring(4, 6), 16);

@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { View, ScrollView, StyleSheet } from 'react-native';
 import { Chip, Searchbar, Text, useTheme } from 'react-native-paper';
 import { useTranslation } from 'react-i18next';
-import { getContrastTextColor } from '@/utils';
+import { getContrastTextColor, sanitizeColor } from '@/utils';
 
 export type ChipItem = {
   id: number;
@@ -87,7 +87,7 @@ export const MultiSelectChips: React.FC<MultiSelectChipsProps> = ({
                   styles.chip,
                   {
                     backgroundColor: isSelected
-                      ? tag.color || theme.colors.primaryContainer
+                      ? sanitizeColor(tag.color, theme.colors.primaryContainer)
                       : theme.colors.surfaceVariant,
                   },
                 ]}
@@ -96,7 +96,7 @@ export const MultiSelectChips: React.FC<MultiSelectChipsProps> = ({
                   {
                     color: isSelected
                       ? tag.text_color ||
-                        getContrastTextColor(tag.color || theme.colors.primaryContainer)
+                        getContrastTextColor(sanitizeColor(tag.color, theme.colors.primaryContainer))
                       : theme.colors.onSurfaceVariant,
                   },
                 ]}

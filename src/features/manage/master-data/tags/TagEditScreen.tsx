@@ -11,6 +11,7 @@ import { useTag, useUpsertTag, useDeleteTag } from '@/reactQuery';
 import { useOfflineQueueStore } from '@/store/offlineQueueStore';
 import { useNetworkStore, NetworkStatus } from '@/store/networkStore';
 import { screenStyles, formStyles, buttonStyles } from '@/theme/commonStyles';
+import { sanitizeColor } from '@/utils';
 
 type Props = NativeStackScreenProps<ManageStackParamList, 'TagEdit'>;
 
@@ -127,16 +128,7 @@ export const TagEditScreen: React.FC<Props> = ({ route, navigation }) => {
         onChangeText={setColor}
         mode="outlined"
         style={styles.input}
-        left={
-          <TextInput.Icon
-            icon="circle"
-            color={() => {
-              const hex = color.startsWith('#') ? color : '#' + color;
-              const digits = hex.slice(1).replace(/[^0-9a-fA-F]/g, '');
-              return '#' + digits.slice(0, 6).padEnd(6, '0');
-            }}
-          />
-        }
+        left={<TextInput.Icon icon="circle" color={sanitizeColor(color)} />}
       />
 
       <TextInput
@@ -181,7 +173,7 @@ export const TagEditScreen: React.FC<Props> = ({ route, navigation }) => {
             if (isNew && isOffline) {
               addItem({
                 type: 'tag',
-                data: { name, color, match, isInsensitive },
+                data: { name, color: sanitizeColor(color), match, isInsensitive },
               });
               navigation.goBack();
               return;
@@ -189,7 +181,7 @@ export const TagEditScreen: React.FC<Props> = ({ route, navigation }) => {
             saveMutation.mutate({
               id: tagId,
               name,
-              color,
+              color: sanitizeColor(color),
               match,
               matching_algorithm: matchingAlgorithm,
               is_insensitive: isInsensitive,

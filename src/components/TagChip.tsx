@@ -1,6 +1,6 @@
 import React from 'react';
 import { Chip } from 'react-native-paper';
-import { getContrastTextColor } from '@/utils';
+import { getContrastTextColor, sanitizeColor } from '@/utils';
 
 interface TagChipProps {
   name: string;
@@ -21,7 +21,8 @@ export const TagChip: React.FC<TagChipProps> = ({
   selected,
   compact = true,
 }) => {
-  const computedTextColor = textColor || getContrastTextColor(color);
+  const safeColor = sanitizeColor(color);
+  const computedTextColor = textColor || getContrastTextColor(safeColor);
 
   return (
     <Chip
@@ -31,7 +32,7 @@ export const TagChip: React.FC<TagChipProps> = ({
       onPress={onPress}
       onClose={onClose}
       style={{
-        backgroundColor: color || '#e0e0e0',
+        backgroundColor: safeColor,
         marginRight: 4,
         marginBottom: 4,
         height: 21,
