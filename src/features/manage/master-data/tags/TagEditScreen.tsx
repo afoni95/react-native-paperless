@@ -127,7 +127,16 @@ export const TagEditScreen: React.FC<Props> = ({ route, navigation }) => {
         onChangeText={setColor}
         mode="outlined"
         style={styles.input}
-        left={<TextInput.Icon icon="circle" color={color} />}
+        left={
+          <TextInput.Icon
+            icon="circle"
+            color={() => {
+              const hex = color.startsWith('#') ? color : '#' + color;
+              const digits = hex.slice(1).replace(/[^0-9a-fA-F]/g, '');
+              return '#' + digits.slice(0, 6).padEnd(6, '0');
+            }}
+          />
+        }
       />
 
       <TextInput

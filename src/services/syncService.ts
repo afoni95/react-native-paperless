@@ -97,13 +97,19 @@ async function syncDocuments(
       }
       if (
         data.correspondentName &&
-        (() => { const id = corrMap.get(data.correspondentName.toLowerCase()); return typeof id !== 'number' || id <= 0; })()
+        (() => {
+          const id = corrMap.get(data.correspondentName.toLowerCase());
+          return typeof id !== 'number' || id <= 0;
+        })()
       ) {
         unresolvedEntities.push(data.correspondentName);
       }
       if (
         data.documentTypeName &&
-        (() => { const id = dtMap.get(data.documentTypeName.toLowerCase()); return typeof id !== 'number' || id <= 0; })()
+        (() => {
+          const id = dtMap.get(data.documentTypeName.toLowerCase());
+          return typeof id !== 'number' || id <= 0;
+        })()
       ) {
         unresolvedEntities.push(data.documentTypeName);
       }
@@ -111,11 +117,13 @@ async function syncDocuments(
         throw new Error(`Entity sync pending: ${unresolvedEntities.join(', ')}`);
       }
 
-      const tagIds = [...new Set(
-        (data.tagNames ?? [])
-          .map((name) => tagMap.get(name.toLowerCase()))
-          .filter((id): id is number => typeof id === 'number' && id > 0),
-      )];
+      const tagIds = [
+        ...new Set(
+          (data.tagNames ?? [])
+            .map((name) => tagMap.get(name.toLowerCase()))
+            .filter((id): id is number => typeof id === 'number' && id > 0),
+        ),
+      ];
 
       const correspondentId = data.correspondentName
         ? corrMap.get(data.correspondentName.toLowerCase())

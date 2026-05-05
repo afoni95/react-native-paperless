@@ -8,7 +8,12 @@ import { useOfflineQueueStore, OfflineQueueItem, OfflineItemType } from '@/store
 import { syncAll } from '@/services/syncService';
 import { EmptyState } from '@/components';
 import { NetworkStatus, useNetworkStore } from '@/store/networkStore';
-import { tagQueryKeys, correspondentQueryKeys, documentTypeQueryKeys, documentQueryKeys } from '@/reactQuery';
+import {
+  tagQueryKeys,
+  correspondentQueryKeys,
+  documentTypeQueryKeys,
+  documentQueryKeys,
+} from '@/reactQuery';
 
 type EmbeddedEntry = {
   kind: 'embedded';

@@ -68,10 +68,10 @@ export const MainTabs: React.FC = () => {
               status !== NetworkStatus.Online
                 ? undefined
                 : ({ tintColor }) => (
-                  <Button disabled={!navigation.canGoBack()} onPress={() => navigation.goBack()}>
-                    <MaterialCommunityIcons size={32} color={tintColor} name="arrow-left" />{' '}
-                  </Button>
-                ),
+                    <Button disabled={!navigation.canGoBack()} onPress={() => navigation.goBack()}>
+                      <MaterialCommunityIcons size={32} color={tintColor} name="arrow-left" />{' '}
+                    </Button>
+                  ),
             tabBarIcon: ({ color, size }) => (
               <MaterialCommunityIcons name="upload" color={color} size={size + 8} />
             ),
