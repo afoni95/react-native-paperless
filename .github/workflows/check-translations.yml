@@ -2,7 +2,7 @@ name: i18n validator
 
 on:
   pull_request:
-    branches: [main, develop]
+    branches: [main, staging, develop]
 
 jobs:
   check-translations:
