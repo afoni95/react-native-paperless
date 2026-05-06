@@ -40,6 +40,8 @@ import { PendingSyncScreen } from '@/features/manage/system/PendingSyncScreen';
 import { OfflineTagCreateScreen } from '@/features/manage/master-data/tags/OfflineTagCreateScreen';
 import { OfflineCorrespondentCreateScreen } from '@/features/manage/master-data/correspondents/OfflineCorrespondentCreateScreen';
 import { OfflineDocTypeCreateScreen } from '@/features/manage/master-data/document-types/OfflineDocTypeCreateScreen';
+import { ShareLinksListScreen } from '@/features/manage/share-links/ShareLinksListScreen';
+import { ShareLinkCreateScreen } from '@/features/manage/share-links/ShareLinkCreateScreen';
 
 const Stack = createNativeStackNavigator<ManageStackParamList>();
 
@@ -263,6 +265,16 @@ export const ManageStack: React.FC = () => {
         name="OfflineDocTypeCreate"
         component={OfflineDocTypeCreateScreen}
         options={{ title: t('offline.createDocumentType') }}
+      />
+      <Stack.Screen
+        name="ShareLinksList"
+        component={ShareLinksListScreen}
+        options={{ title: t('shareLinks.title') }}
+      />
+      <Stack.Screen
+        name="ShareLinkCreate"
+        component={ShareLinkCreateScreen}
+        options={{ title: t('shareLinks.createShareLink') }}
       />
     </Stack.Navigator>
   );

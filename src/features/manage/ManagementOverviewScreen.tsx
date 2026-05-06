@@ -26,6 +26,7 @@ export const ManagementOverviewScreen: React.FC = () => {
   const showMailSection =
     can('view', 'mailaccount') || can('view', 'mailrule') || can('view', 'processedmail');
   const showWorkflowsScreen = can('view', 'workflow');
+  const showShareLinksScreen = can('view', 'sharelink');
 
   const showDocumentsSection =
     can('view', 'tag') ||
@@ -67,7 +68,19 @@ export const ManagementOverviewScreen: React.FC = () => {
             title={t('manage.workflows')}
             subtitle={isOffline ? t('common.offlineMode') : t('manage.workflowsSubtitle')}
             subtitleStyle={isOffline ? offlineStyle : undefined}
-            onPress={() => navigation.navigate('WorkflowsList')}
+            onPress={() => !isOffline && navigation.navigate('WorkflowsList')}
+          />
+        </View>
+      ) : null}
+
+      {showShareLinksScreen ? (
+        <View style={styles.section}>
+          <ManageCard
+            icon="share-variant"
+            title={t('manage.shareLinks')}
+            subtitle={isOffline ? t('common.offlineMode') : t('manage.shareLinksSubtitle')}
+            subtitleStyle={isOffline ? offlineStyle : undefined}
+            onPress={() => !isOffline && navigation.navigate('ShareLinksList')}
           />
         </View>
       ) : null}

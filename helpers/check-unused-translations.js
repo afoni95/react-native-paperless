@@ -68,6 +68,20 @@ function extractUsedKeys(code) {
   return used;
 }
 
+const PLURAL_SUFFIXES = ['_one', '_other', '_zero', '_two', '_few', '_many'];
+
+function extractPluralBaseKeys(code) {
+  const bases = new Set();
+
+  const pluralRegex = /\bt\s*\(\s*(['"\`])([^'"\`]+)\1\s*,\s*\{[^}]*\bcount\b/g;
+  for (const match of code.matchAll(pluralRegex)) {
+    const key = match[2].trim();
+    if (key && !key.includes('${')) bases.add(key);
+  }
+
+  return bases;
+}
+
 function extractPartialPrefixes(code) {
   const prefixes = new Set();
 
@@ -107,10 +121,14 @@ function main() {
   const partialPrefixes = new Set(
     fileContents.flatMap((code) => [...extractPartialPrefixes(code)]),
   );
+  const pluralBaseKeys = new Set(
+    fileContents.flatMap((code) => [...extractPluralBaseKeys(code)]),
+  );
 
   console.log(`Scanned ${sourceFiles.length} source files.`);
   console.log(`Detected ${usedKeys.size} used translation keys in code.`);
-  console.log(`Detected ${partialPrefixes.size} partial key prefixes (dynamic usage).\n`);
+  console.log(`Detected ${partialPrefixes.size} partial key prefixes (dynamic usage).`);
+  console.log(`Detected ${pluralBaseKeys.size} plural base keys (count-based pluralization).\n`);
 
   let hasUnused = false;
 
@@ -119,9 +137,15 @@ function main() {
     const localeJson = JSON.parse(fs.readFileSync(path.join(LOCALES_DIR, localeFile), 'utf8'));
     const allKeys = flattenKeys(localeJson).sort();
     const notUsed = allKeys.filter((key) => !usedKeys.has(key));
-    const warnings = notUsed.filter((key) =>
-      [...partialPrefixes].some((prefix) => key.startsWith(prefix)),
-    );
+    const warnings = notUsed.filter((key) => {
+      if ([...partialPrefixes].some((prefix) => key.startsWith(prefix))) return true;
+      const pluralSuffix = PLURAL_SUFFIXES.find((s) => key.endsWith(s));
+      if (pluralSuffix) {
+        const base = key.slice(0, key.length - pluralSuffix.length);
+        if (pluralBaseKeys.has(base)) return true;
+      }
+      return false;
+    });
     const warningSet = new Set(warnings);
     const unused = notUsed.filter((key) => !warningSet.has(key));
 

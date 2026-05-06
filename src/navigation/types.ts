@@ -93,6 +93,8 @@ export type ManageStackParamList = {
   OfflineTagCreate: undefined;
   OfflineCorrespondentCreate: undefined;
   OfflineDocTypeCreate: undefined;
+  ShareLinksList: undefined;
+  ShareLinkCreate: { documentId?: number };
 };
 
 export type DashboardStackParamList = {

@@ -96,7 +96,9 @@ export const MultiSelectChips: React.FC<MultiSelectChipsProps> = ({
                   {
                     color: isSelected
                       ? tag.text_color ||
-                        getContrastTextColor(sanitizeColor(tag.color, theme.colors.primaryContainer))
+                        getContrastTextColor(
+                          sanitizeColor(tag.color, theme.colors.primaryContainer),
+                        )
                       : theme.colors.onSurfaceVariant,
                   },
                 ]}
