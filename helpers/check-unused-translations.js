@@ -121,7 +121,9 @@ function main() {
   const partialPrefixes = new Set(
     fileContents.flatMap((code) => [...extractPartialPrefixes(code)]),
   );
-  const pluralBaseKeys = new Set(fileContents.flatMap((code) => [...extractPluralBaseKeys(code)]));
+  const pluralBaseKeys = new Set(
+    fileContents.flatMap((code) => [...extractPluralBaseKeys(code)]),
+  );
 
   console.log(`Scanned ${sourceFiles.length} source files.`);
   console.log(`Detected ${usedKeys.size} used translation keys in code.`);
