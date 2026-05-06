@@ -94,3 +94,5 @@ See the [open issues](https://github.com/afoni95/react-native-paperless/issues) 
 ## License
 
 Distributed under the **GNU General Public License v3.0**. See [LICENCE](https://github.com/afoni95/react-native-paperless/blob/main/LICENCE) for more information.
+
+Test
