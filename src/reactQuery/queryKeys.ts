@@ -61,6 +61,10 @@ export const mailRuleQueryKeys = {
   detail: (id: number) => ['mail-rule', id] as const,
 };
 
+export const shareLinkQueryKeys = {
+  all: ['share-links-all'] as const,
+};
+
 export const processedMailQueryKeys = {
   all: ['processed-mail-all'] as const,
   list: (params?: object) => ['processed-mail', params ?? {}] as const,

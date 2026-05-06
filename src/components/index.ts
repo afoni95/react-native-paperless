@@ -17,3 +17,4 @@ export { PermissionMatrix } from './PermissionMatrix';
 export { HasPermission } from './HasPermission';
 export { ProcessingIndicator } from './GlobalProcessingBar';
 export type { FilterState } from './FilterSheet';
+export { ShareLinksSheet } from './ShareLinksSheet';

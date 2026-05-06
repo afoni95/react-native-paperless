@@ -14,6 +14,7 @@ import {
   ConfirmDialog,
   DocumentMetadataForm,
   DocumentMetadataDisplay,
+  ShareLinksSheet,
 } from '@/components';
 import { formatDateTime, coerceCustomFieldValueForSubmit } from '@/utils';
 import { DocumentsStackParamList } from '@/navigation/types';
@@ -71,6 +72,7 @@ export const DocumentDetailScreen: React.FC<Props> = ({ route, navigation }) => 
   const [editCreated, setEditCreated] = useState('');
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [newNote, setNewNote] = useState('');
+  const [shareLinksVisible, setShareLinksVisible] = useState(false);
 
   const { serverUrl, token } = useAuthStore();
 
@@ -80,17 +82,35 @@ export const DocumentDetailScreen: React.FC<Props> = ({ route, navigation }) => 
     onSuccess: () => {
       setIsEditing(false);
     },
+    onError: (error) => {
+      Alert.alert(
+        t('common.error'),
+        t('common.somethingWentWrong') + '\n' + (error instanceof Error ? error.message : ''),
+      );
+    },
   });
 
   const deleteMutation = useDeleteDocument({
     onSuccess: () => {
       navigation.goBack();
     },
+    onError: (error) => {
+      Alert.alert(
+        t('common.error'),
+        t('common.somethingWentWrong') + '\n' + (error instanceof Error ? error.message : ''),
+      );
+    },
   });
 
   const addNoteMutation = useAddDocumentNote(documentId, {
     onSuccess: () => {
       setNewNote('');
+    },
+    onError: (error) => {
+      Alert.alert(
+        t('common.error'),
+        t('common.somethingWentWrong') + '\n' + (error instanceof Error ? error.message : ''),
+      );
     },
   });
 
@@ -177,51 +197,56 @@ export const DocumentDetailScreen: React.FC<Props> = ({ route, navigation }) => 
                   {t('common.edit')}
                 </Button>
               )}
-              <Button
-                mode="outlined"
-                icon="file-pdf-box"
-                onPress={() => navigation.navigate('PdfViewer', { documentId })}
-              >
-                {t('documents.viewPdf')}
-              </Button>
-              <Button
-                mode="outlined"
-                icon="download"
-                onPress={async () => {
-                  try {
-                    const baseUrl = serverUrl.replace(/\/+$/, '');
-                    const downloadUrl = `${baseUrl}/api/documents/${documentId}/download/`;
-                    const filename = `${doc?.title || 'document'}.pdf`;
-                    const fileUri = `${FileSystem.documentDirectory}${filename}`;
-
-                    const result = await FileSystem.downloadAsync(downloadUrl, fileUri, {
-                      headers: { Authorization: `Token ${token}` },
-                    });
-
-                    if (result.status !== 200) {
-                      Alert.alert(t('documents.downloadFailed'), t('documents.downloadError'));
-                      return;
-                    }
-
-                    await Sharing.shareAsync(fileUri, {
-                      mimeType: 'application/pdf',
-                      UTI: 'com.adobe.pdf',
-                    });
-                  } catch (error) {
-                    Alert.alert(t('documents.downloadFailed'), t('documents.downloadError'));
-                    if (__DEV__) console.warn('download err', error);
-                  }
-                }}
-              >
-                {t('documents.download')}
-              </Button>
-              {allowDelete && (
+              <View style={styles.iconActions}>
                 <IconButton
-                  icon="delete"
-                  iconColor={theme.colors.error}
-                  onPress={() => setShowDeleteDialog(true)}
+                  icon="file-pdf-box"
+                  onPress={() => navigation.navigate('PdfViewer', { documentId })}
+                  iconColor={theme.colors.primary}
                 />
-              )}
+                <IconButton
+                  icon="download"
+                  iconColor={theme.colors.primary}
+                  onPress={async () => {
+                    try {
+                      const baseUrl = serverUrl.replace(/\/+$/, '');
+                      const downloadUrl = `${baseUrl}/api/documents/${documentId}/download/`;
+                      const filename = `${doc?.title || 'document'}.pdf`;
+                      const fileUri = `${FileSystem.documentDirectory}${filename}`;
+
+                      const result = await FileSystem.downloadAsync(downloadUrl, fileUri, {
+                        headers: { Authorization: `Token ${token}` },
+                      });
+
+                      if (result.status !== 200) {
+                        Alert.alert(t('documents.downloadFailed'), t('documents.downloadError'));
+                        return;
+                      }
+
+                      await Sharing.shareAsync(fileUri, {
+                        mimeType: 'application/pdf',
+                        UTI: 'com.adobe.pdf',
+                      });
+                    } catch (error) {
+                      Alert.alert(t('documents.downloadFailed'), t('documents.downloadError'));
+                      if (__DEV__) console.warn('download err', error);
+                    }
+                  }}
+                />
+                {can('view', 'sharelink') && (
+                  <IconButton
+                    icon="share-variant"
+                    iconColor={theme.colors.primary}
+                    onPress={() => setShareLinksVisible(true)}
+                  />
+                )}
+                {allowDelete && (
+                  <IconButton
+                    icon="delete"
+                    iconColor={theme.colors.error}
+                    onPress={() => setShowDeleteDialog(true)}
+                  />
+                )}
+              </View>
             </>
           )}
         </View>
@@ -329,6 +354,15 @@ export const DocumentDetailScreen: React.FC<Props> = ({ route, navigation }) => 
         }}
         onCancel={() => setShowDeleteDialog(false)}
       />
+
+      {can('view', 'sharelink') ? (
+        <ShareLinksSheet
+          visible={shareLinksVisible}
+          onDismiss={() => setShareLinksVisible(false)}
+          documentId={documentId}
+          documentTitle={doc.title}
+        />
+      ) : null}
     </View>
   );
 };
@@ -345,6 +379,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 8,
     marginBottom: 16,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  iconActions: {
+    flexDirection: 'row',
     alignItems: 'center',
   },
   title: {

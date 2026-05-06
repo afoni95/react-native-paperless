@@ -149,7 +149,9 @@ export const TagsListScreen: React.FC = () => {
             title={item.name}
             description={t('common.documentCount', { count: item.document_count })}
             left={() => (
-              <View style={[styles.colorDot, { backgroundColor: sanitizeColor(item.color, '#ccc') }]} />
+              <View
+                style={[styles.colorDot, { backgroundColor: sanitizeColor(item.color, '#ccc') }]}
+              />
             )}
             right={(props) => (
               <View style={styles.itemActions}>

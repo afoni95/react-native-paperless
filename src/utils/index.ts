@@ -1,5 +1,49 @@
 import type { CustomField, DocumentCustomFieldValue } from '@/types';
 
+type TFunc = (key: string, options?: Record<string, unknown>) => string;
+
+export function formatExpirationRelative(expiration: string | null, t: TFunc): string {
+  if (!expiration) return t('shareLinks.noExpiration');
+
+  const now = new Date();
+  const exp = new Date(expiration);
+  const diffMs = exp.getTime() - now.getTime();
+
+  const dd = String(exp.getDate()).padStart(2, '0');
+  const mm = String(exp.getMonth() + 1).padStart(2, '0');
+  const yy = String(exp.getFullYear()).slice(-2);
+  const dateStr = `${dd}.${mm}.${yy}`;
+
+  if (diffMs <= 0) return dateStr;
+
+  const totalMinutes = Math.floor(diffMs / 60000);
+  const totalHours = Math.floor(diffMs / 3600000);
+  const totalDays = Math.floor(diffMs / 86400000);
+
+  let relativeStr: string;
+  if (totalDays >= 1) {
+    relativeStr = t('shareLinks.inDays', { count: totalDays });
+  } else if (totalHours >= 1) {
+    const remainingMinutes = totalMinutes % 60;
+    if (remainingMinutes > 0) {
+      relativeStr = t('shareLinks.inHoursMinutes', {
+        hours: totalHours,
+        minutes: remainingMinutes,
+      });
+    } else {
+      relativeStr = t('shareLinks.inHours', { count: totalHours });
+    }
+  } else {
+    relativeStr = t('shareLinks.inMinutes', { count: totalMinutes });
+  }
+
+  const isToday = exp.toDateString() === now.toDateString();
+  if (isToday) {
+    return t('shareLinks.expiresRelativeToday', { time: relativeStr });
+  }
+  return t('shareLinks.expiresRelativeDate', { date: dateStr, time: relativeStr });
+}
+
 export function formatDate(dateString: string): string {
   if (!dateString) return '';
   const date = new Date(dateString);
@@ -76,7 +120,10 @@ export function coerceCustomFieldValueForSubmit(
 export function sanitizeColor(color: string | null | undefined, fallback = '#e0e0e0'): string {
   if (!color) return fallback;
   const raw = color.startsWith('#') ? color : '#' + color;
-  const digits = raw.slice(1).replace(/[^0-9a-fA-F]/g, '').slice(0, 6);
+  const digits = raw
+    .slice(1)
+    .replace(/[^0-9a-fA-F]/g, '')
+    .slice(0, 6);
   if (digits.length === 0) return fallback;
   return '#' + digits.padEnd(6, '0');
 }
