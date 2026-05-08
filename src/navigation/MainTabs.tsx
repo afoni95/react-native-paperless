@@ -7,6 +7,7 @@ import { UploadScreen } from '@/features/documents/UploadScreen';
 import { OfflineCreateScreen } from '@/features/documents/OfflineCreateScreen';
 import { DocumentsStack } from './DocumentsStack';
 import { ManageStack } from './ManageStack';
+import { AnalyticsStack } from './AnalyticsStack';
 import { MainTabsParamList } from './types';
 import { DashboardStack } from './DashboardStack';
 import { usePermissionContext } from '@/hooks/PermissionProvider';
@@ -24,6 +25,7 @@ export const MainTabs: React.FC = () => {
 
   const showDocumentsTab = can('view', 'document');
   const showUploadTab = can('add', 'document');
+  const showAnalyticsTab = can('view', 'document');
 
   const screens = useMemo(() => {
     const arr: React.ReactElement[] = [
@@ -79,6 +81,21 @@ export const MainTabs: React.FC = () => {
         />,
       );
 
+    if (showAnalyticsTab)
+      arr.push(
+        <Tab.Screen
+          key="AnalyticsTab"
+          name="AnalyticsTab"
+          component={AnalyticsStack}
+          options={{
+            title: t('analytics.title'),
+            tabBarIcon: ({ color, size }) => (
+              <MaterialCommunityIcons name="chart-line" color={color} size={size} />
+            ),
+          }}
+        />,
+      );
+
     arr.push(
       <Tab.Screen
         key="ManageTab"
@@ -96,7 +113,7 @@ export const MainTabs: React.FC = () => {
     );
 
     return arr;
-  }, [showDocumentsTab, showUploadTab, status, pendingCount, t]);
+  }, [showDocumentsTab, showUploadTab, showAnalyticsTab, status, pendingCount, t]);
 
   return (
     <Tab.Navigator

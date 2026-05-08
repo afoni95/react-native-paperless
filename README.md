@@ -84,10 +84,11 @@ npm run i18n:unused
 
 - [x] Internationalization
 - [x] Theme support (light/dark/system)
+- [X] Document Analytics 
 - [x] Biometric lock screen
 - [X] Object-level Permissions
-- [ ] WebSocket status updates | Currently not possible due to Managed Expo limitation
 - [X] Upload: add storage_path & custom_fields support
+- [ ] WebSocket status updates | Currently not possible due to Managed Expo limitation
 
 See the [open issues](https://github.com/afoni95/react-native-paperless/issues) for a full list of proposed features and known bugs.
 

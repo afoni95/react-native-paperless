@@ -9,6 +9,7 @@
     "edit": "Edit",
     "search": "Search",
     "noResults": "No results found",
+    "noData": "No data",
     "confirm": "Confirm",
     "ok": "OK",
     "none": "None",
@@ -325,6 +326,101 @@
     "masterDataSubtitle": "Tags, correspondents, document types and more",
     "about": "About this App",
     "aboutSubtitle": "Version info, license and privacy policy"
+  },
+  "analytics": {
+    "title": "Analytics",
+    "widget": {
+      "line": "Line Graph",
+      "pie": "Pie Chart",
+      "infoTile": "Info Tile"
+    },
+    "widgetKind": {
+      "line": "Line",
+      "pie": "Pie",
+      "infoTile": "KPI"
+    },
+    "actions": {
+      "viewMode": "View Mode",
+      "editMode": "Edit Mode",
+      "addWidget": "Add Widget",
+      "deleteWidget": "Delete Widget",
+      "addMetric": "Add Metric",
+      "removeMetric": "Remove Metric"
+    },
+    "editor": {
+      "title": "Widget Editor",
+      "metricSource": "Metric Source",
+      "count": "Document Count",
+      "customField": "Numeric Custom Field",
+      "metricFieldId": "Metric Field ID",
+      "groupBy": "Group By",
+      "dateBucket": "Date Bucket",
+      "dimension": "Dimension",
+      "filters": "Filters",
+      "timeRange": "Time Range",
+      "startDate": "Start Date (YYYY-MM-DD)",
+      "endDate": "End Date (YYYY-MM-DD)",
+      "editFilters": "Edit Filters",
+      "groupByCustomFieldId": "Group By Custom Field ID",
+      "dimensionCustomFieldId": "Dimension Custom Field ID",
+      "metrics": "Metrics",
+      "metricLabel": "Metric Label"
+    },
+    "aggregation": {
+      "count": "Count",
+      "sum": "Sum",
+      "avg": "Avg",
+      "min": "Min",
+      "max": "Max"
+    },
+    "timeRange": {
+      "all": "All",
+      "last30d": "30d",
+      "last90d": "90d",
+      "last365d": "365d",
+      "thisYear": "This Year",
+      "thisYearQ1": "This Year Q1",
+      "thisYearQ2": "This Year Q2",
+      "thisYearQ3": "This Year Q3",
+      "thisYearQ4": "This Year Q4",
+      "custom": "Custom"
+    },
+    "dimension": {
+      "correspondent": "Correspondent",
+      "documentType": "Document Type",
+      "tag": "Tag",
+      "customField": "Custom Field",
+      "dateQuarter": "Date (Quarter)",
+      "dateMonth": "Date (Month)",
+      "dateYear": "Date (Year)"
+    },
+    "bucket": {
+      "day": "Day",
+      "week": "Week",
+      "month": "Month",
+      "quarter": "Quarter",
+      "year": "Year"
+    },
+    "states": {
+      "loading": "Loading analytics...",
+      "unavailableOffline": "Analytics is unavailable while offline.",
+      "emptyDashboard": "No widgets yet. Add your first widget below.",
+      "empty": "No data for this widget.",
+      "invalidConfiguration": "Widget configuration is invalid."
+    },
+    "warnings": {
+      "staleData": "Data might be outdated. Showing cached analytics."
+    },
+    "validation": {
+      "metricFieldRequired": "Select a numeric custom field for this metric.",
+      "groupCustomFieldRequired": "Select a custom field for grouping.",
+      "numericFieldRequired": "Selected custom field must be numeric.",
+      "dimensionCustomFieldRequired": "Select a custom field for this dimension.",
+      "infoTileMetricRange": "Info tile must contain between 1 and 4 metrics."
+    },
+    "confirm": {
+      "deleteWidget": "Delete this widget from your dashboard?"
+    }
   },
   "shareLinks": {
     "title": "Share Links",

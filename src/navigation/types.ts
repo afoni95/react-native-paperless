@@ -1,5 +1,6 @@
 import { NavigatorScreenParams } from '@react-navigation/native';
 import { WorkflowTrigger, WorkflowAction } from '@/types/workflows';
+import type { AnalyticsWidgetType } from '@/features/analytics/types';
 
 export type TriggerEditResult =
   | {
@@ -33,7 +34,16 @@ export type MainTabsParamList = {
   DashboardTab: undefined;
   DocumentsTab: NavigatorScreenParams<DocumentsStackParamList>;
   UploadTab: undefined;
+  AnalyticsTab: NavigatorScreenParams<AnalyticsStackParamList>;
   ManageTab: NavigatorScreenParams<ManageStackParamList>;
+};
+
+export type AnalyticsStackParamList = {
+  AnalyticsHome: undefined;
+  AnalyticsWidgetEditor: {
+    widgetId?: string;
+    widgetType?: AnalyticsWidgetType;
+  };
 };
 
 export type DocumentsStackParamList = {
