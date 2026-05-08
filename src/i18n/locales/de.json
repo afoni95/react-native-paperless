@@ -9,6 +9,7 @@
     "edit": "Bearbeiten",
     "search": "Suchen",
     "noResults": "Keine Ergebnisse gefunden",
+    "noData": "Keine Daten",
     "confirm": "Bestätigen",
     "ok": "OK",
     "none": "Keiner",
@@ -325,6 +326,101 @@
     "masterDataSubtitle": "Tags, Korrespondenten, Dokumenttypen und mehr",
     "about": "Über diese App",
     "aboutSubtitle": "Versionsinformationen, Lizenz und Datenschutz"
+  },
+  "analytics": {
+    "title": "Analysen",
+    "widget": {
+      "line": "Liniendiagramm",
+      "pie": "Kreisdiagramm",
+      "infoTile": "Info-Kachel"
+    },
+    "widgetKind": {
+      "line": "Linie",
+      "pie": "Kreis",
+      "infoTile": "KPI"
+    },
+    "actions": {
+      "viewMode": "Ansicht",
+      "editMode": "Bearbeiten",
+      "addWidget": "Widget hinzufügen",
+      "deleteWidget": "Widget löschen",
+      "addMetric": "Kennzahl hinzufügen",
+      "removeMetric": "Kennzahl entfernen"
+    },
+    "editor": {
+      "title": "Widget-Editor",
+      "metricSource": "Messwertquelle",
+      "count": "Dokumentanzahl",
+      "customField": "Numerisches benutzerdefiniertes Feld",
+      "metricFieldId": "Messwert Feld-ID",
+      "groupBy": "Gruppieren nach",
+      "dateBucket": "Datumsintervall",
+      "dimension": "Dimension",
+      "filters": "Filter",
+      "timeRange": "Zeitraum",
+      "startDate": "Startdatum (JJJJ-MM-TT)",
+      "endDate": "Enddatum (JJJJ-MM-TT)",
+      "editFilters": "Filter bearbeiten",
+      "groupByCustomFieldId": "Gruppierungs-Feld-ID",
+      "dimensionCustomFieldId": "Dimensions-Feld-ID",
+      "metrics": "Kennzahlen",
+      "metricLabel": "Kennzahlen-Label"
+    },
+    "aggregation": {
+      "count": "Anzahl",
+      "sum": "Summe",
+      "avg": "Durchschnitt",
+      "min": "Minimum",
+      "max": "Maximum"
+    },
+    "timeRange": {
+      "all": "Alle",
+      "last30d": "30T",
+      "last90d": "90T",
+      "last365d": "365T",
+      "thisYear": "Dieses Jahr",
+      "thisYearQ1": "Dieses Jahr Q1",
+      "thisYearQ2": "Dieses Jahr Q2",
+      "thisYearQ3": "Dieses Jahr Q3",
+      "thisYearQ4": "Dieses Jahr Q4",
+      "custom": "Benutzerdefiniert"
+    },
+    "dimension": {
+      "correspondent": "Korrespondent",
+      "documentType": "Dokumenttyp",
+      "tag": "Tag",
+      "customField": "Benutzerdefiniertes Feld",
+      "dateQuarter": "Datum (Quartal)",
+      "dateMonth": "Datum (Monat)",
+      "dateYear": "Datum (Jahr)"
+    },
+    "bucket": {
+      "day": "Tag",
+      "week": "Woche",
+      "month": "Monat",
+      "quarter": "Quartal",
+      "year": "Jahr"
+    },
+    "states": {
+      "loading": "Analysen werden geladen...",
+      "unavailableOffline": "Analysen sind im Offline-Modus nicht verfügbar.",
+      "emptyDashboard": "Noch keine Widgets. Fügen Sie unten ein Widget hinzu.",
+      "empty": "Keine Daten für dieses Widget.",
+      "invalidConfiguration": "Widget-Konfiguration ist ungültig."
+    },
+    "warnings": {
+      "staleData": "Daten könnten veraltet sein. Zwischengespeicherte Analysen werden angezeigt."
+    },
+    "validation": {
+      "metricFieldRequired": "Wählen Sie ein numerisches benutzerdefiniertes Feld für den Messwert.",
+      "groupCustomFieldRequired": "Wählen Sie ein benutzerdefiniertes Feld für die Gruppierung.",
+      "numericFieldRequired": "Das ausgewählte benutzerdefinierte Feld muss numerisch sein.",
+      "dimensionCustomFieldRequired": "Wählen Sie ein benutzerdefiniertes Feld für diese Dimension.",
+      "infoTileMetricRange": "Info-Kachel muss zwischen 1 und 4 Kennzahlen enthalten."
+    },
+    "confirm": {
+      "deleteWidget": "Dieses Widget aus dem Dashboard löschen?"
+    }
   },
   "shareLinks": {
     "title": "Freigabe-Links",

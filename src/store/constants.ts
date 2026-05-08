@@ -3,3 +3,4 @@ export const SERVER_URL_KEY = 'paperless_server_url';
 export const BIOMETRIC_ENABLED_KEY = 'paperless_biometric_enabled';
 export const SETTINGS_KEY = 'paperless_settings';
 export const USERNAME_KEY = 'paperless_username';
+export const ANALYTICS_DASHBOARD_KEY = 'paperless_analytics_dashboard';
