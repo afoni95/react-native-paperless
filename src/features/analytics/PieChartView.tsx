@@ -1,5 +1,5 @@
 import React from 'react';
-import { View } from 'react-native';
+import { useWindowDimensions, View } from 'react-native';
 import { Text } from 'react-native-paper';
 import Svg, { Path } from 'react-native-svg';
 import type { AnalyticsPieResult } from './types';
@@ -29,9 +29,10 @@ interface PieChartViewProps {
 }
 
 export const PieChartView: React.FC<PieChartViewProps> = ({ result }) => {
+  const { width: windowWidth } = useWindowDimensions();
   const total = result.slices.reduce((sum, slice) => sum + slice.value, 0);
-  const size = 180;
-  const radius = 70;
+  const size = Math.min(Math.max(windowWidth - 72, 160), 280);
+  const radius = size * 0.4;
   const center = size / 2;
 
   const arcs = result.slices.map((slice) => {

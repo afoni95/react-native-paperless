@@ -1,5 +1,5 @@
 import React from 'react';
-import { View } from 'react-native';
+import { useWindowDimensions, View } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
 import Svg, { Polyline, Line, Text as SvgText, Circle } from 'react-native-svg';
 import type { AnalyticsLineResult } from './types';
@@ -12,8 +12,9 @@ interface LineChartViewProps {
 
 export const LineChartView: React.FC<LineChartViewProps> = ({ result }) => {
   const theme = useTheme();
-  const width = 320;
-  const height = 190;
+  const { width: windowWidth } = useWindowDimensions();
+  const width = Math.min(Math.max(windowWidth - 40, 260), 720);
+  const height = Math.min(Math.max(width * 0.58, 180), 320);
   const margin = 34;
 
   const xLabels = result.series[0]?.points.map((point) => point.x) ?? [];
