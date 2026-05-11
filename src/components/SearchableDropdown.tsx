@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { View, ScrollView, StyleSheet, Modal, Pressable, Dimensions } from 'react-native';
 import { Searchbar, List, useTheme } from 'react-native-paper';
 import { useTranslation } from 'react-i18next';
@@ -14,6 +14,7 @@ export interface SearchableDropdownProps {
   onSelect: (id: number | null) => void;
   placeholder?: string;
   label?: string;
+  canClear?: boolean;
   allowClear?: boolean;
   searchable?: boolean;
 }
@@ -24,9 +25,13 @@ export const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
   onSelect,
   placeholder,
   label,
+  canClear,
   allowClear = true,
   searchable = true,
 }) => {
+  const clearEnabled = canClear ?? allowClear;
+  const hasData = items.length > 0;
+
   const theme = useTheme();
   const { t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState('');
@@ -47,7 +52,15 @@ export const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
     return items.filter((item) => item.name.toLowerCase().includes(searchQuery.toLowerCase()));
   }, [items, searchQuery, searchable]);
 
+  useEffect(() => {
+    if (!hasData && isOpen) {
+      setIsOpen(false);
+      setSearchQuery('');
+    }
+  }, [hasData, isOpen]);
+
   const handleOpen = () => {
+    if (!hasData) return;
     triggerRef.current?.measureInWindow((x, y, width, height) => {
       const screenHeight = Dimensions.get('window').height;
       const spacing = 4;
@@ -85,11 +98,17 @@ export const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
   return (
     <View style={styles.container} ref={triggerRef}>
       <List.Item
-        title={selectedItem?.name || placeholder || label || t('common.search')}
+        title={
+          selectedItem?.name ||
+          (hasData ? placeholder || label || t('common.search') : t('common.noData'))
+        }
         titleStyle={!selectedItem ? { color: theme.colors.onSurfaceVariant } : undefined}
         description={label}
-        onPress={handleOpen}
-        right={(props) => <List.Icon {...props} icon={isOpen ? 'chevron-up' : 'chevron-down'} />}
+        onPress={hasData ? handleOpen : undefined}
+        disabled={!hasData}
+        right={(props) =>
+          hasData ? <List.Icon {...props} icon={isOpen ? 'chevron-up' : 'chevron-down'} /> : null
+        }
         style={[styles.selector, { backgroundColor: theme.colors.surfaceVariant }]}
       />
 
@@ -118,7 +137,7 @@ export const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
               />
             ) : null}
 
-            {allowClear && selectedId !== null && (
+            {clearEnabled && selectedId !== null && (
               <List.Item
                 title={`— ${t('common.none')} —`}
                 onPress={() => handleSelect(null)}

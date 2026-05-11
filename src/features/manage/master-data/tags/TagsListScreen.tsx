@@ -12,6 +12,7 @@ import { Tag } from '@/types';
 import { LoadingScreen, EmptyState, ErrorBanner, ConfirmDialog } from '@/components';
 import { useAllTags, useDeleteTag } from '@/reactQuery';
 import { useOfflineQueueStore, OfflineQueueItem } from '@/store/offlineQueueStore';
+import { sanitizeColor } from '@/utils';
 
 type EmbeddedDiscard = { docId: string; tagName: string };
 
@@ -104,7 +105,7 @@ export const TagsListScreen: React.FC = () => {
                     <View
                       style={[
                         styles.colorDot,
-                        { backgroundColor: item.data.color || theme.colors.tertiary },
+                        { backgroundColor: sanitizeColor(item.data.color, theme.colors.tertiary) },
                       ]}
                     />
                   )}
@@ -148,7 +149,9 @@ export const TagsListScreen: React.FC = () => {
             title={item.name}
             description={t('common.documentCount', { count: item.document_count })}
             left={() => (
-              <View style={[styles.colorDot, { backgroundColor: item.color || '#ccc' }]} />
+              <View
+                style={[styles.colorDot, { backgroundColor: sanitizeColor(item.color, '#ccc') }]}
+              />
             )}
             right={(props) => (
               <View style={styles.itemActions}>
