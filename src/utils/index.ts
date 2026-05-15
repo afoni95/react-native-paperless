@@ -119,10 +119,7 @@ export const coerceCustomFieldValueForSubmit = (
   return value;
 };
 
-export const sanitizeColor = (
-  color: string | null | undefined,
-  fallback = '#e0e0e0',
-): string => {
+export const sanitizeColor = (color: string | null | undefined, fallback = '#e0e0e0'): string => {
   if (!color) return fallback;
   const raw = color.startsWith('#') ? color : '#' + color;
   const digits = raw

@@ -34,7 +34,9 @@ export const buildPermissionName = (
   resource: PermissionResource,
 ): string => `${action}_${resource}`;
 
-export const parsePermission = (permission: string): {
+export const parsePermission = (
+  permission: string,
+): {
   action: PermissionAction;
   resource: PermissionResource;
 } | null => {

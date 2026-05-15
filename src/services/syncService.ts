@@ -31,10 +31,7 @@ const syncTags = async (items: OfflineQueueItem[], tagMap: NameIdMap): Promise<v
   }
 };
 
-const syncCorrespondents = async (
-  items: OfflineQueueItem[],
-  corrMap: NameIdMap,
-): Promise<void> => {
+const syncCorrespondents = async (items: OfflineQueueItem[], corrMap: NameIdMap): Promise<void> => {
   for (const item of items) {
     const { updateItemStatus, removeItem } = useOfflineQueueStore.getState();
     const name = item.data.name ?? '';
@@ -55,10 +52,7 @@ const syncCorrespondents = async (
   }
 };
 
-const syncDocumentTypes = async (
-  items: OfflineQueueItem[],
-  dtMap: NameIdMap,
-): Promise<void> => {
+const syncDocumentTypes = async (items: OfflineQueueItem[], dtMap: NameIdMap): Promise<void> => {
   for (const item of items) {
     const { updateItemStatus, removeItem } = useOfflineQueueStore.getState();
     const name = item.data.name ?? '';
