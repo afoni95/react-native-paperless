@@ -90,12 +90,12 @@ export const CorrespondentsListScreen: React.FC = () => {
         style={styles.searchBar}
       />
 
-      {isError && (
+      {isError ? (
         <ErrorBanner
           message={(error as Error)?.message ?? t('common.somethingWentWrong')}
           onRetry={refetch}
         />
-      )}
+      ) : null}
 
       <FlatList
         data={filteredItems}
@@ -182,14 +182,14 @@ export const CorrespondentsListScreen: React.FC = () => {
         keyboardShouldPersistTaps="handled"
       />
 
-      {canAddCorrespondent && (
+      {canAddCorrespondent ? (
         <FAB
           icon="plus"
           style={[styles.fab, { backgroundColor: theme.colors.primary }]}
           color={theme.colors.onPrimary}
           onPress={() => navigation.navigate('CorrespondentEdit', {})}
         />
-      )}
+      ) : null}
 
       <ConfirmDialog
         visible={!!deleteTarget}

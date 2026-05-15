@@ -67,12 +67,12 @@ export const StoragePathsListScreen: React.FC = () => {
         style={styles.searchBar}
       />
 
-      {isError && (
+      {isError ? (
         <ErrorBanner
           message={(error as Error)?.message ?? t('common.somethingWentWrong')}
           onRetry={refetch}
         />
-      )}
+      ) : null}
 
       <FlatList
         data={filteredStoragePaths}
@@ -115,14 +115,14 @@ export const StoragePathsListScreen: React.FC = () => {
         keyboardShouldPersistTaps="handled"
       />
 
-      {canAddStoragePath && !isOffline && (
+      {canAddStoragePath && !isOffline ? (
         <FAB
           icon="plus"
           style={[styles.fab, { backgroundColor: theme.colors.primary }]}
           color={theme.colors.onPrimary}
           onPress={() => navigation.navigate('StoragePathEdit', {})}
         />
-      )}
+      ) : null}
 
       <ConfirmDialog
         visible={!!deleteTarget}

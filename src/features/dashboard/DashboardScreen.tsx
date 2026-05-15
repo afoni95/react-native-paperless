@@ -165,7 +165,7 @@ export const DashboardScreen: React.FC = () => {
           />
         </View>
 
-        {showMailAccounts && (
+        {showMailAccounts ? (
           <Card style={[styles.mailAccountsCard, { backgroundColor: theme.colors.surface }]}>
             <Card.Content>
               <Text variant="titleMedium" style={{ marginBottom: 12 }}>
@@ -206,16 +206,18 @@ export const DashboardScreen: React.FC = () => {
                           {t('dashboard.processMail')}
                         </Button>
                       </View>
-                      {index < mailAccounts.length - 1 && <Divider style={{ marginVertical: 8 }} />}
+                      {index < mailAccounts.length - 1 ? (
+                        <Divider style={{ marginVertical: 8 }} />
+                      ) : null}
                     </View>
                   );
                 })
               )}
             </Card.Content>
           </Card>
-        )}
+        ) : null}
 
-        {stats?.document_file_type_counts && stats.document_file_type_counts.length > 0 && (
+        {stats?.document_file_type_counts && stats.document_file_type_counts.length > 0 ? (
           <Card style={[styles.fileTypesCard, { backgroundColor: theme.colors.surface }]}>
             <Card.Content>
               <Text variant="titleMedium" style={{ marginBottom: 12 }}>
@@ -234,14 +236,14 @@ export const DashboardScreen: React.FC = () => {
                       {ft.mime_type_count}
                     </Text>
                   </View>
-                  {index < stats.document_file_type_counts.length - 1 && (
+                  {index < stats.document_file_type_counts.length - 1 ? (
                     <Divider style={{ marginVertical: 4 }} />
-                  )}
+                  ) : null}
                 </View>
               ))}
             </Card.Content>
           </Card>
-        )}
+        ) : null}
       </ScrollView>
       <Snackbar
         visible={!!snackbarMessage}
@@ -287,11 +289,11 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, icon, color, textColo
   );
 };
 
-function formatNumber(num: number): string {
+const formatNumber = (num: number): string => {
   if (num >= 1_000_000) return `${(num / 1_000_000).toFixed(1)}M`;
   if (num >= 1_000) return `${(num / 1_000).toFixed(1)}K`;
   return String(num);
-}
+};
 
 const styles = StyleSheet.create({
   container: {

@@ -9,72 +9,69 @@ import {
   PaginatedResponse,
 } from '@/types';
 
+const buildDocumentQueryParams = (
+  params?: DocumentListParams,
+): Record<string, string | number | boolean> => {
+  const queryParams: Record<string, string | number | boolean> = {};
+
+  if (!params) return queryParams;
+
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined && value !== null) {
+      queryParams[key] = Array.isArray(value) ? value.join(',') : value;
+    }
+  });
+
+  return queryParams;
+};
+
 export const documentsApi = {
   getDocuments: async (params?: DocumentListParams): Promise<PaginatedResponse<Document>> => {
-    const queryParams: Record<string, string | number | boolean> = {};
-
-    if (params) {
-      Object.entries(params).forEach(([key, value]) => {
-        if (value !== undefined && value !== null) {
-          if (Array.isArray(value)) {
-            queryParams[key] = value.join(',');
-          } else {
-            queryParams[key] = value;
-          }
-        }
-      });
-    }
-
-    const response = await apiClient.get<PaginatedResponse<Document>>('/api/documents/', {
+    const queryParams = buildDocumentQueryParams(params);
+    const { data } = await apiClient.get<PaginatedResponse<Document>>('/api/documents/', {
       params: queryParams,
     });
-    return response.data;
+    return data;
   },
 
   getDocument: async (id: number): Promise<Document> => {
-    const response = await apiClient.get<Document>(`/api/documents/${id}/`);
-    return response.data;
+    const { data } = await apiClient.get<Document>(`/api/documents/${id}/`);
+    return data;
   },
 
   updateDocument: async (id: number, data: Partial<DocumentUpdatePayload>): Promise<Document> => {
-    const response = await apiClient.patch<Document>(`/api/documents/${id}/`, data);
-    return response.data;
+    const { data: updated } = await apiClient.patch<Document>(`/api/documents/${id}/`, data);
+    return updated;
   },
 
   deleteDocument: async (id: number): Promise<void> => {
     await apiClient.delete(`/api/documents/${id}/`);
   },
 
-  getDocumentPreviewUrl: (id: number): string => {
-    return `/api/documents/${id}/preview/`;
-  },
+  getDocumentPreviewUrl: (id: number): string => `/api/documents/${id}/preview/`,
 
-  getDocumentDownloadUrl: (id: number): string => {
-    return `/api/documents/${id}/download/`;
-  },
+  getDocumentDownloadUrl: (id: number): string => `/api/documents/${id}/download/`,
 
-  getDocumentThumbUrl: (id: number): string => {
-    return `/api/documents/${id}/thumb/`;
-  },
+  getDocumentThumbUrl: (id: number): string => `/api/documents/${id}/thumb/`,
 
   getDocumentMetadata: async (id: number): Promise<unknown> => {
-    const response = await apiClient.get(`/api/documents/${id}/metadata/`);
-    return response.data;
+    const { data } = await apiClient.get(`/api/documents/${id}/metadata/`);
+    return data;
   },
 
   getDocumentSuggestions: async (id: number): Promise<unknown> => {
-    const response = await apiClient.get(`/api/documents/${id}/suggestions/`);
-    return response.data;
+    const { data } = await apiClient.get(`/api/documents/${id}/suggestions/`);
+    return data;
   },
 
   getNotes: async (id: number): Promise<DocumentNote[]> => {
-    const response = await apiClient.get<DocumentNote[]>(`/api/documents/${id}/notes/`);
-    return response.data;
+    const { data } = await apiClient.get<DocumentNote[]>(`/api/documents/${id}/notes/`);
+    return data;
   },
 
   addNote: async (id: number, note: string): Promise<DocumentNote> => {
-    const response = await apiClient.post<DocumentNote>(`/api/documents/${id}/notes/`, { note });
-    return response.data;
+    const { data } = await apiClient.post<DocumentNote>(`/api/documents/${id}/notes/`, { note });
+    return data;
   },
 
   deleteNote: async (documentId: number, noteId: number): Promise<void> => {
@@ -111,38 +108,38 @@ export const documentsApi = {
       });
     }
 
-    const response = await apiClient.post('/api/documents/post_document/', formData, {
+    const { data } = await apiClient.post('/api/documents/post_document/', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
     });
-    return response.data;
+    return data;
   },
 
   getNextAsn: async (): Promise<number> => {
-    const response = await apiClient.get<number>('/api/documents/next_asn/');
-    return response.data;
+    const { data } = await apiClient.get<number>('/api/documents/next_asn/');
+    return data;
   },
 
   searchAutocomplete: async (term: string, limit = 10): Promise<string[]> => {
-    const response = await apiClient.get('/api/search/autocomplete/', {
+    const { data } = await apiClient.get('/api/search/autocomplete/', {
       params: { term, limit },
     });
-    return response.data;
+    return data;
   },
 
   globalSearch: async (query: string): Promise<GlobalSearchResult> => {
-    const response = await apiClient.get<GlobalSearchResult>('/api/search/', {
+    const { data } = await apiClient.get<GlobalSearchResult>('/api/search/', {
       params: { query },
     });
-    return response.data;
+    return data;
   },
 
   getTrash: async (): Promise<PaginatedResponse<Document>> => {
-    const response = await apiClient.get<PaginatedResponse<Document>>('/api/trash/', {
+    const { data } = await apiClient.get<PaginatedResponse<Document>>('/api/trash/', {
       params: { page_size: 100 },
     });
-    return response.data;
+    return data;
   },
 
   restoreDocuments: async (documentIds: number[]): Promise<void> => {

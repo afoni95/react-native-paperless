@@ -77,22 +77,29 @@ export const DocumentMetadataForm: React.FC<DocumentMetadataFormProps> = ({
 }) => {
   const theme = useTheme();
   const { t } = useTranslation();
+  const resolvedCardStyle = cardStyle || { marginBottom: 16, borderRadius: 12 };
+  const resolvedInputStyle = inputStyle || { marginBottom: 12 };
+  const showAsnField = showAsn && asn !== undefined && onAsnChange;
+  const showCreatedDateField = showCreatedDate && createdDate !== undefined && onCreatedDateChange;
+  const showCustomFields =
+    customFields !== undefined &&
+    allCustomFields.length > 0 &&
+    customFieldsMap &&
+    onFieldToAddChange &&
+    onAddField &&
+    onRemoveField &&
+    onChangeField;
 
   return (
     <>
-      <Card
-        style={[
-          cardStyle || { marginBottom: 16, borderRadius: 12 },
-          { backgroundColor: theme.colors.surface },
-        ]}
-      >
+      <Card style={[resolvedCardStyle, { backgroundColor: theme.colors.surface }]}>
         <Card.Content>
           <TextInput
             label={t('documents.singularEntity')}
             value={title}
             onChangeText={onTitleChange}
             mode="outlined"
-            style={inputStyle || { marginBottom: 12 }}
+            style={resolvedInputStyle}
           />
 
           <SearchableDropdown
@@ -126,58 +133,47 @@ export const DocumentMetadataForm: React.FC<DocumentMetadataFormProps> = ({
             label={t('documents.tags')}
           />
 
-          {showAsn && asn !== undefined && onAsnChange && (
+          {showAsnField ? (
             <TextInput
               label={t('documents.asn')}
               value={asn}
               onChangeText={onAsnChange}
               mode="outlined"
               keyboardType="numeric"
-              style={inputStyle || { marginBottom: 12 }}
+              style={resolvedInputStyle}
             />
-          )}
+          ) : null}
 
-          {showCreatedDate && createdDate !== undefined && onCreatedDateChange && (
+          {showCreatedDateField ? (
             <TextInput
               label={t('documents.created') + ' (YYYY-MM-DD)'}
               value={createdDate}
               onChangeText={onCreatedDateChange}
               mode="outlined"
-              style={inputStyle || { marginBottom: 12 }}
+              style={resolvedInputStyle}
               placeholder="2024-01-31"
             />
-          )}
+          ) : null}
         </Card.Content>
       </Card>
 
-      {customFields !== undefined &&
-        allCustomFields.length > 0 &&
-        customFieldsMap &&
-        onFieldToAddChange &&
-        onAddField &&
-        onRemoveField &&
-        onChangeField && (
-          <Card
-            style={[
-              cardStyle || { marginBottom: 16, borderRadius: 12 },
-              { backgroundColor: theme.colors.surface },
-            ]}
-          >
-            <Card.Title title={t('customFields.title')} />
-            <Card.Content>
-              <CustomFieldsSection
-                customFields={customFields}
-                availableFields={availableCustomFields}
-                customFieldsMap={customFieldsMap}
-                fieldToAdd={fieldToAdd || null}
-                onFieldToAddChange={onFieldToAddChange}
-                onAddField={onAddField}
-                onRemoveField={onRemoveField}
-                onChangeField={onChangeField}
-              />
-            </Card.Content>
-          </Card>
-        )}
+      {showCustomFields ? (
+        <Card style={[resolvedCardStyle, { backgroundColor: theme.colors.surface }]}>
+          <Card.Title title={t('customFields.title')} />
+          <Card.Content>
+            <CustomFieldsSection
+              customFields={customFields}
+              availableFields={availableCustomFields}
+              customFieldsMap={customFieldsMap}
+              fieldToAdd={fieldToAdd || null}
+              onFieldToAddChange={onFieldToAddChange}
+              onAddField={onAddField}
+              onRemoveField={onRemoveField}
+              onChangeField={onChangeField}
+            />
+          </Card.Content>
+        </Card>
+      ) : null}
     </>
   );
 };

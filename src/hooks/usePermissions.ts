@@ -11,7 +11,7 @@ export type UsePermissionsOptions = {
   permissions?: string[] | null;
 };
 
-export function usePermissions(options?: UsePermissionsOptions) {
+export const usePermissions = (options?: UsePermissionsOptions) => {
   const optPermissions = options?.permissions ?? null;
   const userUp = options?.user?.user_permissions ?? null;
   const userInh = options?.user?.inherited_permissions ?? null;
@@ -56,4 +56,4 @@ export function usePermissions(options?: UsePermissionsOptions) {
   );
 
   return { permissions, has, hasAny, hasAll, can, getResourcePermissions } as const;
-}
+};

@@ -23,6 +23,20 @@ export const TagChip: React.FC<TagChipProps> = ({
 }) => {
   const safeColor = sanitizeColor(color);
   const computedTextColor = textColor || getContrastTextColor(safeColor);
+  const chipStyle = {
+    backgroundColor: safeColor,
+    marginRight: 4,
+    marginBottom: 4,
+    height: 21,
+    paddingVertical: 0,
+    paddingHorizontal: 1,
+  };
+  const chipTextStyle = {
+    color: computedTextColor,
+    fontSize: compact ? 11 : 13,
+    marginVertical: 0,
+    marginHorizontal: 0,
+  };
 
   return (
     <Chip
@@ -31,20 +45,8 @@ export const TagChip: React.FC<TagChipProps> = ({
       selected={selected}
       onPress={onPress}
       onClose={onClose}
-      style={{
-        backgroundColor: safeColor,
-        marginRight: 4,
-        marginBottom: 4,
-        height: 21,
-        paddingVertical: 0,
-        paddingHorizontal: 1,
-      }}
-      textStyle={{
-        color: computedTextColor,
-        fontSize: compact ? 11 : 13,
-        marginVertical: 0,
-        marginHorizontal: 0,
-      }}
+      style={chipStyle}
+      textStyle={chipTextStyle}
     >
       {name}
     </Chip>

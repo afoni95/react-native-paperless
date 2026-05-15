@@ -70,12 +70,12 @@ export const MailAccountsListScreen: React.FC = () => {
         style={styles.searchBar}
       />
 
-      {isError && (
+      {isError ? (
         <ErrorBanner
           message={error instanceof Error ? error.message : t('common.somethingWentWrong')}
           onRetry={refetch}
         />
-      )}
+      ) : null}
 
       <FlatList
         data={filteredMailAccounts}
@@ -121,14 +121,14 @@ export const MailAccountsListScreen: React.FC = () => {
         keyboardShouldPersistTaps="handled"
       />
 
-      {canAddMailAccount && !isOffline && (
+      {canAddMailAccount && !isOffline ? (
         <FAB
           icon="plus"
           style={[styles.fab, { backgroundColor: theme.colors.primary }]}
           color={theme.colors.onPrimary}
           onPress={() => navigation.navigate('MailAccountEdit', {})}
         />
-      )}
+      ) : null}
 
       <ConfirmDialog
         visible={!!deleteTarget}

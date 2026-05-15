@@ -19,13 +19,7 @@ export const HasPermission: React.FC<HasPermissionProps> = ({
   children,
 }) => {
   const { has, can } = usePermissionContext();
-  let allowed = false;
-
-  if (permission) {
-    allowed = has(permission);
-  } else if (action && resource) {
-    allowed = can(action, resource);
-  }
+  const allowed = permission ? has(permission) : action && resource ? can(action, resource) : false;
 
   return <>{allowed ? children : fallback}</>;
 };

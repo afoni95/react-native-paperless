@@ -9,11 +9,11 @@ import { useNetworkStore, NetworkStatus } from '@/store/networkStore';
 
 const PAPERLESS_API_ACCEPT_HEADER = 'application/json; version=9';
 
-async function fetchCurrentUser(
+const fetchCurrentUser = async (
   serverUrl: string,
   token: string,
   username: string,
-): Promise<User | null> {
+): Promise<User | null> => {
   const { data } = await axios.get<PaginatedResponse<User>>(
     `${serverUrl.replace(/\/+$/, '')}/api/users/`,
     {
@@ -27,7 +27,7 @@ async function fetchCurrentUser(
   );
 
   return data.results?.find((user) => user.username === username) || null;
-}
+};
 
 interface AuthState {
   token: string | null;

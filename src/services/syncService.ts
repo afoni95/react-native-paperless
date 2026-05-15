@@ -7,7 +7,7 @@ import { Alert } from 'react-native';
 
 type NameIdMap = Map<string, number>;
 
-async function syncTags(items: OfflineQueueItem[], tagMap: NameIdMap): Promise<void> {
+const syncTags = async (items: OfflineQueueItem[], tagMap: NameIdMap): Promise<void> => {
   for (const item of items) {
     const { updateItemStatus, removeItem } = useOfflineQueueStore.getState();
     const name = item.data.name ?? '';
@@ -29,9 +29,12 @@ async function syncTags(items: OfflineQueueItem[], tagMap: NameIdMap): Promise<v
       updateItemStatus(item.id, 'failed', err instanceof Error ? err.message : 'Unknown error');
     }
   }
-}
+};
 
-async function syncCorrespondents(items: OfflineQueueItem[], corrMap: NameIdMap): Promise<void> {
+const syncCorrespondents = async (
+  items: OfflineQueueItem[],
+  corrMap: NameIdMap,
+): Promise<void> => {
   for (const item of items) {
     const { updateItemStatus, removeItem } = useOfflineQueueStore.getState();
     const name = item.data.name ?? '';
@@ -50,9 +53,12 @@ async function syncCorrespondents(items: OfflineQueueItem[], corrMap: NameIdMap)
       updateItemStatus(item.id, 'failed', err instanceof Error ? err.message : 'Unknown error');
     }
   }
-}
+};
 
-async function syncDocumentTypes(items: OfflineQueueItem[], dtMap: NameIdMap): Promise<void> {
+const syncDocumentTypes = async (
+  items: OfflineQueueItem[],
+  dtMap: NameIdMap,
+): Promise<void> => {
   for (const item of items) {
     const { updateItemStatus, removeItem } = useOfflineQueueStore.getState();
     const name = item.data.name ?? '';
@@ -71,14 +77,14 @@ async function syncDocumentTypes(items: OfflineQueueItem[], dtMap: NameIdMap): P
       updateItemStatus(item.id, 'failed', err instanceof Error ? err.message : 'Unknown error');
     }
   }
-}
+};
 
-async function syncDocuments(
+const syncDocuments = async (
   items: OfflineQueueItem[],
   tagMap: NameIdMap,
   corrMap: NameIdMap,
   dtMap: NameIdMap,
-): Promise<void> {
+): Promise<void> => {
   for (const item of items) {
     const { updateItemStatus, removeItem } = useOfflineQueueStore.getState();
     updateItemStatus(item.id, 'syncing');
@@ -154,9 +160,9 @@ async function syncDocuments(
       updateItemStatus(item.id, 'failed', err instanceof Error ? err.message : 'Unknown error');
     }
   }
-}
+};
 
-export async function syncAll(): Promise<void> {
+export const syncAll = async (): Promise<void> => {
   const { items } = useOfflineQueueStore.getState();
   const pending = items.filter((i) => i.status === 'pending' || i.status === 'failed');
 
@@ -185,4 +191,4 @@ export async function syncAll(): Promise<void> {
   if (tagItems.length > 0) await syncTags(tagItems, tagMap);
 
   if (docItems.length > 0) await syncDocuments(docItems, tagMap, corrMap, dtMap);
-}
+};

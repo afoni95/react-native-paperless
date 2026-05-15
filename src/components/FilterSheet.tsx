@@ -38,6 +38,13 @@ export const FilterSheet: React.FC<FilterSheetProps> = ({
 
   const [localFilters, setLocalFilters] = React.useState<FilterState>(filters);
 
+  const clearedFilters: FilterState = {
+    correspondent: null,
+    documentType: null,
+    tags: [],
+    inbox: undefined,
+  };
+
   React.useEffect(() => {
     if (visible) {
       setLocalFilters(filters);
@@ -50,14 +57,8 @@ export const FilterSheet: React.FC<FilterSheetProps> = ({
   };
 
   const handleReset = () => {
-    const cleared: FilterState = {
-      correspondent: null,
-      documentType: null,
-      tags: [],
-      inbox: undefined,
-    };
-    setLocalFilters(cleared);
-    onApply(cleared);
+    setLocalFilters(clearedFilters);
+    onApply(clearedFilters);
     onDismiss();
   };
 

@@ -24,7 +24,7 @@ type EmbeddedEntry = {
 
 type ListEntry = { kind: 'item'; item: OfflineQueueItem } | EmbeddedEntry;
 
-function typeIcon(type: OfflineItemType): string {
+const typeIcon = (type: OfflineItemType): string => {
   switch (type) {
     case 'document':
       return 'file-document';
@@ -35,7 +35,7 @@ function typeIcon(type: OfflineItemType): string {
     case 'documentType':
       return 'file-multiple';
   }
-}
+};
 
 export const PendingSyncScreen: React.FC = () => {
   const theme = useTheme();

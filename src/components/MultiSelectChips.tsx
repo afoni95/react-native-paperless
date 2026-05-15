@@ -21,7 +21,7 @@ interface MultiSelectChipsProps {
 const MAX_VISIBLE = 6;
 
 export const MultiSelectChips: React.FC<MultiSelectChipsProps> = ({
-  chipItems: tags,
+  chipItems,
   selectedIds,
   onSelectionChange,
   label,
@@ -30,11 +30,12 @@ export const MultiSelectChips: React.FC<MultiSelectChipsProps> = ({
   const { t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState('');
   const [expanded, setExpanded] = useState(false);
+  const normalizedQuery = searchQuery.trim().toLowerCase();
 
   const filteredTags = useMemo(() => {
-    if (!searchQuery) return tags;
-    return tags.filter((tag) => tag.name.toLowerCase().includes(searchQuery.toLowerCase()));
-  }, [tags, searchQuery]);
+    if (!normalizedQuery) return chipItems;
+    return chipItems.filter((tag) => tag.name.toLowerCase().includes(normalizedQuery));
+  }, [chipItems, normalizedQuery]);
 
   const visibleTags = useMemo(() => {
     if (expanded) return filteredTags;
@@ -56,11 +57,11 @@ export const MultiSelectChips: React.FC<MultiSelectChipsProps> = ({
 
   return (
     <View style={styles.container}>
-      {!!label && (
+      {!!label ? (
         <Text variant="labelLarge" style={{ color: theme.colors.onSurface, marginBottom: 6 }}>
           {label}
         </Text>
-      )}
+      ) : null}
 
       <Searchbar
         placeholder={t('common.search')}

@@ -31,8 +31,8 @@ export const authApi = {
       if (code) {
         payload.code = code;
       }
-      const response = await apiClient.post<TokenResponse>('/api/token/', payload);
-      return response.data;
+      const { data } = await apiClient.post<TokenResponse>('/api/token/', payload);
+      return data;
     } catch (err) {
       const axiosErr = err as AxiosError<PaperlessApiError>;
       const errors = axiosErr.response?.data?.non_field_errors;

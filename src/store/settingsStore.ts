@@ -46,7 +46,7 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
   },
 }));
 
-async function persistSettings(state: SettingsState) {
+const persistSettings = async (state: SettingsState): Promise<void> => {
   try {
     await AsyncStorage.setItem(
       SETTINGS_KEY,
@@ -58,4 +58,4 @@ async function persistSettings(state: SettingsState) {
   } catch {
     // idk
   }
-}
+};

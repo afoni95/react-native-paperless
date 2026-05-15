@@ -31,6 +31,20 @@ export const CustomFieldEditor: React.FC<CustomFieldEditorProps> = ({
       ? (entry.value as (string | number)[]).map((v) => Number(v)).filter((n) => !Number.isNaN(n))
       : [];
 
+  const handleRemove = () => onRemove(entry.field);
+  const handleTextChange = (value: string) => onChange(entry.field, value);
+  const handleToggleOption = (optionId: string) => {
+    const isSelected = selectValues.includes(optionId);
+    const nextValues = isSelected
+      ? selectValues.filter((id) => id !== optionId)
+      : [...selectValues, optionId];
+    const normalized = nextValues.map((id) => {
+      const parsed = Number.parseInt(id, 10);
+      return Number.isNaN(parsed) ? id : parsed;
+    });
+    onChange(entry.field, normalized.length > 0 ? normalized : '');
+  };
+
   return (
     <View style={[styles.editor, { borderColor: theme.colors.outlineVariant }]}>
       <View style={styles.header}>
@@ -40,7 +54,7 @@ export const CustomFieldEditor: React.FC<CustomFieldEditorProps> = ({
         <IconButton
           icon="close"
           size={18}
-          onPress={() => onRemove(entry.field)}
+          onPress={handleRemove}
           accessibilityLabel={t('documents.removeCustomField')}
         />
       </View>
@@ -60,16 +74,7 @@ export const CustomFieldEditor: React.FC<CustomFieldEditorProps> = ({
               <Chip
                 key={optionId}
                 selected={isSelected}
-                onPress={() => {
-                  const nextValues = isSelected
-                    ? selectValues.filter((id) => id !== optionId)
-                    : [...selectValues, optionId];
-                  const normalized = nextValues.map((id) => {
-                    const parsed = Number.parseInt(id, 10);
-                    return Number.isNaN(parsed) ? id : parsed;
-                  });
-                  onChange(entry.field, normalized.length > 0 ? normalized : '');
-                }}
+                onPress={() => handleToggleOption(optionId)}
                 style={styles.chip}
               >
                 {option.label}
@@ -81,7 +86,7 @@ export const CustomFieldEditor: React.FC<CustomFieldEditorProps> = ({
         <TextInput
           mode="outlined"
           value={Array.isArray(entry.value) ? entry.value.join(', ') : String(entry.value ?? '')}
-          onChangeText={(v) => onChange(entry.field, v)}
+          onChangeText={handleTextChange}
           multiline={fieldDefinition?.data_type === 'longtext'}
           keyboardType={
             fieldDefinition?.data_type === 'integer' || fieldDefinition?.data_type === 'float'

@@ -1,13 +1,13 @@
 import client from './client';
 
-export async function listLogs(): Promise<string[]> {
-  const response = await client.get<string[]>('/api/logs/');
-  return response.data.reverse();
-}
+export const listLogs = async (): Promise<string[]> => {
+  const { data } = await client.get<string[]>('/api/logs/');
+  return data.reverse();
+};
 
-export async function getLog(logId: string, limit?: number): Promise<string[]> {
-  const response = await client.get<string[]>(`/api/logs/${logId}/`, {
+export const getLog = async (logId: string, limit?: number): Promise<string[]> => {
+  const { data } = await client.get<string[]>(`/api/logs/${logId}/`, {
     params: limit ? { limit } : undefined,
   });
-  return response.data.reverse();
-}
+  return data.reverse();
+};

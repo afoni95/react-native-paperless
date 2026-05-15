@@ -28,10 +28,10 @@ export const PermissionMatrix: React.FC<PermissionMatrixProps> = ({
 
   const handlePermissionToggle = (resource: PermissionResource, action: PermissionAction) => {
     const permissionName = buildPermissionName(action, resource);
-    const newPermissions = isPermissionSelected(resource, action)
+    const nextPermissions = isPermissionSelected(resource, action)
       ? selectedPermissions.filter((p) => p !== permissionName)
       : [...selectedPermissions, permissionName];
-    onPermissionsChange(newPermissions);
+    onPermissionsChange(nextPermissions);
   };
 
   return (
