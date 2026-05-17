@@ -40,11 +40,11 @@ interface OfflineQueueState {
 }
 
 let idCounter = 0;
-function generateId(): string {
+const generateId = (): string => {
   const ts = Date.now().toString(36);
   idCounter += 1;
   return `${ts}-${idCounter.toString(36)}-${Math.random().toString(36).slice(2, 7)}`;
-}
+};
 
 export const useOfflineQueueStore = create<OfflineQueueState>((set, get) => ({
   items: [],

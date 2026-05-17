@@ -24,6 +24,7 @@ export const GlobalSearchBar: React.FC<GlobalSearchBarProps> = ({ disabled, plac
   const [isLoading, setIsLoading] = useState(false);
 
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
+  const searchPlaceholder = placeholder ?? t('search.placeholder');
 
   useEffect(() => {
     const fetchSuggestions = async () => {
@@ -93,7 +94,7 @@ export const GlobalSearchBar: React.FC<GlobalSearchBarProps> = ({ disabled, plac
   return (
     <View style={styles.container}>
       <Searchbar
-        placeholder={placeholder ?? t('search.placeholder')}
+        placeholder={searchPlaceholder}
         value={disabled ? '' : searchQuery}
         onChangeText={disabled ? undefined : handleChangeText}
         onSubmitEditing={disabled ? undefined : () => handleSearch(searchQuery)}
@@ -111,7 +112,7 @@ export const GlobalSearchBar: React.FC<GlobalSearchBarProps> = ({ disabled, plac
         clearIcon="close"
       />
 
-      {showSuggestions && suggestions.length > 0 && (
+      {showSuggestions && suggestions.length > 0 ? (
         <Portal>
           <TouchableOpacity
             style={styles.backdrop}
@@ -151,7 +152,7 @@ export const GlobalSearchBar: React.FC<GlobalSearchBarProps> = ({ disabled, plac
                         right={(props) => <List.Icon {...props} icon="arrow-top-left" />}
                         style={styles.suggestionItem}
                       />
-                      {index < suggestions.length - 1 && <Divider />}
+                      {index < suggestions.length - 1 ? <Divider /> : null}
                     </>
                   )}
                   style={styles.suggestionsList}
@@ -160,7 +161,7 @@ export const GlobalSearchBar: React.FC<GlobalSearchBarProps> = ({ disabled, plac
             </View>
           </TouchableOpacity>
         </Portal>
-      )}
+      ) : null}
     </View>
   );
 };

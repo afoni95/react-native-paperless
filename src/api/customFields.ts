@@ -6,39 +6,40 @@ export const customFieldsApi = {
     page?: number;
     page_size?: number;
   }): Promise<PaginatedResponse<CustomField>> => {
-    const response = await apiClient.get<PaginatedResponse<CustomField>>('/api/custom_fields/', {
+    const { data } = await apiClient.get<PaginatedResponse<CustomField>>('/api/custom_fields/', {
       params,
     });
-    return response.data;
+    return data;
   },
 
   getAllCustomFields: async (): Promise<CustomField[]> => {
     const customFieldsList: CustomField[] = [];
     let page = 1;
+    let hasMore = true;
 
-    while (true) {
-      const resp = await customFieldsApi.getCustomFields({ page, page_size: 100 });
-      customFieldsList.push(...resp.results);
-      if (!resp.next) break;
-      page++;
+    while (hasMore) {
+      const { results, next } = await customFieldsApi.getCustomFields({ page, page_size: 100 });
+      customFieldsList.push(...results);
+      hasMore = Boolean(next);
+      page += 1;
     }
 
     return customFieldsList;
   },
 
   getCustomField: async (id: number): Promise<CustomField> => {
-    const response = await apiClient.get<CustomField>(`/api/custom_fields/${id}/`);
-    return response.data;
+    const { data } = await apiClient.get<CustomField>(`/api/custom_fields/${id}/`);
+    return data;
   },
 
   createCustomField: async (data: Partial<CustomField>): Promise<CustomField> => {
-    const response = await apiClient.post<CustomField>('/api/custom_fields/', data);
-    return response.data;
+    const { data: created } = await apiClient.post<CustomField>('/api/custom_fields/', data);
+    return created;
   },
 
   updateCustomField: async (id: number, data: Partial<CustomField>): Promise<CustomField> => {
-    const response = await apiClient.patch<CustomField>(`/api/custom_fields/${id}/`, data);
-    return response.data;
+    const { data: updated } = await apiClient.patch<CustomField>(`/api/custom_fields/${id}/`, data);
+    return updated;
   },
 
   deleteCustomField: async (id: number): Promise<void> => {

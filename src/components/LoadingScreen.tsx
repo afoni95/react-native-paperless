@@ -8,13 +8,14 @@ interface LoadingScreenProps {
 
 export const LoadingScreen: React.FC<LoadingScreenProps> = ({ message }) => {
   const theme = useTheme();
+  const showMessage = Boolean(message);
 
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <ActivityIndicator size="large" color={theme.colors.primary} />
-      {!!message && (
+      {showMessage ? (
         <Text style={[styles.message, { color: theme.colors.onBackground }]}>{message}</Text>
-      )}
+      ) : null}
     </View>
   );
 };

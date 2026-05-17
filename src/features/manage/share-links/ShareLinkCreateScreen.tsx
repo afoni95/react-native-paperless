@@ -123,17 +123,17 @@ export const ShareLinkCreateScreen: React.FC<Props> = ({ route, navigation }) =>
               onChangeText={handleSearch}
               style={styles.searchBar}
             />
-            {searchError && <ErrorBanner message={searchError} />}
-            {isSearching && <LoadingScreen message={t('common.loading')} />}
-            {selectedDocument && (
+            {searchError ? <ErrorBanner message={searchError} /> : null}
+            {isSearching ? <LoadingScreen message={t('common.loading')} /> : null}
+            {selectedDocument ? (
               <View style={styles.selectedRow}>
                 <Text style={{ flex: 1 }}>{selectedDocument.title}</Text>
                 <Button compact onPress={() => setSelectedDocument(null)}>
                   {t('common.cancel')}
                 </Button>
               </View>
-            )}
-            {!selectedDocument && searchResults.length > 0 && (
+            ) : null}
+            {!selectedDocument && searchResults.length > 0 ? (
               <FlatList
                 data={searchResults}
                 keyExtractor={(item) => String(item.id)}
@@ -149,7 +149,7 @@ export const ShareLinkCreateScreen: React.FC<Props> = ({ route, navigation }) =>
                   />
                 )}
               />
-            )}
+            ) : null}
           </>
         )}
 

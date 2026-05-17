@@ -24,6 +24,9 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
   onCancel,
 }) => {
   const { t } = useTranslation();
+  const cancelText = cancelLabel || t('common.cancel');
+  const confirmText = confirmLabel || t('common.confirm');
+  const confirmColor = destructive ? '#d32f2f' : undefined;
 
   return (
     <Portal>
@@ -33,9 +36,9 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
           <Text variant="bodyMedium">{message}</Text>
         </Dialog.Content>
         <Dialog.Actions>
-          <Button onPress={onCancel}>{cancelLabel || t('common.cancel')}</Button>
-          <Button onPress={onConfirm} textColor={destructive ? '#d32f2f' : undefined}>
-            {confirmLabel || t('common.confirm')}
+          <Button onPress={onCancel}>{cancelText}</Button>
+          <Button onPress={onConfirm} textColor={confirmColor}>
+            {confirmText}
           </Button>
         </Dialog.Actions>
       </Dialog>

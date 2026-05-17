@@ -171,14 +171,14 @@ export const DocumentListScreen: React.FC = () => {
           activeOpacity={0.7}
         >
           <View style={styles.rowContainer}>
-            {hasSelections && (
+            {hasSelections ? (
               <View style={styles.checkboxContainer}>
                 <Checkbox
                   status={isSelected ? 'checked' : 'unchecked'}
                   onPress={() => toggleSelection(item.id)}
                 />
               </View>
-            )}
+            ) : null}
             <Card
               style={[
                 styles.card,
@@ -203,33 +203,33 @@ export const DocumentListScreen: React.FC = () => {
                   >
                     {item.title}
                   </Text>
-                  {correspondent && (
+                  {correspondent ? (
                     <Text variant="bodySmall" style={{ color: theme.colors.primary }}>
                       {correspondent.name}
                     </Text>
-                  )}
+                  ) : null}
                   <View style={styles.metaRow}>
-                    {docType && (
+                    {docType ? (
                       <Text variant="labelSmall" style={{ color: theme.colors.onSurfaceVariant }}>
                         {docType.name}
                       </Text>
-                    )}
+                    ) : null}
                     <Text variant="labelSmall" style={{ color: theme.colors.onSurfaceVariant }}>
                       {formatDate(item.created)}
                     </Text>
                   </View>
-                  {docTags.length > 0 && (
+                  {docTags.length > 0 ? (
                     <View style={styles.tagsRow}>
                       {docTags.slice(0, 3).map((tag) => (
                         <TagChip key={tag.id} name={tag.name} color={tag.color} />
                       ))}
-                      {docTags.length > 3 && (
+                      {docTags.length > 3 ? (
                         <Text variant="labelSmall" style={{ color: theme.colors.onSurfaceVariant }}>
                           +{docTags.length - 3}
                         </Text>
-                      )}
+                      ) : null}
                     </View>
-                  )}
+                  ) : null}
                 </View>
               </View>
             </Card>
@@ -292,7 +292,7 @@ export const DocumentListScreen: React.FC = () => {
         <ProcessingIndicator />
       </View>
 
-      {showSortOptions && (
+      {showSortOptions ? (
         <View style={styles.sortOptions}>
           {SORT_OPTIONS.map((opt) => (
             <Chip
@@ -310,9 +310,9 @@ export const DocumentListScreen: React.FC = () => {
             </Chip>
           ))}
         </View>
-      )}
+      ) : null}
 
-      {hasSelections && (
+      {hasSelections ? (
         <View style={[styles.selectionBar, { backgroundColor: theme.colors.surfaceVariant }]}>
           <Text variant="labelLarge" style={{ color: theme.colors.onSurfaceVariant }}>
             {selectedIds.size} {selectedIds.size === 1 ? 'selected' : 'selected'}
@@ -321,7 +321,7 @@ export const DocumentListScreen: React.FC = () => {
             <Button mode="text" onPress={() => setSelectedIds(new Set())} compact>
               Unselect All
             </Button>
-            {can('delete', 'document') && (
+            {can('delete', 'document') ? (
               <Button
                 mode="contained"
                 buttonColor={theme.colors.error}
@@ -333,14 +333,14 @@ export const DocumentListScreen: React.FC = () => {
               >
                 {t('common.delete')}
               </Button>
-            )}
+            ) : null}
           </View>
         </View>
-      )}
+      ) : null}
 
-      {isError && (
+      {isError ? (
         <ErrorBanner message={error?.message ?? t('common.somethingWentWrong')} onRetry={refetch} />
-      )}
+      ) : null}
 
       <FlatList
         data={documents}

@@ -6,10 +6,10 @@ export const documentTypesApi = {
     page?: number;
     page_size?: number;
   }): Promise<PaginatedResponse<DocumentType>> => {
-    const response = await apiClient.get<PaginatedResponse<DocumentType>>('/api/document_types/', {
+    const { data } = await apiClient.get<PaginatedResponse<DocumentType>>('/api/document_types/', {
       params,
     });
-    return response.data;
+    return data;
   },
 
   getAllDocumentTypes: async (): Promise<DocumentType[]> => {
@@ -18,28 +18,34 @@ export const documentTypesApi = {
     let hasMore = true;
 
     while (hasMore) {
-      const response = await documentTypesApi.getDocumentTypes({ page: nextPage, page_size: 100 });
-      results.push(...response.results);
-      hasMore = response.next !== null;
-      nextPage++;
+      const { results: pageResults, next } = await documentTypesApi.getDocumentTypes({
+        page: nextPage,
+        page_size: 100,
+      });
+      results.push(...pageResults);
+      hasMore = next !== null;
+      nextPage += 1;
     }
 
     return results;
   },
 
   getDocumentType: async (id: number): Promise<DocumentType> => {
-    const response = await apiClient.get<DocumentType>(`/api/document_types/${id}/`);
-    return response.data;
+    const { data } = await apiClient.get<DocumentType>(`/api/document_types/${id}/`);
+    return data;
   },
 
   createDocumentType: async (data: Partial<DocumentType>): Promise<DocumentType> => {
-    const response = await apiClient.post<DocumentType>('/api/document_types/', data);
-    return response.data;
+    const { data: created } = await apiClient.post<DocumentType>('/api/document_types/', data);
+    return created;
   },
 
   updateDocumentType: async (id: number, data: Partial<DocumentType>): Promise<DocumentType> => {
-    const response = await apiClient.patch<DocumentType>(`/api/document_types/${id}/`, data);
-    return response.data;
+    const { data: updated } = await apiClient.patch<DocumentType>(
+      `/api/document_types/${id}/`,
+      data,
+    );
+    return updated;
   },
 
   deleteDocumentType: async (id: number): Promise<void> => {

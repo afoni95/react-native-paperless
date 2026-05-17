@@ -197,7 +197,7 @@ export const TagEditScreen: React.FC<Props> = ({ route, navigation }) => {
         </Button>
       </HasPermission>
 
-      {!isNew && (
+      {!isNew ? (
         <HasPermission action="delete" resource="tag">
           <Button
             mode="outlined"
@@ -210,7 +210,7 @@ export const TagEditScreen: React.FC<Props> = ({ route, navigation }) => {
             {t('common.delete')}
           </Button>
         </HasPermission>
-      )}
+      ) : null}
 
       <ConfirmDialog
         visible={showDeleteDialog}

@@ -66,12 +66,12 @@ export const MailRulesListScreen: React.FC = () => {
         style={styles.searchBar}
       />
 
-      {isError && (
+      {isError ? (
         <ErrorBanner
           message={error instanceof Error ? error.message : t('common.somethingWentWrong')}
           onRetry={refetch}
         />
-      )}
+      ) : null}
 
       <FlatList
         data={filteredMailRules}
@@ -114,14 +114,14 @@ export const MailRulesListScreen: React.FC = () => {
         keyboardShouldPersistTaps="handled"
       />
 
-      {canAddMailRule && !isOffline && (
+      {canAddMailRule && !isOffline ? (
         <FAB
           icon="plus"
           style={[styles.fab, { backgroundColor: theme.colors.primary }]}
           color={theme.colors.onPrimary}
           onPress={() => navigation.navigate('MailRuleEdit', {})}
         />
-      )}
+      ) : null}
 
       <ConfirmDialog
         visible={!!deleteTarget}

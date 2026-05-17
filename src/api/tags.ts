@@ -6,37 +6,38 @@ export const tagsApi = {
     page?: number;
     page_size?: number;
   }): Promise<PaginatedResponse<Tag>> => {
-    const response = await apiClient.get<PaginatedResponse<Tag>>('/api/tags/', { params });
-    return response.data;
+    const { data } = await apiClient.get<PaginatedResponse<Tag>>('/api/tags/', { params });
+    return data;
   },
 
   getAllTags: async (): Promise<Tag[]> => {
     const tagsList: Tag[] = [];
     let page = 1;
+    let hasMore = true;
 
-    while (true) {
-      const resp = await tagsApi.getTags({ page, page_size: 100 });
-      tagsList.push(...resp.results);
-      if (!resp.next) break;
-      page++;
+    while (hasMore) {
+      const { results, next } = await tagsApi.getTags({ page, page_size: 100 });
+      tagsList.push(...results);
+      hasMore = Boolean(next);
+      page += 1;
     }
 
     return tagsList;
   },
 
   getTag: async (id: number): Promise<Tag> => {
-    const response = await apiClient.get<Tag>(`/api/tags/${id}/`);
-    return response.data;
+    const { data } = await apiClient.get<Tag>(`/api/tags/${id}/`);
+    return data;
   },
 
   createTag: async (data: Partial<Tag>): Promise<Tag> => {
-    const response = await apiClient.post<Tag>('/api/tags/', data);
-    return response.data;
+    const { data: created } = await apiClient.post<Tag>('/api/tags/', data);
+    return created;
   },
 
   updateTag: async (id: number, data: Partial<Tag>): Promise<Tag> => {
-    const response = await apiClient.patch<Tag>(`/api/tags/${id}/`, data);
-    return response.data;
+    const { data: updated } = await apiClient.patch<Tag>(`/api/tags/${id}/`, data);
+    return updated;
   },
 
   deleteTag: async (id: number): Promise<void> => {

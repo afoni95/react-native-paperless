@@ -339,11 +339,11 @@ export const GlobalSearchResultsScreen: React.FC = () => {
           <Text style={styles.itemTitle} numberOfLines={2}>
             {item.name}
           </Text>
-          {item.subtitle && (
+          {item.subtitle ? (
             <Text style={[styles.itemSubtitle, { color: theme.colors.onSurfaceVariant }]}>
               {item.subtitle}
             </Text>
-          )}
+          ) : null}
           <Text style={[styles.itemType, { color: theme.colors.onSurfaceVariant }]}>
             {t(getTypeTranslationKey(item.type)) || item.type}
           </Text>

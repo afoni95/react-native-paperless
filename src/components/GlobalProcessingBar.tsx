@@ -11,11 +11,11 @@ export const ProcessingIndicator: React.FC = () => {
 
   const { data: allServerTasks } = useAllTasks(true, { refetchInterval: 3000 });
 
-  const processingTasks = (allServerTasks || []).filter(
+  const activeTasks = (allServerTasks || []).filter(
     (task) => task.status === 'PENDING' || task.status === 'STARTED',
   );
 
-  if (processingTasks.length === 0) return null;
+  if (activeTasks.length === 0) return null;
 
   return (
     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
@@ -24,7 +24,7 @@ export const ProcessingIndicator: React.FC = () => {
         variant="labelSmall"
         style={{ color: theme.colors.tertiary, fontSize: 12, fontWeight: '700' }}
       >
-        {t('documents.processingCount', { count: processingTasks.length })}
+        {t('documents.processingCount', { count: activeTasks.length })}
       </Text>
     </View>
   );

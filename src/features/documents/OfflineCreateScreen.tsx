@@ -287,7 +287,7 @@ export const OfflineCreateScreen: React.FC = () => {
             >
               {tagNames.length > 0 ? tagNames.join(', ') : t('documents.noTags')}
             </Button>
-            {tagNames.length > 0 && (
+            {tagNames.length > 0 ? (
               <View style={styles.chipRow}>
                 {tagNames.map((tag) => (
                   <Chip
@@ -300,7 +300,7 @@ export const OfflineCreateScreen: React.FC = () => {
                   </Chip>
                 ))}
               </View>
-            )}
+            ) : null}
 
             <Button
               mode="text"

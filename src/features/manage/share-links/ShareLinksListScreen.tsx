@@ -75,12 +75,12 @@ export const ShareLinksListScreen: React.FC = () => {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      {isError && (
+      {isError ? (
         <ErrorBanner
           message={error instanceof Error ? error.message : t('common.somethingWentWrong')}
           onRetry={refetch}
         />
-      )}
+      ) : null}
 
       <FlatList
         data={sortedLinks}
@@ -118,28 +118,28 @@ export const ShareLinksListScreen: React.FC = () => {
                   iconColor={theme.colors.primary}
                   size={20}
                 />
-                {canDeleteShareLink && (
+                {canDeleteShareLink ? (
                   <IconButton
                     icon="delete"
                     onPress={() => setDeleteTarget(item)}
                     iconColor={theme.colors.error}
                     size={20}
                   />
-                )}
+                ) : null}
               </View>
             )}
           />
         )}
       />
 
-      {canAddShareLink && !isOffline && (
+      {canAddShareLink && !isOffline ? (
         <FAB
           icon="plus"
           style={[styles.fab, { backgroundColor: theme.colors.primary }]}
           onPress={() => navigation.navigate('ShareLinkCreate', {})}
           color={theme.colors.onPrimary}
         />
-      )}
+      ) : null}
 
       <ConfirmDialog
         visible={!!deleteTarget}

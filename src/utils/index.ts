@@ -2,7 +2,7 @@ import type { CustomField, DocumentCustomFieldValue } from '@/types';
 
 type TFunc = (key: string, options?: Record<string, unknown>) => string;
 
-export function formatExpirationRelative(expiration: string | null, t: TFunc): string {
+export const formatExpirationRelative = (expiration: string | null, t: TFunc): string => {
   if (!expiration) return t('shareLinks.noExpiration');
 
   const now = new Date();
@@ -42,9 +42,9 @@ export function formatExpirationRelative(expiration: string | null, t: TFunc): s
     return t('shareLinks.expiresRelativeToday', { time: relativeStr });
   }
   return t('shareLinks.expiresRelativeDate', { date: dateStr, time: relativeStr });
-}
+};
 
-export function formatDate(dateString: string): string {
+export const formatDate = (dateString: string): string => {
   if (!dateString) return '';
   const date = new Date(dateString);
   return date.toLocaleDateString(undefined, {
@@ -52,9 +52,9 @@ export function formatDate(dateString: string): string {
     month: 'short',
     day: 'numeric',
   });
-}
+};
 
-export function formatDateTime(dateString: string): string {
+export const formatDateTime = (dateString: string): string => {
   if (!dateString) return '';
   const date = new Date(dateString);
   return date.toLocaleString(undefined, {
@@ -64,24 +64,26 @@ export function formatDateTime(dateString: string): string {
     hour: '2-digit',
     minute: '2-digit',
   });
-}
+};
 
-export function truncateText(text: string, maxLength: number): string {
+export const truncateText = (text: string, maxLength: number): string => {
   if (!text || text.length <= maxLength) return text;
   return text.substring(0, maxLength) + '...';
-}
+};
 
-export function getDefaultCustomFieldValue(field?: CustomField): DocumentCustomFieldValue['value'] {
+export const getDefaultCustomFieldValue = (
+  field?: CustomField,
+): DocumentCustomFieldValue['value'] => {
   if (!field) return '';
   if (field.data_type === 'boolean') return false;
   if (field.data_type === 'select' || field.data_type === 'documentlink') return [];
   return '';
-}
+};
 
-export function coerceCustomFieldValueForSubmit(
+export const coerceCustomFieldValueForSubmit = (
   value: DocumentCustomFieldValue['value'],
   field?: CustomField,
-): DocumentCustomFieldValue['value'] {
+): DocumentCustomFieldValue['value'] => {
   if (!field) return value;
 
   if (field.data_type === 'boolean') {
@@ -115,9 +117,9 @@ export function coerceCustomFieldValueForSubmit(
   }
 
   return value;
-}
+};
 
-export function sanitizeColor(color: string | null | undefined, fallback = '#e0e0e0'): string {
+export const sanitizeColor = (color: string | null | undefined, fallback = '#e0e0e0'): string => {
   if (!color) return fallback;
   const raw = color.startsWith('#') ? color : '#' + color;
   const digits = raw
@@ -126,9 +128,9 @@ export function sanitizeColor(color: string | null | undefined, fallback = '#e0e
     .slice(0, 6);
   if (digits.length === 0) return fallback;
   return '#' + digits.padEnd(6, '0');
-}
+};
 
-export function getContrastTextColor(hexColor: string): string {
+export const getContrastTextColor = (hexColor: string): string => {
   if (!hexColor) return '#000000';
   const hex = sanitizeColor(hexColor).replace('#', '');
   const r = parseInt(hex.substring(0, 2), 16);
@@ -136,6 +138,6 @@ export function getContrastTextColor(hexColor: string): string {
   const b = parseInt(hex.substring(4, 6), 16);
   const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
   return luminance > 0.5 ? '#000000' : '#ffffff';
-}
+};
 
 export const pauseAsync = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));

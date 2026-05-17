@@ -282,7 +282,7 @@ export const TriggerEditScreen: React.FC<Props> = ({ route, navigation }) => {
             />
           </View>
 
-          {scheduleIsRecurring && (
+          {scheduleIsRecurring ? (
             <TextInput
               label={t('workflows.scheduleRecurringIntervalDays')}
               value={scheduleRecurringIntervalDays}
@@ -291,7 +291,7 @@ export const TriggerEditScreen: React.FC<Props> = ({ route, navigation }) => {
               keyboardType="number-pad"
               style={styles.input}
             />
-          )}
+          ) : null}
 
           <List.Subheader>{t('workflows.scheduleDateField')}</List.Subheader>
           {(() => {
@@ -324,7 +324,7 @@ export const TriggerEditScreen: React.FC<Props> = ({ route, navigation }) => {
             );
           })()}
 
-          {scheduleDateField === 'custom_field' && (
+          {scheduleDateField === 'custom_field' ? (
             <SearchableDropdown
               label={t('workflows.scheduleDateCustomField')}
               items={customFields}
@@ -333,7 +333,7 @@ export const TriggerEditScreen: React.FC<Props> = ({ route, navigation }) => {
               searchable={false}
               onSelect={(id) => setScheduleDateCustomField(id)}
             />
-          )}
+          ) : null}
         </>
       ) : null}
 

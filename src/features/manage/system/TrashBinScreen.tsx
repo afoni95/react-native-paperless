@@ -103,19 +103,19 @@ export const TrashBinScreen: React.FC = () => {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      {isError && (
+      {isError ? (
         <ErrorBanner
           message={error instanceof Error ? error.message : t('trash.loadError')}
           onRetry={refetch}
         />
-      )}
+      ) : null}
 
-      {documents.length > 0 && (
+      {documents.length > 0 ? (
         <View style={[styles.header, { backgroundColor: theme.colors.surfaceVariant }]}>
           <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant }}>
             {documents.length === 1 ? '1 document' : `${documents.length} documents`}
           </Text>
-          {can('delete', 'document') && !isOffline && (
+          {can('delete', 'document') && !isOffline ? (
             <Button
               mode="text"
               textColor={theme.colors.error}
@@ -125,9 +125,9 @@ export const TrashBinScreen: React.FC = () => {
             >
               {t('trash.emptyTrash')}
             </Button>
-          )}
+          ) : null}
         </View>
-      )}
+      ) : null}
 
       <FlatList
         data={documents}
@@ -143,7 +143,7 @@ export const TrashBinScreen: React.FC = () => {
             left={(props) => <List.Icon {...props} icon="file-document-outline" />}
             right={() => (
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-                {can('change', 'document') && (
+                {can('change', 'document') ? (
                   <Button
                     mode="text"
                     compact
@@ -152,8 +152,8 @@ export const TrashBinScreen: React.FC = () => {
                   >
                     {t('trash.restore')}
                   </Button>
-                )}
-                {can('delete', 'document') && (
+                ) : null}
+                {can('delete', 'document') ? (
                   <Button
                     mode="text"
                     textColor={theme.colors.error}
@@ -163,7 +163,7 @@ export const TrashBinScreen: React.FC = () => {
                   >
                     {t('trash.deletePermanently')}
                   </Button>
-                )}
+                ) : null}
               </View>
             )}
             style={styles.listItem}

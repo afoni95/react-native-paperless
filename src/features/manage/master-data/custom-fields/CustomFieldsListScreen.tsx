@@ -65,12 +65,12 @@ export const CustomFieldsListScreen: React.FC = () => {
         style={styles.searchBar}
       />
 
-      {isError && (
+      {isError ? (
         <ErrorBanner
           message={(error as Error)?.message ?? t('common.somethingWentWrong')}
           onRetry={refetch}
         />
-      )}
+      ) : null}
 
       <FlatList
         data={filteredCustomFields}
@@ -118,14 +118,14 @@ export const CustomFieldsListScreen: React.FC = () => {
         keyboardShouldPersistTaps="handled"
       />
 
-      {canAddCustomField && !isOffline && (
+      {canAddCustomField && !isOffline ? (
         <FAB
           icon="plus"
           style={[styles.fab, { backgroundColor: theme.colors.primary }]}
           color={theme.colors.onPrimary}
           onPress={() => navigation.navigate('CustomFieldEdit', {})}
         />
-      )}
+      ) : null}
 
       <ConfirmDialog
         visible={!!deleteTarget}
