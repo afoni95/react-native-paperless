@@ -434,6 +434,7 @@
     "linkCopied": "Link kopiert!",
     "shareLink": "Freigabe-Links",
     "noShareLinks": "Keine Freigabe-Links",
+    "deleteConfirm": "Möchten Sie diesen Freigabe-Link wirklich löschen?",
     "document": "Dokument",
     "inDays_one": "in {{count}} Tag",
     "inDays_other": "in {{count}} Tagen",
