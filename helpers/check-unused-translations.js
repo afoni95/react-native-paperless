@@ -141,8 +141,12 @@ function main() {
   console.log(`${c.bold}Checking translation key usage:${c.reset}\n`);
   console.log(`  ${dim('Scanned')}          ${highlight(sourceFiles.length)} source files`);
   console.log(`  ${dim('Used keys')}         ${highlight(usedKeys.size)} translation keys in code`);
-  console.log(`  ${dim('Partial prefixes')}  ${highlight(partialPrefixes.size)} dynamic key prefixes`);
-  console.log(`  ${dim('Plural base keys')} ${highlight(pluralBaseKeys.size)} count-based plural keys\n`);
+  console.log(
+    `  ${dim('Partial prefixes')}  ${highlight(partialPrefixes.size)} dynamic key prefixes`,
+  );
+  console.log(
+    `  ${dim('Plural base keys')} ${highlight(pluralBaseKeys.size)} count-based plural keys\n`,
+  );
 
   let hasUnused = false;
 
@@ -166,8 +170,12 @@ function main() {
     console.log(`${c.bold}${c.cyan}Locale: ${localeName}${c.reset}`);
     console.log(`  ${dim('Total keys:')}  ${allKeys.length}`);
     console.log(`  ${dim('Used keys:')}   ${ok(allKeys.length - notUsed.length)}`);
-    console.log(`  ${dim('Partial:')}     ${warnings.length > 0 ? warn(warnings.length) : warnings.length} ${dim('(dynamic keys)')}`);
-    console.log(`  ${dim('Unused:')}      ${unused.length > 0 ? err(unused.length) : ok(unused.length)}`);
+    console.log(
+      `  ${dim('Partial:')}     ${warnings.length > 0 ? warn(warnings.length) : warnings.length} ${dim('(dynamic keys)')}`,
+    );
+    console.log(
+      `  ${dim('Unused:')}      ${unused.length > 0 ? err(unused.length) : ok(unused.length)}`,
+    );
 
     if (unused.length) {
       hasUnused = true;
