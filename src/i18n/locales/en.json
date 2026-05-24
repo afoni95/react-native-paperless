@@ -434,6 +434,7 @@
     "linkCopied": "Link copied!",
     "shareLink": "Share Links",
     "noShareLinks": "No share links",
+    "deleteConfirm": "Are you sure you want to delete this share link?",
     "document": "Document",
     "inDays_one": "in {{count}} Day",
     "inDays_other": "in {{count}} Days",

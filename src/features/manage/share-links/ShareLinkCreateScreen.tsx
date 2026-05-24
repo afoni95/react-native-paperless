@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
-import { FlatList, StyleSheet, View } from 'react-native';
-import { Button, Chip, Divider, FAB, List, Searchbar, Text, useTheme } from 'react-native-paper';
+import { FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Button, Card, Chip, Divider, FAB, Searchbar, Text, useTheme } from 'react-native-paper';
 import { useTranslation } from 'react-i18next';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { ErrorBanner, LoadingScreen } from '@/components';
+import { AuthenticatedImage, ErrorBanner, LoadingScreen } from '@/components';
 import { ManageStackParamList } from '@/navigation/types';
 import { useCreateShareLink } from '@/reactQuery';
+import { useDocumentMetadata } from '@/hooks';
 import { useNetworkStore, NetworkStatus } from '@/store/networkStore';
+import { formatDate } from '@/utils';
 import { documentsApi } from '@/api';
 import { Document } from '@/types';
 
@@ -44,6 +46,9 @@ export const ShareLinkCreateScreen: React.FC<Props> = ({ route, navigation }) =>
   const [expiration, setExpiration] = useState<ExpirationOption>('never');
 
   const isDocumentLocked = prefilledDocumentId !== undefined;
+
+  const { correspondentsMap } = useDocumentMetadata();
+  const getThumbUri = (docId: number) => `/api/documents/${docId}/thumb/`;
 
   const createMutation = useCreateShareLink({
     onSuccess: () => {
@@ -138,16 +143,54 @@ export const ShareLinkCreateScreen: React.FC<Props> = ({ route, navigation }) =>
                 data={searchResults}
                 keyExtractor={(item) => String(item.id)}
                 style={styles.resultsList}
-                renderItem={({ item }) => (
-                  <List.Item
-                    title={item.title}
-                    onPress={() => {
-                      setSelectedDocument(item);
-                      setSearchResults([]);
-                      setSearchQuery('');
-                    }}
-                  />
-                )}
+                renderItem={({ item }) => {
+                  const correspondent = item.correspondent
+                    ? correspondentsMap.get(item.correspondent)
+                    : null;
+                  return (
+                    <TouchableOpacity
+                      activeOpacity={0.7}
+                      onPress={() => {
+                        setSelectedDocument(item);
+                        setSearchResults([]);
+                        setSearchQuery('');
+                      }}
+                    >
+                      <Card style={styles.resultCard}>
+                        <View style={styles.cardContent}>
+                          <AuthenticatedImage
+                            uri={getThumbUri(item.id)}
+                            style={styles.thumbnail}
+                            resizeMode="cover"
+                          />
+                          <View style={styles.cardInfo}>
+                            <Text
+                              variant="titleSmall"
+                              numberOfLines={2}
+                              style={{ color: theme.colors.onSurface }}
+                            >
+                              {item.title}
+                            </Text>
+                            {correspondent ? (
+                              <Text
+                                variant="bodySmall"
+                                style={{ color: theme.colors.primary }}
+                              >
+                                {correspondent.name}
+                              </Text>
+                            ) : null}
+                            <Text
+                              variant="labelSmall"
+                              style={{ color: theme.colors.onSurfaceVariant, marginTop: 4 }}
+                            >
+                              {formatDate(item.created)}
+                            </Text>
+                          </View>
+                        </View>
+                      </Card>
+                    </TouchableOpacity>
+                  );
+                }}
               />
             ) : null}
           </>
@@ -193,6 +236,7 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     padding: 16,
+    paddingBottom: 88,
   },
   label: {
     marginBottom: 8,
@@ -201,7 +245,27 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   resultsList: {
-    maxHeight: 200,
+    flex: 1,
+  },
+  resultCard: {
+    marginBottom: 8,
+    borderRadius: 12,
+  },
+  cardContent: {
+    flexDirection: 'row',
+    padding: 12,
+    height: 110,
+  },
+  thumbnail: {
+    width: 60,
+    height: 80,
+    borderRadius: 6,
+    backgroundColor: '#e0e0e0',
+  },
+  cardInfo: {
+    flex: 1,
+    marginLeft: 12,
+    justifyContent: 'flex-start',
   },
   selectedRow: {
     flexDirection: 'row',
