@@ -44,11 +44,14 @@ npm run android:build
 # Run linter with auto fix
 npm run lint:fix
 
-# Run type check
-npm run typecheck
+# Type check
+npm run ci:typecheck
 
-# Run i18n check
-npm run i18n:unused
+# Check unused i18n translations
+npm run ci:i18n
+
+# Check version sync
+npm run ci:version
 ```
 
 ## Roadmap
