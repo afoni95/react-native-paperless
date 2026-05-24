@@ -15,39 +15,40 @@ export const mailAccountsApi = {
     page?: number;
     page_size?: number;
   }): Promise<PaginatedResponse<MailAccount>> => {
-    const response = await apiClient.get<PaginatedResponse<MailAccount>>('/api/mail_accounts/', {
+    const { data } = await apiClient.get<PaginatedResponse<MailAccount>>('/api/mail_accounts/', {
       params,
     });
-    return response.data;
+    return data;
   },
 
   getAllMailAccounts: async (): Promise<MailAccount[]> => {
     const mailAccountsList: MailAccount[] = [];
     let page = 1;
+    let hasMore = true;
 
-    while (true) {
-      const resp = await mailAccountsApi.getMailAccounts({ page, page_size: 100 });
-      mailAccountsList.push(...resp.results);
-      if (!resp.next) break;
-      page++;
+    while (hasMore) {
+      const { results, next } = await mailAccountsApi.getMailAccounts({ page, page_size: 100 });
+      mailAccountsList.push(...results);
+      hasMore = Boolean(next);
+      page += 1;
     }
 
     return mailAccountsList;
   },
 
   getMailAccount: async (id: number): Promise<MailAccount> => {
-    const response = await apiClient.get<MailAccount>(`/api/mail_accounts/${id}/`);
-    return response.data;
+    const { data } = await apiClient.get<MailAccount>(`/api/mail_accounts/${id}/`);
+    return data;
   },
 
   createMailAccount: async (data: MailAccountCreatePayload): Promise<MailAccount> => {
-    const response = await apiClient.post<MailAccount>('/api/mail_accounts/', data);
-    return response.data;
+    const { data: created } = await apiClient.post<MailAccount>('/api/mail_accounts/', data);
+    return created;
   },
 
   updateMailAccount: async (id: number, data: MailAccountUpdatePayload): Promise<MailAccount> => {
-    const response = await apiClient.patch<MailAccount>(`/api/mail_accounts/${id}/`, data);
-    return response.data;
+    const { data: updated } = await apiClient.patch<MailAccount>(`/api/mail_accounts/${id}/`, data);
+    return updated;
   },
 
   deleteMailAccount: async (id: number): Promise<void> => {
@@ -55,10 +56,10 @@ export const mailAccountsApi = {
   },
 
   processMailAccount: async (id: number): Promise<ProcessMailAccountResponse> => {
-    const response = await apiClient.post<ProcessMailAccountResponse>(
+    const { data } = await apiClient.post<ProcessMailAccountResponse>(
       `/api/mail_accounts/${id}/process/`,
       {},
     );
-    return response.data;
+    return data;
   },
 };

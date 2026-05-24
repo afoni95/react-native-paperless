@@ -21,7 +21,7 @@ interface MultiSelectChipsProps {
 const MAX_VISIBLE = 6;
 
 export const MultiSelectChips: React.FC<MultiSelectChipsProps> = ({
-  chipItems: tags,
+  chipItems,
   selectedIds,
   onSelectionChange,
   label,
@@ -30,21 +30,22 @@ export const MultiSelectChips: React.FC<MultiSelectChipsProps> = ({
   const { t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState('');
   const [expanded, setExpanded] = useState(false);
+  const normalizedQuery = searchQuery.trim().toLowerCase();
 
-  const filteredTags = useMemo(() => {
-    if (!searchQuery) return tags;
-    return tags.filter((tag) => tag.name.toLowerCase().includes(searchQuery.toLowerCase()));
-  }, [tags, searchQuery]);
+  const filteredChips = useMemo(() => {
+    if (!normalizedQuery) return chipItems;
+    return chipItems.filter((tag) => tag.name.toLowerCase().includes(normalizedQuery));
+  }, [chipItems, normalizedQuery]);
 
-  const visibleTags = useMemo(() => {
-    if (expanded) return filteredTags;
-    // Prefer selected tags first, then fill with non-selected until MAX_VISIBLE.
-    const selectedInFiltered = filteredTags.filter((tag) => selectedIds.includes(tag.id));
-    const nonSelected = filteredTags.filter((tag) => !selectedIds.includes(tag.id));
+  const visibleChips = useMemo(() => {
+    if (expanded) return filteredChips;
+    // Prefer selected chips first, then fill with non-selected until MAX_VISIBLE.
+    const selectedInFiltered = filteredChips.filter((tag) => selectedIds.includes(tag.id));
+    const nonSelected = filteredChips.filter((tag) => !selectedIds.includes(tag.id));
     return [...selectedInFiltered, ...nonSelected].slice(0, MAX_VISIBLE);
-  }, [filteredTags, expanded, selectedIds]);
+  }, [filteredChips, expanded, selectedIds]);
 
-  const extraCount = Math.max(0, filteredTags.length - visibleTags.length);
+  const extraCount = Math.max(0, filteredChips.length - visibleChips.length);
 
   const handleToggle = (id: number) => {
     if (selectedIds.includes(id)) {
@@ -56,11 +57,11 @@ export const MultiSelectChips: React.FC<MultiSelectChipsProps> = ({
 
   return (
     <View style={styles.container}>
-      {!!label && (
+      {!!label ? (
         <Text variant="labelLarge" style={{ color: theme.colors.onSurface, marginBottom: 6 }}>
           {label}
         </Text>
-      )}
+      ) : null}
 
       <Searchbar
         placeholder={t('common.search')}
@@ -75,7 +76,7 @@ export const MultiSelectChips: React.FC<MultiSelectChipsProps> = ({
         nestedScrollEnabled
       >
         <View style={styles.chipWrap}>
-          {visibleTags.map((tag) => {
+          {visibleChips.map((tag) => {
             const isSelected = selectedIds.includes(tag.id);
             return (
               <Chip
@@ -119,7 +120,7 @@ export const MultiSelectChips: React.FC<MultiSelectChipsProps> = ({
             </Chip>
           ) : null}
 
-          {expanded && filteredTags.length > MAX_VISIBLE ? (
+          {expanded && filteredChips.length > MAX_VISIBLE ? (
             <Chip
               mode="outlined"
               onPress={() => setExpanded(false)}

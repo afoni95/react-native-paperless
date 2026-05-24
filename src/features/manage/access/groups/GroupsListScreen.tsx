@@ -29,8 +29,8 @@ export const GroupsListScreen: React.FC = () => {
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <List.Section>
-        {isLoading && <List.Item title={t('common.loading')} />}
-        {isError && <List.Item title={t('common.error')} />}
+        {isLoading ? <List.Item title={t('common.loading')} /> : null}
+        {isError ? <List.Item title={t('common.error')} /> : null}
         {data?.results.map((group) => (
           <List.Item
             key={group.id}
@@ -43,14 +43,14 @@ export const GroupsListScreen: React.FC = () => {
           />
         ))}
       </List.Section>
-      {canAddGroup && !isOffline && (
+      {canAddGroup && !isOffline ? (
         <FAB
           style={styles.fab}
           icon="plus"
           onPress={() => navigation.navigate('GroupEdit', {})}
           color={theme.colors.onPrimary}
         />
-      )}
+      ) : null}
     </View>
   );
 };

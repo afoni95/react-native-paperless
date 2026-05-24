@@ -200,7 +200,7 @@ export const UploadScreen: React.FC = () => {
               </Button>
             </View>
 
-            {selectedFile && (
+            {selectedFile ? (
               <View style={styles.selectedFile}>
                 <Text variant="bodyMedium" style={{ color: theme.colors.primary }}>
                   {selectedFile.name}
@@ -209,16 +209,16 @@ export const UploadScreen: React.FC = () => {
                   {selectedFile.type}
                 </Text>
               </View>
-            )}
+            ) : null}
 
-            {!selectedFile && (
+            {!selectedFile ? (
               <Text
                 variant="bodyMedium"
                 style={[styles.noFile, { color: theme.colors.onSurfaceVariant }]}
               >
                 {t('upload.noFileSelected')}
               </Text>
-            )}
+            ) : null}
           </Card.Content>
         </Card>
 
@@ -252,11 +252,11 @@ export const UploadScreen: React.FC = () => {
         />
 
         {/* Upload section */}
-        {uploadMutation.isPending && (
+        {uploadMutation.isPending ? (
           <ProgressBar indeterminate color={theme.colors.primary} style={styles.progress} />
-        )}
+        ) : null}
 
-        {canAddDocument && (
+        {canAddDocument ? (
           <Button
             mode="contained"
             icon="upload"
@@ -291,7 +291,7 @@ export const UploadScreen: React.FC = () => {
           >
             {uploadMutation.isPending ? t('upload.uploading') : t('upload.upload')}
           </Button>
-        )}
+        ) : null}
       </ScrollView>
 
       {/* Toast snackbar for success / failure */}

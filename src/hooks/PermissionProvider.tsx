@@ -46,7 +46,7 @@ export const PermissionProvider: React.FC<{
   );
 };
 
-export function usePermissionContext(): PermissionContextValue {
+export const usePermissionContext = (): PermissionContextValue => {
   const ctx = React.useContext(PermissionContext);
   if (!ctx) {
     return {
@@ -60,4 +60,4 @@ export function usePermissionContext(): PermissionContextValue {
     };
   }
   return ctx;
-}
+};

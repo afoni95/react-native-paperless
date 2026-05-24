@@ -135,7 +135,7 @@ export const DocumentTypeEditScreen: React.FC<Props> = ({ route, navigation }) =
         </Button>
       </HasPermission>
 
-      {!isNew && (
+      {!isNew ? (
         <HasPermission action="delete" resource="documenttype">
           <Button
             mode="outlined"
@@ -148,7 +148,7 @@ export const DocumentTypeEditScreen: React.FC<Props> = ({ route, navigation }) =
             {t('common.delete')}
           </Button>
         </HasPermission>
-      )}
+      ) : null}
 
       <ConfirmDialog
         visible={showDeleteDialog}

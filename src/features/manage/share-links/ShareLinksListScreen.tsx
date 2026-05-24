@@ -9,7 +9,7 @@ import * as Clipboard from 'expo-clipboard';
 import { ConfirmDialog, EmptyState, ErrorBanner, LoadingScreen } from '@/components';
 import { usePermissionContext } from '@/hooks/PermissionProvider';
 import { ManageStackParamList } from '@/navigation/types';
-import { useAllShareLinks, useDeleteShareLink } from '@/reactQuery';
+import { useAllShareLinks, useDeleteShareLink, useLinkedDocuments, useAllCorrespondents } from '@/reactQuery';
 import { ShareLink } from '@/types';
 import { useNetworkStore, NetworkStatus } from '@/store/networkStore';
 import { useOfflineNavigationTitle } from '@/hooks/useOfflineNavigationTitle';
@@ -69,18 +69,42 @@ export const ShareLinksListScreen: React.FC = () => {
     return [...shareLinks].sort((a, b) => a.id - b.id);
   }, [shareLinks]);
 
+  const documentIds = useMemo(
+    () => [...new Set((shareLinks ?? []).map((l) => l.document))],
+    [shareLinks],
+  );
+
+  const { data: linkedDocumentsData } = useLinkedDocuments(documentIds);
+  const { data: correspondents } = useAllCorrespondents();
+
+  const docMap = useMemo(() => {
+    const map: Record<number, { title: string; correspondent: number | null }> = {};
+    for (const doc of linkedDocumentsData?.results ?? []) {
+      map[doc.id] = { title: doc.title, correspondent: doc.correspondent };
+    }
+    return map;
+  }, [linkedDocumentsData]);
+
+  const corrMap = useMemo(() => {
+    const map: Record<number, string> = {};
+    for (const c of correspondents ?? []) {
+      map[c.id] = c.name;
+    }
+    return map;
+  }, [correspondents]);
+
   if (isLoading) {
     return <LoadingScreen message={t('common.loading')} />;
   }
 
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      {isError && (
+      {isError ? (
         <ErrorBanner
           message={error instanceof Error ? error.message : t('common.somethingWentWrong')}
           onRetry={refetch}
         />
-      )}
+      ) : null}
 
       <FlatList
         data={sortedLinks}
@@ -93,12 +117,18 @@ export const ShareLinksListScreen: React.FC = () => {
           />
         }
         ListEmptyComponent={<EmptyState message={t('shareLinks.noShareLinks')} />}
-        renderItem={({ item }) => (
+        renderItem={({ item }) => {
+          const doc = docMap[item.document];
+          const correspondentName =
+            doc?.correspondent != null
+              ? (corrMap[doc.correspondent] ?? t('common.unknown'))
+              : t('shareLinks.noCorrespondent');
+          return (
           <List.Item
-            title={`${t('shareLinks.document')} #${item.document}`}
+            title={doc?.title ?? `${t('shareLinks.document')} #${item.document}`}
             description={
               <View>
-                <Text style={styles.metaText}>{getPublicUrl(item.slug)}</Text>
+                <Text style={styles.metaText}>{correspondentName}</Text>
                 <Text style={styles.metaText}>
                   {t('shareLinks.expiration')}: {formatExpiration(item.expiration, t)}
                 </Text>
@@ -118,28 +148,29 @@ export const ShareLinksListScreen: React.FC = () => {
                   iconColor={theme.colors.primary}
                   size={20}
                 />
-                {canDeleteShareLink && (
+                {canDeleteShareLink ? (
                   <IconButton
                     icon="delete"
                     onPress={() => setDeleteTarget(item)}
                     iconColor={theme.colors.error}
                     size={20}
                   />
-                )}
+                ) : null}
               </View>
             )}
           />
-        )}
+          );
+        }}
       />
 
-      {canAddShareLink && !isOffline && (
+      {canAddShareLink && !isOffline ? (
         <FAB
           icon="plus"
           style={[styles.fab, { backgroundColor: theme.colors.primary }]}
           onPress={() => navigation.navigate('ShareLinkCreate', {})}
           color={theme.colors.onPrimary}
         />
-      )}
+      ) : null}
 
       <ConfirmDialog
         visible={!!deleteTarget}

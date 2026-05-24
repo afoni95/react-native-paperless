@@ -192,11 +192,11 @@ export const DocumentDetailScreen: React.FC<Props> = ({ route, navigation }) => 
             </>
           ) : (
             <>
-              {allowEdit && (
+              {allowEdit ? (
                 <Button mode="outlined" icon="pencil" onPress={startEditing}>
                   {t('common.edit')}
                 </Button>
-              )}
+              ) : null}
               <View style={styles.iconActions}>
                 <IconButton
                   icon="file-pdf-box"
@@ -232,20 +232,20 @@ export const DocumentDetailScreen: React.FC<Props> = ({ route, navigation }) => 
                     }
                   }}
                 />
-                {can('view', 'sharelink') && (
+                {can('view', 'sharelink') ? (
                   <IconButton
                     icon="share-variant"
                     iconColor={theme.colors.primary}
                     onPress={() => setShareLinksVisible(true)}
                   />
-                )}
-                {allowDelete && (
+                ) : null}
+                {allowDelete ? (
                   <IconButton
                     icon="delete"
                     iconColor={theme.colors.error}
                     onPress={() => setShowDeleteDialog(true)}
                   />
-                )}
+                ) : null}
               </View>
             </>
           )}

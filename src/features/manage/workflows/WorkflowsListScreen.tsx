@@ -154,13 +154,13 @@ export const WorkflowsListScreen: React.FC<Props> = ({ navigation }) => {
         )}
       />
 
-      {can('add', 'workflow') && !isOffline && (
+      {can('add', 'workflow') && !isOffline ? (
         <FAB
           icon="plus"
           style={[styles.fab, { bottom: 2, right: 2 }]}
           onPress={() => navigation.navigate('WorkflowEdit', { workflowId: undefined })}
         />
-      )}
+      ) : null}
 
       <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)}>
         {snackbarMessage}

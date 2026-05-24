@@ -17,6 +17,13 @@ export const AuthenticatedImage: React.FC<AuthenticatedImageProps> = ({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
+  const buildDataUri = (buffer: ArrayBuffer, contentType: string) => {
+    const base64 = btoa(
+      new Uint8Array(buffer).reduce((data, byte) => data + String.fromCharCode(byte), ''),
+    );
+    return `data:${contentType};base64,${base64}`;
+  };
+
   useEffect(() => {
     let isMounted = true;
 
@@ -25,23 +32,11 @@ export const AuthenticatedImage: React.FC<AuthenticatedImageProps> = ({
         setLoading(true);
         setError(false);
 
-        const response = await apiClient.get(uri, {
-          responseType: 'arraybuffer',
-        });
+        const response = await apiClient.get(uri, { responseType: 'arraybuffer' });
 
         if (isMounted) {
-          // arraybuffer -> base64 string
-          const base64 = btoa(
-            new Uint8Array(response.data).reduce(
-              (data, byte) => data + String.fromCharCode(byte),
-              '',
-            ),
-          );
-
           const contentType = response.headers['content-type'] || 'image/png';
-          const dataUri = `data:${contentType};base64,${base64}`;
-
-          setImageData(dataUri);
+          setImageData(buildDataUri(response.data, contentType));
           setLoading(false);
         }
       } catch (err) {

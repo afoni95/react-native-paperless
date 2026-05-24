@@ -60,24 +60,21 @@ export const DocumentLinkEditor: React.FC<DocumentLinkEditorProps> = ({ value, o
   const { t } = useTranslation();
   const [search, setSearch] = useState('');
   const debouncedSearch = useDebounce(search, 300);
+  const hasSearch = debouncedSearch.trim().length > 0;
 
   const { data: searchResults, isFetching } = useDocuments(
     { query: debouncedSearch, page_size: 10, truncate_content: true },
-    debouncedSearch.trim().length > 0,
+    hasSearch,
   );
 
   const { data: linkedDocs } = useLinkedDocuments(value);
 
   const handleAdd = (docId: number) => {
-    if (!value.includes(docId)) {
-      onChange([...value, docId]);
-    }
+    if (!value.includes(docId)) onChange([...value, docId]);
     setSearch('');
   };
 
-  const handleRemove = (docId: number) => {
-    onChange(value.filter((id) => id !== docId));
-  };
+  const handleRemove = (docId: number) => onChange(value.filter((id) => id !== docId));
 
   const filteredResults = (searchResults?.results ?? []).filter((doc) => !value.includes(doc.id));
 
@@ -91,7 +88,7 @@ export const DocumentLinkEditor: React.FC<DocumentLinkEditorProps> = ({ value, o
 
   return (
     <View>
-      {value.length > 0 && (
+      {value.length > 0 ? (
         <View style={styles.chipsRow}>
           {value
             .map((id) => docsById.get(id))
@@ -100,7 +97,7 @@ export const DocumentLinkEditor: React.FC<DocumentLinkEditorProps> = ({ value, o
               <DocumentChip key={doc.id} doc={doc} onRemove={() => handleRemove(doc.id)} />
             ))}
         </View>
-      )}
+      ) : null}
 
       <Searchbar
         placeholder={t('documents.search')}
@@ -111,7 +108,7 @@ export const DocumentLinkEditor: React.FC<DocumentLinkEditorProps> = ({ value, o
         elevation={0}
       />
 
-      {debouncedSearch.trim().length > 0 && (
+      {hasSearch ? (
         <View
           style={[
             styles.results,
@@ -140,7 +137,7 @@ export const DocumentLinkEditor: React.FC<DocumentLinkEditorProps> = ({ value, o
             </ScrollView>
           )}
         </View>
-      )}
+      ) : null}
     </View>
   );
 };

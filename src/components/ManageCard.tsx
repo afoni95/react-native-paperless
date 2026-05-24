@@ -19,6 +19,8 @@ export const ManageCard: React.FC<ManageCardProps> = ({
   onPress,
 }) => {
   const theme = useTheme();
+  const iconName = icon as React.ComponentProps<typeof MaterialCommunityIcons>['name'];
+  const showSubtitle = Boolean(subtitle);
   return (
     <Surface
       style={[styles.surface, { backgroundColor: theme.colors.elevation.level2 }]}
@@ -27,17 +29,13 @@ export const ManageCard: React.FC<ManageCardProps> = ({
       <TouchableRipple onPress={onPress} style={styles.ripple} borderless>
         <View style={styles.content}>
           <View style={[styles.iconCircle, { backgroundColor: theme.colors.primary }]}>
-            <MaterialCommunityIcons
-              name={icon as React.ComponentProps<typeof MaterialCommunityIcons>['name']}
-              size={22}
-              color={theme.colors.onPrimary}
-            />
+            <MaterialCommunityIcons name={iconName} size={22} color={theme.colors.onPrimary} />
           </View>
           <View style={styles.textContainer}>
             <Text variant="bodyLarge" style={{ color: theme.colors.onSurface }}>
               {title}
             </Text>
-            {subtitle ? (
+            {showSubtitle ? (
               <Text
                 variant="bodySmall"
                 style={[{ color: theme.colors.onSurfaceVariant }, subtitleStyle]}

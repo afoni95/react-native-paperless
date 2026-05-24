@@ -29,8 +29,8 @@ export const UsersListScreen: React.FC = () => {
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <List.Section>
-        {isLoading && <List.Item title={t('common.loading')} />}
-        {isError && <List.Item title={t('common.error')} />}
+        {isLoading ? <List.Item title={t('common.loading')} /> : null}
+        {isError ? <List.Item title={t('common.error')} /> : null}
         {data?.results.map((user) => (
           <List.Item
             key={user.id}
@@ -44,14 +44,14 @@ export const UsersListScreen: React.FC = () => {
           />
         ))}
       </List.Section>
-      {canAddUser && !isOffline && (
+      {canAddUser && !isOffline ? (
         <FAB
           style={styles.fab}
           icon="plus"
           onPress={() => navigation.navigate('UserEdit', {})}
           color={theme.colors.onPrimary}
         />
-      )}
+      ) : null}
     </View>
   );
 };

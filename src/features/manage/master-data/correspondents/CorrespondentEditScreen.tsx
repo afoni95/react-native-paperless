@@ -136,7 +136,7 @@ export const CorrespondentEditScreen: React.FC<Props> = ({ route, navigation }) 
         </Button>
       </HasPermission>
 
-      {!isNew && (
+      {!isNew ? (
         <HasPermission action="delete" resource="correspondent">
           <Button
             mode="outlined"
@@ -149,7 +149,7 @@ export const CorrespondentEditScreen: React.FC<Props> = ({ route, navigation }) 
             {t('common.delete')}
           </Button>
         </HasPermission>
-      )}
+      ) : null}
 
       <ConfirmDialog
         visible={showDeleteDialog}

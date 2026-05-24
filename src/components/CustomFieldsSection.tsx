@@ -32,12 +32,15 @@ export const CustomFieldsSection: React.FC<CustomFieldsSectionProps> = ({
   const { t } = useTranslation();
   const theme = useTheme();
 
+  const availableItems = availableFields.map((field) => ({ id: field.id, name: field.name }));
+  const showEmptyState = customFields.length === 0;
+
   return (
     <>
       <View style={styles.addRow}>
         <View style={styles.addDropdown}>
           <SearchableDropdown
-            items={availableFields.map((field) => ({ id: field.id, name: field.name }))}
+            items={availableItems}
             selectedId={fieldToAdd}
             onSelect={onFieldToAddChange}
             placeholder={t('documents.selectCustomField')}
@@ -48,11 +51,11 @@ export const CustomFieldsSection: React.FC<CustomFieldsSectionProps> = ({
         </Button>
       </View>
 
-      {customFields.length === 0 && (
+      {showEmptyState ? (
         <Text variant="bodyMedium" style={{ color: theme.colors.onSurfaceVariant }}>
           {t('documents.noCustomFieldsSet')}
         </Text>
-      )}
+      ) : null}
 
       {customFields.map((entry) => (
         <CustomFieldEditor

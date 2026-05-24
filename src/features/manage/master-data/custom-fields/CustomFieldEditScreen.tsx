@@ -105,7 +105,7 @@ export const CustomFieldEditScreen: React.FC<Props> = ({ route, navigation }) =>
         </Button>
       </HasPermission>
 
-      {!isNew && (
+      {!isNew ? (
         <HasPermission action="delete" resource="customfield">
           <Button
             mode="outlined"
@@ -118,7 +118,7 @@ export const CustomFieldEditScreen: React.FC<Props> = ({ route, navigation }) =>
             {t('common.delete')}
           </Button>
         </HasPermission>
-      )}
+      ) : null}
 
       <ConfirmDialog
         visible={showDeleteDialog}

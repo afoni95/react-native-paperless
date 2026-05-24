@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useNetworkStore, NetworkStatus } from '@/store/networkStore';
 import React from 'react';
 
-export function useOfflineNavigationTitle(title: string) {
+export const useOfflineNavigationTitle = (title: string) => {
   const navigation = useNavigation();
   const { status } = useNetworkStore();
   const theme = useTheme();
@@ -33,7 +33,7 @@ export function useOfflineNavigationTitle(title: string) {
       navigation.setOptions({ headerTitle: title });
     }
   }, [status, title, navigation, theme, t]);
-}
+};
 
 const styles = StyleSheet.create({
   headerContainer: {
