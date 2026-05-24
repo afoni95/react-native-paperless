@@ -11,17 +11,18 @@ interface ErrorBannerProps {
 export const ErrorBanner: React.FC<ErrorBannerProps> = ({ message, onRetry }) => {
   const theme = useTheme();
   const { t } = useTranslation();
+  const resolvedMessage = message || t('common.error');
 
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.errorContainer }]}>
       <Text style={[styles.message, { color: theme.colors.onErrorContainer }]}>
-        {message || t('common.error')}
+        {resolvedMessage}
       </Text>
-      {onRetry && (
+      {onRetry ? (
         <Button mode="text" onPress={onRetry} textColor={theme.colors.error}>
           {t('common.retry')}
         </Button>
-      )}
+      ) : null}
     </View>
   );
 };

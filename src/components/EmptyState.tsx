@@ -11,6 +11,7 @@ interface EmptyStateProps {
 export const EmptyState: React.FC<EmptyStateProps> = ({ message }) => {
   const theme = useTheme();
   const { t } = useTranslation();
+  const resolvedMessage = message || t('common.noResults');
 
   return (
     <View style={styles.container}>
@@ -21,7 +22,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({ message }) => {
         style={{ marginBottom: 16 }}
       />
       <Text style={[styles.message, { color: theme.colors.onSurfaceVariant }]}>
-        {message || t('common.noResults')}
+        {resolvedMessage}
       </Text>
     </View>
   );

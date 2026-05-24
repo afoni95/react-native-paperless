@@ -31,6 +31,8 @@ export const ShareLinksSheet: React.FC<ShareLinksSheetProps> = ({
   const { serverUrl } = useAuthStore();
   const navigation = useNavigation<BottomTabNavigationProp<MainTabsParamList>>();
 
+  const publicBaseUrl = serverUrl.replace(/\/+$/, '');
+
   const [copiedSlug, setCopiedSlug] = React.useState<string | null>(null);
 
   const { data: allShareLinks, isLoading } = useAllShareLinks(visible);
@@ -42,10 +44,7 @@ export const ShareLinksSheet: React.FC<ShareLinksSheetProps> = ({
     [allShareLinks, documentId],
   );
 
-  const getPublicUrl = (slug: string) => {
-    const base = serverUrl.replace(/\/+$/, '');
-    return `${base}/share/${slug}`;
-  };
+  const getPublicUrl = (slug: string) => `${publicBaseUrl}/share/${slug}`;
 
   const handleCopy = async (slug: string) => {
     await Clipboard.setStringAsync(getPublicUrl(slug));
@@ -117,14 +116,14 @@ export const ShareLinksSheet: React.FC<ShareLinksSheetProps> = ({
                     onPress={() => handleShare(link.slug)}
                     iconColor={theme.colors.primary}
                   />
-                  {canDelete && (
+                  {canDelete ? (
                     <IconButton
                       icon="delete"
                       size={20}
                       onPress={() => deleteMutation.mutate(link.id)}
                       iconColor={theme.colors.error}
                     />
-                  )}
+                  ) : null}
                 </View>
               </View>
             ))
@@ -133,13 +132,13 @@ export const ShareLinksSheet: React.FC<ShareLinksSheetProps> = ({
 
         <Divider />
 
-        {canAdd && (
+        {canAdd ? (
           <View style={styles.footer}>
             <Button mode="contained" onPress={handleCreateNew} icon="plus">
               {t('shareLinks.createShareLink')}
             </Button>
           </View>
-        )}
+        ) : null}
       </View>
     </Modal>
   );

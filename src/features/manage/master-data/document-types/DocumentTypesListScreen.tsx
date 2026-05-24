@@ -86,12 +86,12 @@ export const DocumentTypesListScreen: React.FC = () => {
         style={styles.searchBar}
       />
 
-      {isError && (
+      {isError ? (
         <ErrorBanner
           message={error instanceof Error ? error.message : t('common.somethingWentWrong')}
           onRetry={refetch}
         />
-      )}
+      ) : null}
 
       <FlatList
         data={filteredItems}
@@ -168,14 +168,14 @@ export const DocumentTypesListScreen: React.FC = () => {
         keyboardShouldPersistTaps="handled"
       />
 
-      {canAddDocumentType && (
+      {canAddDocumentType ? (
         <FAB
           icon="plus"
           style={[styles.fab, { backgroundColor: theme.colors.primary }]}
           color={theme.colors.onPrimary}
           onPress={() => navigation.navigate('DocumentTypeEdit', {})}
         />
-      )}
+      ) : null}
 
       <ConfirmDialog
         visible={!!deleteTarget}

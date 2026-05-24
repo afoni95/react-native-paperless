@@ -165,7 +165,7 @@ export const UserEditScreen: React.FC = () => {
           </View>
         </View>
 
-        {groups.length > 0 && (
+        {groups.length > 0 ? (
           <View style={styles.groupsContainer}>
             <Text variant="labelLarge" style={{ color: theme.colors.onSurface, marginBottom: 8 }}>
               {t('manage.groups')}
@@ -200,9 +200,9 @@ export const UserEditScreen: React.FC = () => {
               })}
             </View>
           </View>
-        )}
+        ) : null}
 
-        {!isSuperuser && (
+        {!isSuperuser ? (
           <>
             <Text
               variant="labelLarge"
@@ -216,7 +216,7 @@ export const UserEditScreen: React.FC = () => {
               disabled={isLoading || upsert.isPending}
             />
           </>
-        )}
+        ) : null}
 
         <HasPermission action={userId ? 'change' : 'add'} resource="user">
           <Button

@@ -63,6 +63,14 @@ export const DocumentMetadataDisplay: React.FC<DocumentMetadataDisplayProps> = (
 }) => {
   const theme = useTheme();
   const { t } = useTranslation();
+  const resolvedCardStyle = cardStyle || { marginBottom: 12, borderRadius: 12 };
+
+  const getDocumentLinkIds = (value: DocumentCustomFieldValue['value']) =>
+    Array.isArray(value)
+      ? (value as (string | number)[])
+          .map((entry) => Number(entry))
+          .filter((id) => !Number.isNaN(id))
+      : [];
 
   return (
     <>
@@ -77,12 +85,7 @@ export const DocumentMetadataDisplay: React.FC<DocumentMetadataDisplayProps> = (
         {title}
       </Text>
 
-      <Card
-        style={[
-          cardStyle || { marginBottom: 12, borderRadius: 12 },
-          { backgroundColor: theme.colors.surface },
-        ]}
-      >
+      <Card style={[resolvedCardStyle, { backgroundColor: theme.colors.surface }]}>
         <Card.Content>
           <List.Item
             title={t('documents.correspondent')}
@@ -134,12 +137,7 @@ export const DocumentMetadataDisplay: React.FC<DocumentMetadataDisplayProps> = (
         </Card.Content>
       </Card>
 
-      <Card
-        style={[
-          cardStyle || { marginBottom: 12, borderRadius: 12 },
-          { backgroundColor: theme.colors.surface },
-        ]}
-      >
+      <Card style={[resolvedCardStyle, { backgroundColor: theme.colors.surface }]}>
         <Card.Content>
           <Text variant="titleMedium" style={{ marginBottom: 8 }}>
             {t('documents.tags')}
@@ -158,13 +156,8 @@ export const DocumentMetadataDisplay: React.FC<DocumentMetadataDisplayProps> = (
         </Card.Content>
       </Card>
 
-      {customFields && customFields.length > 0 && customFieldsMap && (
-        <Card
-          style={[
-            cardStyle || { marginBottom: 12, borderRadius: 12 },
-            { backgroundColor: theme.colors.surface },
-          ]}
-        >
+      {customFields && customFields.length > 0 && customFieldsMap ? (
+        <Card style={[resolvedCardStyle, { backgroundColor: theme.colors.surface }]}>
           <Card.Content>
             <Text variant="titleMedium" style={{ marginBottom: 8 }}>
               {t('customFields.title')}
@@ -173,12 +166,7 @@ export const DocumentMetadataDisplay: React.FC<DocumentMetadataDisplayProps> = (
             {customFields.map((entry) => {
               const fieldDefinition = customFieldsMap.get(entry.field);
               const isDocumentLink = fieldDefinition?.data_type === 'documentlink';
-              const docLinkIds =
-                isDocumentLink && Array.isArray(entry.value)
-                  ? (entry.value as (string | number)[])
-                      .map((v) => Number(v))
-                      .filter((n) => !Number.isNaN(n))
-                  : [];
+              const docLinkIds = isDocumentLink ? getDocumentLinkIds(entry.value) : [];
               return (
                 <List.Item
                   key={entry.field}
@@ -194,7 +182,7 @@ export const DocumentMetadataDisplay: React.FC<DocumentMetadataDisplayProps> = (
             })}
           </Card.Content>
         </Card>
-      )}
+      ) : null}
     </>
   );
 };

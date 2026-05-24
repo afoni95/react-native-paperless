@@ -31,9 +31,8 @@ import { AnalyticsFilterSheet } from './AnalyticsFilterSheet';
 type Route = RouteProp<AnalyticsStackParamList, 'AnalyticsWidgetEditor'>;
 type Navigation = NativeStackNavigationProp<AnalyticsStackParamList, 'AnalyticsWidgetEditor'>;
 
-function metricDraft(metric?: AnalyticsMetric): AnalyticsMetric {
-  return metric ?? { mode: 'count', aggregation: 'count' };
-}
+const metricDraft = (metric?: AnalyticsMetric): AnalyticsMetric =>
+  metric ?? { mode: 'count', aggregation: 'count' };
 
 export const AnalyticsWidgetEditorScreen: React.FC = () => {
   const theme = useTheme();

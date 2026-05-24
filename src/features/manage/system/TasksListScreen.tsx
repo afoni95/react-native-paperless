@@ -109,11 +109,11 @@ export const TasksListScreen: React.FC = () => {
               }
               style={styles.listItem}
             />
-            {item.result && (
+            {item.result ? (
               <View style={styles.resultContainer}>
                 <List.Item title={t('tasks.loaded')} description={item.result} />
               </View>
-            )}
+            ) : null}
           </View>
         )}
         contentContainerStyle={tasks && tasks.length === 0 ? styles.emptyContainer : undefined}

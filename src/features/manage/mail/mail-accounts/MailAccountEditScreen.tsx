@@ -227,7 +227,7 @@ export const MailAccountEditScreen: React.FC<Props> = ({ route, navigation }) =>
         </Button>
       </HasPermission>
 
-      {!isNew && (
+      {!isNew ? (
         <HasPermission action="delete" resource="mailaccount">
           <Button
             mode="outlined"
@@ -240,7 +240,7 @@ export const MailAccountEditScreen: React.FC<Props> = ({ route, navigation }) =>
             {t('common.delete')}
           </Button>
         </HasPermission>
-      )}
+      ) : null}
 
       <ConfirmDialog
         visible={showDeleteDialog}

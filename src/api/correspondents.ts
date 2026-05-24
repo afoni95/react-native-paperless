@@ -6,10 +6,10 @@ export const correspondentsApi = {
     page?: number;
     page_size?: number;
   }): Promise<PaginatedResponse<Correspondent>> => {
-    const response = await apiClient.get<PaginatedResponse<Correspondent>>('/api/correspondents/', {
+    const { data } = await apiClient.get<PaginatedResponse<Correspondent>>('/api/correspondents/', {
       params,
     });
-    return response.data;
+    return data;
   },
 
   getAllCorrespondents: async (): Promise<Correspondent[]> => {
@@ -18,9 +18,12 @@ export const correspondentsApi = {
     let hasMore = true;
 
     while (hasMore) {
-      const response = await correspondentsApi.getCorrespondents({ page, page_size: 100 });
-      results.push(...response.results);
-      hasMore = response.next !== null;
+      const { results: pageResults, next } = await correspondentsApi.getCorrespondents({
+        page,
+        page_size: 100,
+      });
+      results.push(...pageResults);
+      hasMore = next !== null;
       page++;
     }
 
@@ -28,18 +31,21 @@ export const correspondentsApi = {
   },
 
   getCorrespondent: async (id: number): Promise<Correspondent> => {
-    const response = await apiClient.get<Correspondent>(`/api/correspondents/${id}/`);
-    return response.data;
+    const { data } = await apiClient.get<Correspondent>(`/api/correspondents/${id}/`);
+    return data;
   },
 
   createCorrespondent: async (data: Partial<Correspondent>): Promise<Correspondent> => {
-    const response = await apiClient.post<Correspondent>('/api/correspondents/', data);
-    return response.data;
+    const { data: created } = await apiClient.post<Correspondent>('/api/correspondents/', data);
+    return created;
   },
 
   updateCorrespondent: async (id: number, data: Partial<Correspondent>): Promise<Correspondent> => {
-    const response = await apiClient.patch<Correspondent>(`/api/correspondents/${id}/`, data);
-    return response.data;
+    const { data: updated } = await apiClient.patch<Correspondent>(
+      `/api/correspondents/${id}/`,
+      data,
+    );
+    return updated;
   },
 
   deleteCorrespondent: async (id: number): Promise<void> => {

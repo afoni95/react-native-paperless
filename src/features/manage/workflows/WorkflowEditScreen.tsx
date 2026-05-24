@@ -412,7 +412,7 @@ export const WorkflowEditScreen: React.FC<Props> = ({ route, navigation }) => {
           {t('common.save')}
         </Button>
 
-        {!isNew && (
+        {!isNew ? (
           <Button
             mode="outlined"
             textColor={theme.colors.error}
@@ -422,7 +422,7 @@ export const WorkflowEditScreen: React.FC<Props> = ({ route, navigation }) => {
           >
             {t('common.delete')}
           </Button>
-        )}
+        ) : null}
       </View>
 
       <ConfirmDialog

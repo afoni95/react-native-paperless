@@ -6,12 +6,12 @@ import type { AnalyticsPieResult } from './types';
 
 const PALETTE = ['#1d3557', '#2a9d8f', '#e76f51', '#f4a261', '#6d597a', '#457b9d', '#e9c46a'];
 
-function polarToCartesian(cx: number, cy: number, r: number, angle: number) {
+const polarToCartesian = (cx: number, cy: number, r: number, angle: number) => {
   const rad = ((angle - 90) * Math.PI) / 180;
   return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) };
-}
+};
 
-function arcPath(cx: number, cy: number, r: number, start: number, end: number) {
+const arcPath = (cx: number, cy: number, r: number, start: number, end: number) => {
   const startPoint = polarToCartesian(cx, cy, r, end);
   const endPoint = polarToCartesian(cx, cy, r, start);
   const largeArcFlag = end - start > 180 ? 1 : 0;
@@ -22,7 +22,7 @@ function arcPath(cx: number, cy: number, r: number, start: number, end: number) 
     `A ${r} ${r} 0 ${largeArcFlag} 0 ${endPoint.x} ${endPoint.y}`,
     'Z',
   ].join(' ');
-}
+};
 
 interface PieChartViewProps {
   result: AnalyticsPieResult;

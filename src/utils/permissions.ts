@@ -29,17 +29,17 @@ export const PERMISSION_ACTIONS = ['add', 'change', 'delete', 'view'] as const;
 
 export type PermissionAction = (typeof PERMISSION_ACTIONS)[number];
 
-export function buildPermissionName(
+export const buildPermissionName = (
   action: PermissionAction,
   resource: PermissionResource,
-): string {
-  return `${action}_${resource}`;
-}
+): string => `${action}_${resource}`;
 
-export function parsePermission(permission: string): {
+export const parsePermission = (
+  permission: string,
+): {
   action: PermissionAction;
   resource: PermissionResource;
-} | null {
+} | null => {
   const parts = permission.split('_');
   if (parts.length < 2) return null;
 
@@ -53,16 +53,14 @@ export function parsePermission(permission: string): {
     action: action as PermissionAction,
     resource: resource as PermissionResource,
   };
-}
+};
 
-export function getResourcePermissions(
+export const getResourcePermissions = (
   permissions: string[],
   resource: PermissionResource,
-): Record<PermissionAction, boolean> {
-  return {
-    add: permissions.includes(buildPermissionName('add', resource)),
-    change: permissions.includes(buildPermissionName('change', resource)),
-    delete: permissions.includes(buildPermissionName('delete', resource)),
-    view: permissions.includes(buildPermissionName('view', resource)),
-  };
-}
+): Record<PermissionAction, boolean> => ({
+  add: permissions.includes(buildPermissionName('add', resource)),
+  change: permissions.includes(buildPermissionName('change', resource)),
+  delete: permissions.includes(buildPermissionName('delete', resource)),
+  view: permissions.includes(buildPermissionName('view', resource)),
+});

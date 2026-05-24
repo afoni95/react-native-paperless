@@ -299,7 +299,7 @@ export const LoginScreen: React.FC = () => {
             style={styles.input}
           />
 
-          {mfaRequired && (
+          {mfaRequired ? (
             <Animated.View
               style={[
                 styles.mfaContainer,
@@ -342,7 +342,7 @@ export const LoginScreen: React.FC = () => {
                 contentStyle={styles.mfaInputContent}
               />
             </Animated.View>
-          )}
+          ) : null}
 
           {error ? (
             <HelperText type="error" visible>
@@ -350,7 +350,7 @@ export const LoginScreen: React.FC = () => {
             </HelperText>
           ) : null}
 
-          {biometricAvailable && (
+          {biometricAvailable ? (
             <TouchableOpacity
               activeOpacity={0.7}
               onPress={() => setBiometricChecked((v) => !v)}
@@ -364,7 +364,7 @@ export const LoginScreen: React.FC = () => {
                 {t('auth.biometricCheckbox')}
               </Text>
             </TouchableOpacity>
-          )}
+          ) : null}
 
           <Button
             mode="contained"

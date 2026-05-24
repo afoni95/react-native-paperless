@@ -303,7 +303,7 @@ export const MailRuleEditScreen: React.FC<Props> = ({ route, navigation }) => {
         ))}
       </ScrollView>
 
-      {(action === 2 || action === 5) && (
+      {action === 2 || action === 5 ? (
         <TextInput
           label={t('mailRules.actionParameter')}
           value={actionParameter}
@@ -311,7 +311,7 @@ export const MailRuleEditScreen: React.FC<Props> = ({ route, navigation }) => {
           mode="outlined"
           style={formStyles.input}
         />
-      )}
+      ) : null}
 
       {/* Filters */}
       <Text variant="labelLarge" style={[formStyles.label, { color: theme.colors.onBackground }]}>
@@ -410,7 +410,7 @@ export const MailRuleEditScreen: React.FC<Props> = ({ route, navigation }) => {
         ))}
       </ScrollView>
 
-      {assignCorrespondentFrom === 4 && (
+      {assignCorrespondentFrom === 4 ? (
         <SearchableDropdown
           items={correspondentOptions}
           selectedId={assignCorrespondent}
@@ -418,7 +418,7 @@ export const MailRuleEditScreen: React.FC<Props> = ({ route, navigation }) => {
           label={t('mailRules.assignCorrespondent')}
           placeholder={t('mailRules.assignCorrespondent')}
         />
-      )}
+      ) : null}
 
       {/* Assign Document Type */}
       <SearchableDropdown
@@ -511,7 +511,7 @@ export const MailRuleEditScreen: React.FC<Props> = ({ route, navigation }) => {
         </Button>
       </HasPermission>
 
-      {!isNew && (
+      {!isNew ? (
         <HasPermission action="delete" resource="mailrule">
           <Button
             mode="outlined"
@@ -524,7 +524,7 @@ export const MailRuleEditScreen: React.FC<Props> = ({ route, navigation }) => {
             {t('common.delete')}
           </Button>
         </HasPermission>
-      )}
+      ) : null}
 
       <ConfirmDialog
         visible={showDeleteDialog}

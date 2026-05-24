@@ -27,20 +27,18 @@ interface AnalyticsDashboardState extends AnalyticsDashboardStateShape {
 
 let widgetCounter = 0;
 
-function nextWidgetId() {
+const nextWidgetId = (): string => {
   widgetCounter += 1;
   return `widget-${Date.now().toString(36)}-${widgetCounter.toString(36)}`;
-}
+};
 
-function snapshotForPersistence(
+const snapshotForPersistence = (
   state: AnalyticsDashboardState,
-): AnalyticsDashboardStateShape & { editMode: boolean } {
-  return {
-    widgetOrder: state.widgetOrder,
-    widgets: state.widgets,
-    editMode: state.editMode,
-  };
-}
+): AnalyticsDashboardStateShape & { editMode: boolean } => ({
+  widgetOrder: state.widgetOrder,
+  widgets: state.widgets,
+  editMode: state.editMode,
+});
 
 export const useAnalyticsDashboardStore = create<AnalyticsDashboardState>((set, get) => ({
   widgetOrder: [],

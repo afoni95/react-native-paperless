@@ -84,16 +84,17 @@ export const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
     });
   };
 
-  const handleSelect = (id: number | null) => {
-    onSelect(id);
+  const resetDropdown = () => {
     setIsOpen(false);
     setSearchQuery('');
   };
 
-  const handleClose = () => {
-    setIsOpen(false);
-    setSearchQuery('');
+  const handleSelect = (id: number | null) => {
+    onSelect(id);
+    resetDropdown();
   };
+
+  const handleClose = () => resetDropdown();
 
   return (
     <View style={styles.container} ref={triggerRef}>
@@ -137,13 +138,13 @@ export const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
               />
             ) : null}
 
-            {clearEnabled && selectedId !== null && (
+            {clearEnabled && selectedId !== null ? (
               <List.Item
                 title={`— ${t('common.none')} —`}
                 onPress={() => handleSelect(null)}
                 titleStyle={{ color: theme.colors.onSurfaceVariant, fontStyle: 'italic' }}
               />
-            )}
+            ) : null}
 
             <ScrollView style={styles.list} keyboardShouldPersistTaps="handled" nestedScrollEnabled>
               {filteredItems.map((item) => (
