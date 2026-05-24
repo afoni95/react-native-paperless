@@ -1,0 +1,42 @@
+# F-Droid build metadata for Paperless Native
+# This file belongs in the fdroiddata repository at:
+#   metadata/com.paperlessnative.mobile.yml
+#
+# Steps to submit:
+#   1. Fork https://gitlab.com/fdroid/fdroiddata
+#   2. Create branch: com.paperlessnative.mobile
+#   3. Copy this file to metadata/com.paperlessnative.mobile.yml
+#   4. Test: fdroid lint com.paperlessnative.mobile && fdroid build com.paperlessnative.mobile
+#   5. Open merge request at https://gitlab.com/fdroid/fdroiddata/-/merge_requests
+
+Categories:
+  - Connectivity
+
+License: GPL-3.0-only
+
+AuthorName: afoni95
+AuthorWebSite: https://github.com/afoni95
+
+WebSite: https://github.com/afoni95/react-native-paperless
+SourceCode: https://github.com/afoni95/react-native-paperless
+IssueTracker: https://github.com/afoni95/react-native-paperless/issues
+Changelog: https://github.com/afoni95/react-native-paperless/releases
+
+RepoType: git
+Repo: https://github.com/afoni95/react-native-paperless
+
+Builds:
+  - versionName: 1.3.1
+    versionCode: 18
+    commit: v1.3.1
+    sudo:
+      - apt-get update
+      - apt-get install -y nodejs npm
+    prebuild: npm ci
+    gradle:
+      - yes
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 1.3.1
+CurrentVersionCode: 18
