@@ -172,10 +172,7 @@ export const ShareLinkCreateScreen: React.FC<Props> = ({ route, navigation }) =>
                               {item.title}
                             </Text>
                             {correspondent ? (
-                              <Text
-                                variant="bodySmall"
-                                style={{ color: theme.colors.primary }}
-                              >
+                              <Text variant="bodySmall" style={{ color: theme.colors.primary }}>
                                 {correspondent.name}
                               </Text>
                             ) : null}

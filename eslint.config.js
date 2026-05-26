@@ -7,7 +7,7 @@ const compat = new FlatCompat({
 });
 
 module.exports = [
-  { ignores: ['node_modules/**', '.expo/**', 'dist/**', 'build/**', 'eslint.config.js', 'metro.config.js', 'babel.config.js'] },
+  { ignores: ['node_modules/**', '.expo/**', 'dist/**', 'build/**', 'eslint.config.js', 'metro.config.js', 'babel.config.js', 'plugins/**', 'scripts/**'] },
   ...compat.config({
     root: true,
     parser: '@typescript-eslint/parser',

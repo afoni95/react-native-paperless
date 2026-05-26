@@ -9,7 +9,12 @@ import * as Clipboard from 'expo-clipboard';
 import { ConfirmDialog, EmptyState, ErrorBanner, LoadingScreen } from '@/components';
 import { usePermissionContext } from '@/hooks/PermissionProvider';
 import { ManageStackParamList } from '@/navigation/types';
-import { useAllShareLinks, useDeleteShareLink, useLinkedDocuments, useAllCorrespondents } from '@/reactQuery';
+import {
+  useAllShareLinks,
+  useDeleteShareLink,
+  useLinkedDocuments,
+  useAllCorrespondents,
+} from '@/reactQuery';
 import { ShareLink } from '@/types';
 import { useNetworkStore, NetworkStatus } from '@/store/networkStore';
 import { useOfflineNavigationTitle } from '@/hooks/useOfflineNavigationTitle';
@@ -124,41 +129,41 @@ export const ShareLinksListScreen: React.FC = () => {
               ? (corrMap[doc.correspondent] ?? t('common.unknown'))
               : t('shareLinks.noCorrespondent');
           return (
-          <List.Item
-            title={doc?.title ?? `${t('shareLinks.document')} #${item.document}`}
-            description={
-              <View>
-                <Text style={styles.metaText}>{correspondentName}</Text>
-                <Text style={styles.metaText}>
-                  {t('shareLinks.expiration')}: {formatExpiration(item.expiration, t)}
-                </Text>
-              </View>
-            }
-            right={() => (
-              <View style={styles.itemActions}>
-                <IconButton
-                  icon="content-copy"
-                  onPress={() => handleCopy(item.slug)}
-                  iconColor={theme.colors.primary}
-                  size={20}
-                />
-                <IconButton
-                  icon="share-variant"
-                  onPress={() => handleShare(item.slug)}
-                  iconColor={theme.colors.primary}
-                  size={20}
-                />
-                {canDeleteShareLink ? (
+            <List.Item
+              title={doc?.title ?? `${t('shareLinks.document')} #${item.document}`}
+              description={
+                <View>
+                  <Text style={styles.metaText}>{correspondentName}</Text>
+                  <Text style={styles.metaText}>
+                    {t('shareLinks.expiration')}: {formatExpiration(item.expiration, t)}
+                  </Text>
+                </View>
+              }
+              right={() => (
+                <View style={styles.itemActions}>
                   <IconButton
-                    icon="delete"
-                    onPress={() => setDeleteTarget(item)}
-                    iconColor={theme.colors.error}
+                    icon="content-copy"
+                    onPress={() => handleCopy(item.slug)}
+                    iconColor={theme.colors.primary}
                     size={20}
                   />
-                ) : null}
-              </View>
-            )}
-          />
+                  <IconButton
+                    icon="share-variant"
+                    onPress={() => handleShare(item.slug)}
+                    iconColor={theme.colors.primary}
+                    size={20}
+                  />
+                  {canDeleteShareLink ? (
+                    <IconButton
+                      icon="delete"
+                      onPress={() => setDeleteTarget(item)}
+                      iconColor={theme.colors.error}
+                      size={20}
+                    />
+                  ) : null}
+                </View>
+              )}
+            />
           );
         }}
       />

@@ -39,12 +39,12 @@ if (keystorePropertiesFile.exists()) {
 
     contents = contents.replace(
       /(signingConfigs\s*\{[\s\S]*?debug\s*\{[\s\S]*?\})/,
-      `$1${releaseSigningConfig}`
+      `$1${releaseSigningConfig}`,
     );
 
     contents = contents.replace(
       /(buildTypes\s*\{[\s\S]*?release\s*\{[\s\S]*?)signingConfig\s+signingConfigs\.debug/,
-      '$1signingConfig signingConfigs.release'
+      '$1signingConfig signingConfigs.release',
     );
 
     mod.modResults.contents = contents;
