@@ -3,14 +3,15 @@
 A React Native mobile application for [Paperless-ngx](https://docs.paperless-ngx.com/) document management system. Built with Expo, TypeScript, and React Navigation.
 
 [![Google Play: Coming Soon](https://img.shields.io/badge/Google%20Play-Coming%20Soon-34A853?style=for-the-badge&logo=googleplay&logoColor=white)]()
+[![F-Droid: Coming Soon](https://img.shields.io/badge/F--Droid-Coming%20Soon-1DA462?style=for-the-badge&logo=fdroid&logoColor=white)]()
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://github.com/afoni95/react-native-paperless/blob/main/LICENCE)
-[![Build](https://github.com/afoni95/react-native-paperless/actions/workflows/build-appbundle.yml/badge.svg)](https://github.com/afoni95/react-native-paperless/actions/workflows/build-appbundle.yml)
+[![Build](https://github.com/afoni95/react-native-paperless/actions/workflows/ci.yml/badge.svg)](https://github.com/afoni95/react-native-paperless/actions/workflows/ci.yml)
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/afoni95/react-native-paperless)](https://github.com/afoni95/react-native-paperless/releases)
 [![Platform](https://img.shields.io/badge/Platform-Android-green.svg)](https://reactnative.dev/)
-[![Expo](https://img.shields.io/badge/Expo-SDK-000020?logo=expo&logoColor=white)](https://expo.dev/)
+[![Expo](https://img.shields.io/badge/Expo-SDK%2054-000020?logo=expo&logoColor=white)](https://expo.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9.2-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![React Native](https://img.shields.io/badge/React%20Native-0.81-61DAFB?logo=react&logoColor=white)](https://reactnative.dev/)
+[![React Native](https://img.shields.io/badge/React%20Native-0.81.5-61DAFB?logo=react&logoColor=white)](https://reactnative.dev/)
 [![Paperless-ngx](https://img.shields.io/badge/Paperless--ngx-API%20v9-17541f)](https://docs.paperless-ngx.com/api/)
 [![GitHub Issues](https://img.shields.io/github/issues/afoni95/react-native-paperless)](https://github.com/afoni95/react-native-paperless/issues)
 
@@ -35,11 +36,17 @@ npm install
 # Start Metro bundler
 npm run start
 
+# Start Metro bundler with tunnel (useful for remote devices)
+npm run start:tunnel
+
 # Run on Android (via Expo)
 npm run android
 
-# Build Android locally
-npm run android:build
+# Clean and rebuild Android native project
+npm run android:clean
+
+# Run linter
+npm run lint
 
 # Run linter with auto fix
 npm run lint:fix
@@ -93,6 +100,7 @@ npm run ci:version
 - [x] Biometric lock screen
 - [X] Object-level Permissions
 - [X] Upload: add storage_path & custom_fields support
+- [X] Offline Support (queue & sync)
 - [ ] WebSocket status updates | Currently not possible due to Managed Expo limitation
 
 See the [open issues](https://github.com/afoni95/react-native-paperless/issues) for a full list of proposed features and known bugs.

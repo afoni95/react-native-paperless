@@ -11,8 +11,7 @@
     "lint:fix": "npx eslint . --fix",
     "ci:typecheck": "tsc --noEmit",
     "ci:i18n": "node helpers/check-unused-translations.js",
-    "ci:version": "node helpers/check-version-sync.js",
-    "ios": "expo run:ios"
+    "ci:version": "node helpers/check-version-sync.js"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
