@@ -30,6 +30,8 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
+      "./plugins/withAndroidSigning",
+      "./plugins/withGradleProperties",
       [
         "expo-build-properties",
         {

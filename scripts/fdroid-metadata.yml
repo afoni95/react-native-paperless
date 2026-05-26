@@ -36,9 +36,16 @@ Builds:
       - curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
       - apt-get install -y nodejs
     subdir: android
-    prebuild: npm ci
+    prebuild: npm ci && npx expo prebuild --platform android --clean
     gradle:
       - yes
+
+# SHA-256 fingerprint of the signing certificate (lowercase hex, no colons).
+AllowedAPKSigningKeys: 31941dd7086f496a9909c11d5d3ab061d9239b11a39dfe4254f629b1a2b5f14c
+
+# Reproducible-build reference: F-Droid builds from source, verifies contents
+# match this pre-signed APK, then distributes your signed APK (same key as Play).
+Binaries: https://github.com/afoni95/react-native-paperless/releases/download/%v/PaperlessNative-%v.apk
 
 AutoUpdateMode: Version
 UpdateCheckMode: Tags
