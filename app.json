@@ -32,6 +32,7 @@
     "plugins": [
       "./plugins/withAndroidSigning",
       "./plugins/withGradleProperties",
+      "./plugins/withDependenciesInfo",
       [
         "expo-build-properties",
         {
