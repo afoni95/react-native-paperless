@@ -101,7 +101,7 @@ jobs:
       # Build a signed Android App Bundle (AAB)
       - name: Build signed AAB
         working-directory: android
-        run: ./gradlew bundleRelease
+        run: ./gradlew bundleRelease --no-daemon --stacktrace
 
       - name: Upload AAB artifact
         uses: actions/upload-artifact@v4
@@ -118,3 +118,16 @@ jobs:
           releaseFiles: android/app/build/outputs/bundle/release/*.aab
           track: ${{ github.event.inputs.track }}
           status: ${{ github.event.inputs.status }}
+
+      - name: Summary
+        run: |
+          {
+            echo "### Deployment successful"
+            echo ""
+            echo "| | |"
+            echo "|---|---|"
+            echo "| Package | com.paperlessnative.mobile |"
+            echo "| Version | $VERSION (Code $VERSION_CODE) |"
+            echo "| Track | ${{ github.event.inputs.track }} |"
+            echo "| Status | ${{ github.event.inputs.status }} |"
+          } >> "$GITHUB_STEP_SUMMARY"
