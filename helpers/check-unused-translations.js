@@ -3,6 +3,21 @@ const fs = require('fs');
 const path = require('path');
 
 const ROOT = process.cwd();
+
+const c = {
+  reset: '\x1b[0m',
+  bold: '\x1b[1m',
+  red: '\x1b[31m',
+  green: '\x1b[32m',
+  yellow: '\x1b[33m',
+  cyan: '\x1b[36m',
+  dim: '\x1b[2m',
+};
+const ok = (s) => `${c.green}${c.bold}${s}${c.reset}`;
+const err = (s) => `${c.red}${c.bold}${s}${c.reset}`;
+const warn = (s) => `${c.yellow}${s}${c.reset}`;
+const dim = (s) => `${c.dim}${s}${c.reset}`;
+const highlight = (s) => `${c.cyan}${s}${c.reset}`;
 const LOCALES_DIR = path.join(ROOT, 'src', 'i18n', 'locales');
 const SOURCE_ROOTS = [path.join(ROOT, 'src'), path.join(ROOT, 'App.tsx')];
 const CODE_EXTENSIONS = new Set(['.ts', '.tsx']);
@@ -102,7 +117,7 @@ function extractPartialPrefixes(code) {
 
 function main() {
   if (!fs.existsSync(LOCALES_DIR)) {
-    console.error(`Locales directory not found: ${LOCALES_DIR}`);
+    console.error(err(`Locales directory not found: ${LOCALES_DIR}`));
     process.exit(1);
   }
 
@@ -111,7 +126,7 @@ function main() {
     .filter((name) => name.endsWith('.json'))
     .sort();
   if (!localeFiles.length) {
-    console.error(`No locale JSON files found in: ${LOCALES_DIR}`);
+    console.error(err(`No locale JSON files found in: ${LOCALES_DIR}`));
     process.exit(1);
   }
 
@@ -123,10 +138,15 @@ function main() {
   );
   const pluralBaseKeys = new Set(fileContents.flatMap((code) => [...extractPluralBaseKeys(code)]));
 
-  console.log(`Scanned ${sourceFiles.length} source files.`);
-  console.log(`Detected ${usedKeys.size} used translation keys in code.`);
-  console.log(`Detected ${partialPrefixes.size} partial key prefixes (dynamic usage).`);
-  console.log(`Detected ${pluralBaseKeys.size} plural base keys (count-based pluralization).\n`);
+  console.log(`${c.bold}Checking translation key usage:${c.reset}\n`);
+  console.log(`  ${dim('Scanned')}          ${highlight(sourceFiles.length)} source files`);
+  console.log(`  ${dim('Used keys')}         ${highlight(usedKeys.size)} translation keys in code`);
+  console.log(
+    `  ${dim('Partial prefixes')}  ${highlight(partialPrefixes.size)} dynamic key prefixes`,
+  );
+  console.log(
+    `  ${dim('Plural base keys')} ${highlight(pluralBaseKeys.size)} count-based plural keys\n`,
+  );
 
   let hasUnused = false;
 
@@ -147,20 +167,29 @@ function main() {
     const warningSet = new Set(warnings);
     const unused = notUsed.filter((key) => !warningSet.has(key));
 
-    console.log(`Locale: ${localeName}`);
-    console.log(`  Total keys: ${allKeys.length}`);
-    console.log(`  Used keys:  ${allKeys.length - notUsed.length}`);
-    console.log(`  Partial:    ${warnings.length} (dynamic keys)`);
-    console.log(`  Unused:     ${unused.length}`);
+    console.log(`${c.bold}${c.cyan}Locale: ${localeName}${c.reset}`);
+    console.log(`  ${dim('Total keys:')}  ${allKeys.length}`);
+    console.log(`  ${dim('Used keys:')}   ${ok(allKeys.length - notUsed.length)}`);
+    console.log(
+      `  ${dim('Partial:')}     ${warnings.length > 0 ? warn(warnings.length) : warnings.length} ${dim('(dynamic keys)')}`,
+    );
+    console.log(
+      `  ${dim('Unused:')}      ${unused.length > 0 ? err(unused.length) : ok(unused.length)}`,
+    );
 
     if (unused.length) {
       hasUnused = true;
-      unused.forEach((key) => console.log(`    - ${key}`));
+      unused.forEach((key) => console.log(`    ${c.red}- ${key}${c.reset}`));
     }
     console.log('');
   }
 
-  if (hasUnused) process.exitCode = 2;
+  if (hasUnused) {
+    console.error(err('Some translation keys are unused. Consider removing them.'));
+    process.exitCode = 2;
+  } else {
+    console.log(ok('All translation keys are in use.'));
+  }
 }
 
 main();

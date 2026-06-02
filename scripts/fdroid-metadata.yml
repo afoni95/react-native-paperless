@@ -1,0 +1,53 @@
+# F-Droid build metadata for Paperless Native
+# This file belongs in the fdroiddata repository at:
+#   metadata/com.paperlessnative.mobile.yml
+#
+# Steps to submit:
+#   1. Fork https://gitlab.com/fdroid/fdroiddata
+#   2. Create branch: com.paperlessnative.mobile
+#   3. Copy this file to metadata/com.paperlessnative.mobile.yml
+#   4. Test: fdroid lint com.paperlessnative.mobile && fdroid build com.paperlessnative.mobile
+#   5. Open merge request at https://gitlab.com/fdroid/fdroiddata/-/merge_requests
+
+Categories:
+  - Connectivity
+
+License: GPL-3.0-only
+
+AuthorName: afoni95
+AuthorWebSite: https://github.com/afoni95
+
+WebSite: https://github.com/afoni95/react-native-paperless
+SourceCode: https://github.com/afoni95/react-native-paperless
+IssueTracker: https://github.com/afoni95/react-native-paperless/issues
+Changelog: https://github.com/afoni95/react-native-paperless/releases
+
+RepoType: git
+Repo: https://github.com/afoni95/react-native-paperless.git
+
+Builds:
+  - versionName: 1.3.1
+    versionCode: 18
+    commit: 1.3.1
+    ndk: 27.1.12297006
+    sudo:
+      - apt-get update
+      - apt-get install -y curl
+      - curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+      - apt-get install -y nodejs
+    subdir: android
+    prebuild: npm ci && npx expo prebuild --platform android --clean
+    gradle:
+      - yes
+
+# SHA-256 fingerprint of the signing certificate (lowercase hex, no colons).
+AllowedAPKSigningKeys: 850ea0fa081d5b8141669e7516facbfe72b2ec02e2ba33549cf4858c5b7d2397
+
+# Reproducible-build reference: F-Droid builds from source, verifies contents
+# match this pre-signed APK, then distributes your signed APK (same key as Play).
+Binaries: https://github.com/afoni95/react-native-paperless/releases/download/%v/PaperlessNative-%v.apk
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 1.3.1
+CurrentVersionCode: 18

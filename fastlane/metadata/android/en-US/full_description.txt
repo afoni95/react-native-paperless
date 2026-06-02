@@ -1,0 +1,24 @@
+Paperless Native is a free and open-source Android client for Paperless-ngx, the self-hosted document management system.
+
+Connect to your own Paperless-ngx server and manage your document archive from your phone. No cloud services, no data ever leaves your device or your own server.
+
+<b>Features</b>
+• Browse, search, and filter your entire document library
+• Upload documents from your camera or photo library
+• View PDF and image documents directly in the app
+• Edit document metadata: title, correspondent, tags, document type, storage path, dates, and custom fields
+• Manage tags, correspondents, document types, storage paths, mail accounts, mail rules and workflows
+• Dashboard with document statistics
+• Full-text search with filtering
+• Biometric authentication
+
+<b>Privacy</b>
+This app collects no analytics data, uses no third-party SDKs, and does not contact any server other than your own Paperless-ngx instance. The only data stored on your device is your server URL and an authentication token, held in the system's encrypted secure storage.
+
+HTTP connections are allowed so that users running Paperless-ngx on a local network without TLS can still connect.
+
+<b>Requirements</b>
+A running, accessible Paperless-ngx instance (self-hosted)
+
+<b>Source code</b>
+https://github.com/afoni95/react-native-paperless

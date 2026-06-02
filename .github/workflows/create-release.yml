@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: "Release version (e.g. v1.0.0)"
+        description: "Release version (e.g. 1.0.0)"
         required: true
         type: string
 
@@ -54,37 +54,23 @@ jobs:
       - name: Generate native project
         run: npx expo prebuild --platform android --clean
 
-      # Enable ABI splits (arm64-v8a + armeabi-v7a)
-      - name: Enable ABI splits
+      - name: Write release keystore
         run: |
-          echo '
-          android {
-              splits {
-                  abi {
-                      enable true
-                      reset()
-                      include "arm64-v8a", "armeabi-v7a"
-                      universalApk false
-                  }
-              }
-          }
-          ' >> android/app/build.gradle
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > android/app/upload-keystore.jks
+          echo "storeFile=upload-keystore.jks"              >  android/key.properties
+          echo "storePassword=${{ secrets.KEYSTORE_PASSWORD }}" >> android/key.properties
+          echo "keyAlias=${{ secrets.KEY_ALIAS }}"          >> android/key.properties
+          echo "keyPassword=${{ secrets.KEY_PASSWORD }}"    >> android/key.properties
 
-      - name: Build Release APKs
+      - name: Build Release APK
         working-directory: android
-        run: ./gradlew assembleRelease
+        run: ./gradlew assembleRelease --no-daemon --stacktrace
 
-      - name: Upload modern-devices APK (arm64-v8a)
+      - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: android-modern-devices-apk
-          path: android/app/build/outputs/apk/release/*arm64-v8a*.apk
-
-      - name: Upload legacy-devices APK (armeabi-v7a)
-        uses: actions/upload-artifact@v4
-        with:
-          name: android-legacy-devices-apk
-          path: android/app/build/outputs/apk/release/*armeabi-v7a*.apk
+          name: android-apk
+          path: android/app/build/outputs/apk/release/*.apk
 
   create-release:
     name: Create GitHub Release
@@ -95,35 +81,81 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Download modern-devices artifact
+      - name: Download APK artifact
         uses: actions/download-artifact@v4
         with:
-          name: android-modern-devices-apk
+          name: android-apk
           path: artifacts/android
 
-      - name: Download legacy-devices artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: android-legacy-devices-apk
-          path: artifacts/android
-
-      - name: Rename APKs with version
+      - name: Normalize release version
+        id: normalize-version
+        shell: bash
         run: |
           VERSION="${{ github.event.inputs.version }}"
+          VERSION="${VERSION#v}"
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+
+      - name: Rename APK with version
+        run: |
+          VERSION="${{ steps.normalize-version.outputs.version }}"
           cd artifacts/android
-          for file in *arm64-v8a*.apk; do
-            mv "$file" "PaperlessNative-${VERSION}-modern-devices.apk"
+          for file in *.apk; do
+            mv "$file" "PaperlessNative-${VERSION}.apk"
           done
-          for file in *armeabi-v7a*.apk; do
-            mv "$file" "PaperlessNative-${VERSION}-legacy-devices.apk"
-          done
+
+      - name: Read F-Droid changelogs
+        run: |
+          BUILD_NUMBER="${{ steps.normalize-version.outputs.version }}"
+          if [ -f "fastlane/metadata/android/en-US/changelogs/${BUILD_NUMBER}.txt" ]; then
+            CHANGELOG_CONTENT=$(cat "fastlane/metadata/android/en-US/changelogs/${BUILD_NUMBER}.txt")
+            echo "CHANGELOG_EN<<GHADELIMITER" >> $GITHUB_ENV
+            echo "$CHANGELOG_CONTENT" >> $GITHUB_ENV
+            echo "GHADELIMITER" >> $GITHUB_ENV
+          else
+            echo "CHANGELOG_EN=Release $BUILD_NUMBER" >> $GITHUB_ENV
+          fi
+
+      - name: Create and push version tag
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a "${{ steps.normalize-version.outputs.version }}" "${{ github.sha }}" \
+            -m "Release ${{ steps.normalize-version.outputs.version }}"
+          git push origin "${{ steps.normalize-version.outputs.version }}"
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ github.event.inputs.version }}
-          name: ${{ github.event.inputs.version }}
-          target_commitish: ${{ github.sha }}
-          generate_release_notes: true
+          tag_name: ${{ steps.normalize-version.outputs.version }}
+          name: "Paperless Native v${{ steps.normalize-version.outputs.version }}"
+          draft: true
+          prerelease: false
+          generate_release_notes: false
           files: |
             artifacts/android/PaperlessNative-*.apk
+          body: |
+            ## 📋 Changelog / Release Notes
+
+            ${{ env.CHANGELOG_EN }}
+
+            ## 📦 Download
+
+            `PaperlessNative-${{ steps.normalize-version.outputs.version }}.apk`
+
+            ## 📊 Build Info
+
+            - **Version:** ${{ steps.normalize-version.outputs.version }}
+            - **Commit:** ${{ github.sha }}
+
+            ## 🔐 APK Signature Verification
+
+            All APKs are signed with the official release certificate.
+
+            **Expected SHA-256:**
+            ```
+            85:0E:A0:FA:08:1D:5B:81:41:66:9E:75:16:FA:CB:FE:72:B2:EC:02:E2:BA:33:54:9C:F4:85:8C:5B:7D:23:97
+            ```
+
+            Verify with [AppVerifier](https://github.com/nicholson-lab/AppVerifier) (Android app)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

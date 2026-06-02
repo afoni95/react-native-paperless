@@ -1,0 +1,6 @@
+• Added custom fields support
+• Added share links management
+• Added mail accounts and mail rules
+• Added processed mail view
+• Added workflows management
+• UI improvements and bug fixes
