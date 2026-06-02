@@ -24,7 +24,10 @@
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
       "package": "com.paperlessnative.mobile",
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "blockedPermissions": [
+        "android.permission.SYSTEM_ALERT_WINDOW"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -33,6 +36,12 @@
       "./plugins/withAndroidSigning",
       "./plugins/withGradleProperties",
       "./plugins/withDependenciesInfo",
+      [
+        "./plugins/withJscFlavor",
+        {
+          "version": "2026004.0"
+        }
+      ],
       [
         "expo-build-properties",
         {
