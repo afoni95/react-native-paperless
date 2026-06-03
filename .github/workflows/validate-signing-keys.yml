@@ -21,7 +21,7 @@ jobs:
       - name: Decode keystore
         run: |
           set -euo pipefail
-          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > upload-keystore.jks
+          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 -d > upload-keystore.jks
 
       - name: Validate keystore and fingerprint
         shell: bash
