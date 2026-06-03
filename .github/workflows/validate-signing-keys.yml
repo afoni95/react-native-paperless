@@ -26,14 +26,14 @@ jobs:
       - name: Validate keystore and fingerprint
         shell: bash
         env:
-          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           EXPECTED_CERT_SHA256: ${{ secrets.SIGNING_CERT_SHA256 }}
         run: |
           set -euo pipefail
-          if [ -z "${KEYSTORE_PASSWORD:-}" ] || [ -z "${KEY_ALIAS:-}" ]; then
-            echo "Missing keystore secrets. Ensure KEYSTORE_PASSWORD and KEY_ALIAS are set."
+          if [ -z "${ANDROID_KEYSTORE_PASSWORD:-}" ] || [ -z "${ANDROID_KEY_ALIAS:-}" ]; then
+            echo "Missing keystore secrets. Ensure ANDROID_KEYSTORE_PASSWORD and ANDROID_KEY_ALIAS are set."
             exit 1
           fi
 
@@ -41,18 +41,18 @@ jobs:
           set +e
           KEYTOOL_OUTPUT=$(keytool -list -v \
             -keystore upload-keystore.jks \
-            -alias "$KEY_ALIAS" \
-            -storepass "$KEYSTORE_PASSWORD" 2>&1)
+            -alias "$ANDROID_KEY_ALIAS" \
+            -storepass "$ANDROID_KEYSTORE_PASSWORD" 2>&1)
           STATUS=$?
           set -e
 
           if [ $STATUS -ne 0 ]; then
-            if [ -n "${KEY_PASSWORD:-}" ]; then
+            if [ -n "${ANDROID_KEY_PASSWORD:-}" ]; then
               KEYTOOL_OUTPUT=$(keytool -list -v \
                 -keystore upload-keystore.jks \
-                -alias "$KEY_ALIAS" \
-                -storepass "$KEYSTORE_PASSWORD" \
-                -keypass "$KEY_PASSWORD" 2>&1) || {
+                -alias "$ANDROID_KEY_ALIAS" \
+                -storepass "$ANDROID_KEYSTORE_PASSWORD" \
+                -keypass "$ANDROID_KEY_PASSWORD" 2>&1) || {
                   echo "keytool failed. Output:"
                   echo "$KEYTOOL_OUTPUT"
                   exit 1
@@ -60,7 +60,7 @@ jobs:
             else
               echo "keytool failed. Output:"
               echo "$KEYTOOL_OUTPUT"
-              echo "If your key password differs from the store password, set KEY_PASSWORD."
+              echo "If your key password differs from the store password, set ANDROID_KEY_PASSWORD."
               exit 1
             fi
           fi
