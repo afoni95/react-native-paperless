@@ -32,17 +32,40 @@ jobs:
           EXPECTED_CERT_SHA256: ${{ secrets.SIGNING_CERT_SHA256 }}
         run: |
           set -euo pipefail
-          if [ -z "${KEYSTORE_PASSWORD:-}" ] || [ -z "${KEY_PASSWORD:-}" ] || [ -z "${KEY_ALIAS:-}" ]; then
-            echo "Missing keystore secrets. Ensure KEYSTORE_PASSWORD, KEY_PASSWORD, and KEY_ALIAS are set."
+          if [ -z "${KEYSTORE_PASSWORD:-}" ] || [ -z "${KEY_ALIAS:-}" ]; then
+            echo "Missing keystore secrets. Ensure KEYSTORE_PASSWORD and KEY_ALIAS are set."
             exit 1
           fi
 
-          RAW_LINE=$(keytool -list -v \
+          KEYTOOL_OUTPUT=""
+          set +e
+          KEYTOOL_OUTPUT=$(keytool -list -v \
             -keystore upload-keystore.jks \
             -alias "$KEY_ALIAS" \
-            -storepass "$KEYSTORE_PASSWORD" \
-            -keypass "$KEY_PASSWORD" \
-            | grep -m 1 -i "SHA256:")
+            -storepass "$KEYSTORE_PASSWORD" 2>&1)
+          STATUS=$?
+          set -e
+
+          if [ $STATUS -ne 0 ]; then
+            if [ -n "${KEY_PASSWORD:-}" ]; then
+              KEYTOOL_OUTPUT=$(keytool -list -v \
+                -keystore upload-keystore.jks \
+                -alias "$KEY_ALIAS" \
+                -storepass "$KEYSTORE_PASSWORD" \
+                -keypass "$KEY_PASSWORD" 2>&1) || {
+                  echo "keytool failed. Output:"
+                  echo "$KEYTOOL_OUTPUT"
+                  exit 1
+                }
+            else
+              echo "keytool failed. Output:"
+              echo "$KEYTOOL_OUTPUT"
+              echo "If your key password differs from the store password, set KEY_PASSWORD."
+              exit 1
+            fi
+          fi
+
+          RAW_LINE=$(echo "$KEYTOOL_OUTPUT" | grep -m 1 -i "SHA256:")
 
           if [ -z "$RAW_LINE" ]; then
             echo "SHA-256 fingerprint not found in keytool output."
