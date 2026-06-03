@@ -1,0 +1,70 @@
+name: Validate Signing Keys
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate keystore
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Decode keystore
+        run: |
+          set -euo pipefail
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > upload-keystore.jks
+
+      - name: Validate keystore and fingerprint
+        shell: bash
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          EXPECTED_CERT_SHA256: ${{ secrets.SIGNING_CERT_SHA256 }}
+        run: |
+          set -euo pipefail
+          if [ -z "${KEYSTORE_PASSWORD:-}" ] || [ -z "${KEY_PASSWORD:-}" ] || [ -z "${KEY_ALIAS:-}" ]; then
+            echo "Missing keystore secrets. Ensure KEYSTORE_PASSWORD, KEY_PASSWORD, and KEY_ALIAS are set."
+            exit 1
+          fi
+
+          RAW_LINE=$(keytool -list -v \
+            -keystore upload-keystore.jks \
+            -alias "$KEY_ALIAS" \
+            -storepass "$KEYSTORE_PASSWORD" \
+            -keypass "$KEY_PASSWORD" \
+            | grep -m 1 -i "SHA256:")
+
+          if [ -z "$RAW_LINE" ]; then
+            echo "SHA-256 fingerprint not found in keytool output."
+            exit 1
+          fi
+
+          RAW_FINGERPRINT=$(echo "$RAW_LINE" | awk -F 'SHA256:' '{print $2}')
+          NORMALIZED_FINGERPRINT=$(echo "$RAW_FINGERPRINT" | tr -d '[:space:]:' | tr '[:lower:]' '[:upper:]')
+
+          echo "Computed SHA-256 fingerprint:"
+          echo "$RAW_FINGERPRINT"
+          echo "fingerprint=$NORMALIZED_FINGERPRINT" >> "$GITHUB_OUTPUT"
+
+          if [ -n "${EXPECTED_CERT_SHA256:-}" ]; then
+            EXPECTED=$(echo "$EXPECTED_CERT_SHA256" | tr -d '[:space:]:' | tr '[:lower:]' '[:upper:]')
+            if [ "$EXPECTED" != "$NORMALIZED_FINGERPRINT" ]; then
+              echo "Fingerprint mismatch."
+              echo "Expected: $EXPECTED"
+              echo "Actual:   $NORMALIZED_FINGERPRINT"
+              exit 1
+            fi
+            echo "Fingerprint matches expected value."
+          else
+            echo "No expected fingerprint provided (SIGNING_CERT_SHA256). Skipping comparison."
+          fi
