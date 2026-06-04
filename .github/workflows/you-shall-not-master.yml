@@ -1,0 +1,17 @@
+name: Restrict master PR source
+
+on:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  validate-source-branch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check source branch
+        run: |
+          if [ "${{ github.head_ref }}" != "staging" ]; then
+            echo "Only PRs from staging to master are allowed."
+            exit 1
+          fi

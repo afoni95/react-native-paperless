@@ -15,6 +15,14 @@ A React Native mobile application for [Paperless-ngx](https://docs.paperless-ngx
 [![Paperless-ngx](https://img.shields.io/badge/Paperless--ngx-API%20v9-17541f)](https://docs.paperless-ngx.com/api/)
 [![GitHub Issues](https://img.shields.io/github/issues/afoni95/react-native-paperless)](https://github.com/afoni95/react-native-paperless/issues)
 
+## Signing 
+The app has the following SHA-256 signature:
+
+```
+0E:A0:FA:08:1D:5B:81:41:66:9E:75:16:FA:CB:FE:72:B2:EC:02:E2:BA:33:54:9C:F4:85:8C:5B:7D:23:97
+```
+
+
 ## About the Project
 
 A mobile client for Paperless-ngx. Browse, search, upload, and manage your documents from your Android device. Connects directly to your self-hosted Paperless-ngx instance via its REST API.
@@ -24,84 +32,22 @@ A mobile client for Paperless-ngx. Browse, search, upload, and manage your docum
 - Node.js and npm
 - Running Paperless-ngx server instance
 
-## Installation
+## Installation & Usage
 
 ```bash
+# Install dependencies
 npm install
-```
 
-## Running the App
-
-```bash
-# Start Metro bundler
+# Start the app
 npm run start
 
-# Start Metro bundler with tunnel (useful for remote devices)
-npm run start:tunnel
-
-# Run on Android (via Expo)
+# Run on Android
 npm run android
-
-# Clean and rebuild Android native project
-npm run android:clean
-
-# Run linter
-npm run lint
-
-# Run linter with auto fix
-npm run lint:fix
-
-# Type check
-npm run ci:typecheck
-
-# Check unused i18n translations
-npm run ci:i18n
-
-# Check version sync
-npm run ci:version
 ```
 
-## Roadmap
+## Contributing
 
-### Resource APIs
-
-- [x] Documents CRUD (list, detail, edit, delete)
-- [x] Tags CRUD
-- [x] Correspondents CRUD
-- [x] Document Types CRUD
-- [x] Statistics / Dashboard
-- [x] Tasks (polling)
-- [X] Logs viewer
-- [X] Storage Paths CRUD
-- [X] Custom Fields CRUD
-- [X] Mail Accounts CRUD
-- [X] Mail Rules CRUD
-- [X] Processed Mail view
-- [X] Share Links CRUD
-- [X] Workflows
-- [X] Users/Groups management
-
-### Special Endpoints
-
-- [x] Search autocomplete
-- [x] Document upload (file & camera)
-- [x] PDF preview & download/share
-- [X] Trash view & restore
-- [X] Global Search
-- [ ] Bulk Edit Documents
-- [ ] Bulk Download Documents
-- [ ] Bulk Edit Objects
-
-### Enhancements
-
-- [x] Internationalization
-- [x] Theme support (light/dark/system)
-- [X] Document Analytics 
-- [x] Biometric lock screen
-- [X] Object-level Permissions
-- [X] Upload: add storage_path & custom_fields support
-- [X] Offline Support (queue & sync)
-- [ ] WebSocket status updates | Currently not possible due to Managed Expo limitation
+We'd love your contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines on how to get started, including the full development workflow.
 
 See the [open issues](https://github.com/afoni95/react-native-paperless/issues) for a full list of proposed features and known bugs.
 
