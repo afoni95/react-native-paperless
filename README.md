@@ -45,7 +45,7 @@ npm run start
 npm run android
 ```
 
-## Contributing
+## Contributing <3
 
 We'd love your contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines on how to get started, including the full development workflow.
 
