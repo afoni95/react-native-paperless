@@ -1,17 +1,26 @@
-name: Restrict master PR source
+name: Restrict main PR source
 
 on:
   pull_request:
-    branches:
-      - master
 
 jobs:
-  validate-source-branch:
+  you-shall-not-master:
+    name: Protection of main branch
     runs-on: ubuntu-latest
     steps:
-      - name: Check source branch
+      - name: Allow all except non-staging to main
         run: |
-          if [ "${{ github.head_ref }}" != "staging" ]; then
-            echo "Only PRs from staging to master are allowed."
+          BASE="${{ github.base_ref }}"
+          HEAD="${{ github.head_ref }}"
+
+          if [ "$BASE" != "main" ]; then
+            echo "Base branch is '$BASE'. Rule only applies to main. Skipping check."
+            exit 0
+          fi
+
+          if [ "$BASE" = "main" ] && [ "$HEAD" != "staging" ]; then
+            echo "Only PRs from staging to main are allowed."
             exit 1
           fi
+
+          echo "PR from staging to main is allowed."
