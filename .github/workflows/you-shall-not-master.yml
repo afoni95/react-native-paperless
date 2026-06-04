@@ -5,6 +5,7 @@ on:
 
 jobs:
   you-shall-not-master:
+    name: Protection of main branch
     runs-on: ubuntu-latest
     steps:
       - name: Allow all except non-staging to main
