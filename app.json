@@ -2,7 +2,7 @@
   "expo": {
     "name": "Paperless Native",
     "slug": "react-native-paperless",
-    "version": "1.3.0",
+    "version": "1.3.12",
     "orientation": "default",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
@@ -16,7 +16,7 @@
       "bundleIdentifier": "com.paperlessnative.mobile"
     },
     "android": {
-      "versionCode": 17,
+      "versionCode": 19,
       "adaptiveIcon": {
         "backgroundColor": "#62c1f0",
         "foregroundImage": "./assets/android-icon-foreground.png",
@@ -24,12 +24,24 @@
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
       "package": "com.paperlessnative.mobile",
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "blockedPermissions": [
+        "android.permission.SYSTEM_ALERT_WINDOW"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
+      "./plugins/withAndroidSigning",
+      "./plugins/withGradleProperties",
+      "./plugins/withDependenciesInfo",
+      [
+        "./plugins/withJscFlavor",
+        {
+          "version": "2026004.0"
+        }
+      ],
       [
         "expo-build-properties",
         {
@@ -48,7 +60,8 @@
         "expo-image-picker",
         {
           "photosPermission": "Allow Paperless to access your photos to upload documents.",
-          "cameraPermission": "Allow Paperless to access your camera to scan documents."
+          "cameraPermission": "Allow Paperless to access your camera to scan documents.",
+          "microphonePermission": false
         }
       ],
       "expo-secure-store"
