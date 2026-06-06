@@ -19,7 +19,7 @@ A React Native mobile application for [Paperless-ngx](https://docs.paperless-ngx
 The app has the following SHA-256 signature:
 
 ```
-0E:A0:FA:08:1D:5B:81:41:66:9E:75:16:FA:CB:FE:72:B2:EC:02:E2:BA:33:54:9C:F4:85:8C:5B:7D:23:97
+85:0E:A0:FA:08:1D:5B:81:41:66:9E:75:16:FA:CB:FE:72:B2:EC:02:E2:BA:33:54:9C:F4:85:8C:5B:7D:23:97
 ```
 
 
