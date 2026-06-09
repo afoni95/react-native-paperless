@@ -2,7 +2,7 @@
 
 A React Native mobile application for [Paperless-ngx](https://docs.paperless-ngx.com/) document management system. Built with Expo, TypeScript, and React Navigation.
 
-[![Google Play: Coming Soon](https://img.shields.io/badge/Google%20Play-Coming%20Soon-34A853?style=for-the-badge&logo=googleplay&logoColor=white)]()
+[![Google Play](https://img.shields.io/badge/Google%20Play-Available%20Now-34A853?style=for-the-badge&logo=googleplay&logoColor=white)](https://play.google.com/store/apps/details?id=com.paperlessnative.mobile&pcampaignid=web_share)
 [![F-Droid: Coming Soon](https://img.shields.io/badge/F--Droid-Coming%20Soon-1DA462?style=for-the-badge&logo=fdroid&logoColor=white)]()
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://github.com/afoni95/react-native-paperless/blob/main/LICENCE)
