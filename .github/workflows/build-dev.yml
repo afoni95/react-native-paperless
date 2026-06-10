@@ -29,6 +29,16 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
+      - name: Cache Gradle dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ runner.os }}-${{ hashFiles('android/**/*.gradle*', 'android/gradle-wrapper.properties') }}
+          restore-keys: |
+            gradle-${{ runner.os }}-
+
       - name: Install dependencies
         run: npm ci
 
@@ -37,6 +47,14 @@ jobs:
 
       - name: Generate native project
         run: npx expo prebuild --platform android --clean
+
+      - name: Write release keystore
+        run: |
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > android/app/upload-keystore.jks
+          echo "storeFile=upload-keystore.jks"              >  android/key.properties
+          echo "storePassword=${{ secrets.KEYSTORE_PASSWORD }}" >> android/key.properties
+          echo "keyAlias=${{ secrets.KEY_ALIAS }}"          >> android/key.properties
+          echo "keyPassword=${{ secrets.KEY_PASSWORD }}"    >> android/key.properties
 
       # Enable ABI splits (arm64-v8a + armeabi-v7a)
       - name: Enable ABI splits
@@ -56,7 +74,7 @@ jobs:
 
       - name: Build Release APKs
         working-directory: android
-        run: ./gradlew assembleRelease
+        run: ./gradlew assembleRelease --no-daemon --stacktrace
 
       - name: Upload modern-devices APK (arm64-v8a)
         uses: actions/upload-artifact@v4
