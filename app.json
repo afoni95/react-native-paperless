@@ -37,6 +37,26 @@
       "./plugins/withGradleProperties",
       "./plugins/withDependenciesInfo",
       [
+        "react-native-android-widget",
+        {
+          "widgets": [
+            {
+              "name": "AnalyticsWidget",
+              "label": "Paperless Analytics",
+              "description": "Display analytics data from Paperless",
+              "minWidth": "250dp",
+              "minHeight": "180dp",
+              "targetCellWidth": 4,
+              "targetCellHeight": 3,
+              "maxResizeWidth": "500dp",
+              "maxResizeHeight": "350dp",
+              "resizeMode": "horizontal|vertical",
+              "updatePeriodMillis": 1800000
+            }
+          ]
+        }
+      ],
+      [
         "./plugins/withJscFlavor",
         {
           "version": "2026004.0"

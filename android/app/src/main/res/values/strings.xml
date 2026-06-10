@@ -2,4 +2,5 @@
   <string name="app_name">Paperless Native</string>
   <string name="expo_splash_screen_resize_mode" translatable="false">contain</string>
   <string name="expo_splash_screen_status_bar_translucent" translatable="false">false</string>
+  <string name="widget_analyticswidget_description" translatable="false">Display analytics data from Paperless</string>
 </resources>

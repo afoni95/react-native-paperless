@@ -31,6 +31,10 @@ const EXCLUDED_DIRS = new Set([
   'docs',
   'assets',
   'public',
+  'scripts',
+  'plugins',
+  'docs',
+  'android',
 ]);
 
 function flattenKeys(obj, prefix = '') {
