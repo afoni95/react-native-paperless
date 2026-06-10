@@ -19,7 +19,6 @@ const withDependenciesInfo = (config) => {
         includeInBundle = false
     }`;
 
-    // Inject just before the closing brace of the android {} block
     contents = contents.replace(
       /(androidResources\s*\{[^}]*\})\s*\n(\})/,
       `$1\n${block}\n$2`,
