@@ -14,6 +14,7 @@ import { useSettingsStore } from '@/store/settingsStore';
 import { useNetworkStore, NetworkStatus } from '@/store/networkStore';
 import { lightTheme, darkTheme } from '@/theme';
 import i18n from '@/i18n';
+import { WidgetSnapshotBootstrap } from '@/widgets/WidgetSnapshotBootstrap';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -70,7 +71,7 @@ const boundaryStyles = StyleSheet.create({
 export default function App() {
   const { t } = useTranslation();
   const systemScheme = useColorScheme();
-  const { restoreSession } = useAuthStore();
+  const { restoreSession, isAuthenticated, isLoading, biometricLocked } = useAuthStore();
   const { theme: themeMode, loadSettings } = useSettingsStore();
   const [isOffline, setIsOffline] = useState(false);
 
@@ -101,6 +102,7 @@ export default function App() {
       <SafeAreaProvider>
         <QueryClientProvider client={queryClient}>
           <PaperProvider theme={paperTheme}>
+            {isAuthenticated && !isLoading && !biometricLocked ? <WidgetSnapshotBootstrap /> : null}
             <Banner
               visible={isOffline}
               icon="wifi-off"

@@ -32,7 +32,7 @@ export async function updateNativeWidget(message: WidgetUpdateMessage): Promise<
     updatedAt: Date.now(),
   };
 
-  await saveWidgetSnapshot(snapshot);
+  await saveWidgetSnapshot(message.widgetId, snapshot);
 
   requestWidgetUpdate({
     widgetName: WIDGET_NAME,
@@ -49,8 +49,7 @@ export async function updateNativeWidget(message: WidgetUpdateMessage): Promise<
  * Notify native layer that a widget is being removed
  */
 export async function removeNativeWidget(widgetId: string): Promise<void> {
-  void widgetId;
-  await clearWidgetSnapshot();
+  await clearWidgetSnapshot(widgetId);
 }
 
 /**
@@ -62,7 +61,7 @@ export async function requestWidgetRefresh(widgetId: string): Promise<void> {
     return;
   }
 
-  const snapshot = await loadWidgetSnapshot();
+  const snapshot = await loadWidgetSnapshot(widgetId);
   requestWidgetUpdate({
     widgetName: WIDGET_NAME,
     renderWidget: () =>

@@ -105,66 +105,84 @@ export function WidgetConfigurationScreen({
 
   if (isLoading) {
     return (
-      <View style={styles.container}>
-        <Text style={styles.title}>Loading analytics widgets...</Text>
+      <View style={styles.screen}>
+        <View style={styles.container}>
+          <Text style={styles.title}>Loading analytics widgets...</Text>
+        </View>
       </View>
     );
   }
 
   if (items.length === 0) {
     return (
-      <View style={styles.container}>
-        <Text style={styles.title}>No analytics widgets available</Text>
-        <Text style={styles.subtitle}>
-          Create one in the Analytics dashboard first, then configure this widget again.
-        </Text>
-        <Pressable style={styles.secondaryButton} onPress={handleCancel}>
-          <Text style={styles.secondaryButtonText}>Close</Text>
-        </Pressable>
+      <View style={styles.screen}>
+        <View style={styles.container}>
+          <Text style={styles.title}>No analytics widgets available</Text>
+          <Text style={styles.subtitle}>
+            Create one in the Analytics dashboard first, then configure this widget again.
+          </Text>
+          <Pressable style={styles.secondaryButton} onPress={handleCancel}>
+            <Text style={styles.secondaryButtonText}>Close</Text>
+          </Pressable>
+        </View>
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Configure Home Widget</Text>
-      <Text style={styles.subtitle}>Choose which analytics widget to display.</Text>
+    <View style={styles.screen}>
+      <View style={styles.container}>
+        <Text style={styles.title}>Configure Home Widget</Text>
+        <Text style={styles.subtitle}>Choose which analytics widget to display.</Text>
 
-      <FlatList
-        data={items}
-        keyExtractor={(item) => item.id}
-        style={styles.list}
-        renderItem={({ item }) => {
-          const isSelected = item.id === selectedId;
-          return (
-            <Pressable
-              onPress={() => setSelectedId(item.id)}
-              style={[styles.itemCard, isSelected ? styles.itemCardSelected : null]}
-            >
-              <Text style={styles.itemTitle}>{item.displayTitle}</Text>
-              <Text style={styles.itemMeta}>{formatType(item.type)}</Text>
-            </Pressable>
-          );
-        }}
-      />
+        <FlatList
+          data={items}
+          keyExtractor={(item) => item.id}
+          style={styles.list}
+          contentContainerStyle={styles.listContent}
+          renderItem={({ item }) => {
+            const isSelected = item.id === selectedId;
+            return (
+              <Pressable
+                onPress={() => setSelectedId(item.id)}
+                style={[styles.itemCard, isSelected ? styles.itemCardSelected : null]}
+              >
+                <Text style={styles.itemTitle}>{item.displayTitle}</Text>
+                <Text style={styles.itemMeta}>{formatType(item.type)}</Text>
+              </Pressable>
+            );
+          }}
+        />
 
-      <View style={styles.actions}>
-        <Pressable style={styles.secondaryButton} onPress={handleCancel}>
-          <Text style={styles.secondaryButtonText}>Cancel</Text>
-        </Pressable>
-        <Pressable style={styles.primaryButton} onPress={handleConfirm}>
-          <Text style={styles.primaryButtonText}>Save</Text>
-        </Pressable>
+        <View style={styles.actions}>
+          <Pressable style={styles.secondaryButton} onPress={handleCancel}>
+            <Text style={styles.secondaryButtonText}>Cancel</Text>
+          </Pressable>
+          <Pressable style={styles.primaryButton} onPress={handleConfirm}>
+            <Text style={styles.primaryButtonText}>Save</Text>
+          </Pressable>
+        </View>
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  screen: {
+    flex: 1,
+    backgroundColor: '#e2e8f0',
+    paddingTop: 10,
+    paddingHorizontal: 10,
+    paddingBottom: 20,
+  },
   container: {
     flex: 1,
     backgroundColor: '#f8fafc',
-    padding: 16,
+    borderWidth: 1,
+    borderColor: '#cbd5e1',
+    borderRadius: 14,
+    padding: 14,
+    paddingBottom: 26,
   },
   title: {
     fontSize: 20,
@@ -179,6 +197,9 @@ const styles = StyleSheet.create({
   },
   list: {
     flex: 1,
+  },
+  listContent: {
+    paddingBottom: 8,
   },
   itemCard: {
     backgroundColor: '#ffffff',

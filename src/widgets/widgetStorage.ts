@@ -18,10 +18,44 @@ export interface WidgetConfiguration {
   configuredAt: number;
 }
 
+type WidgetSnapshotMap = Record<string, WidgetSnapshot>;
 type WidgetConfigurationMap = Record<string, WidgetConfiguration>;
 
 function toWidgetKey(widgetId: number): string {
   return widgetId.toString();
+}
+
+function isWidgetSnapshot(value: unknown): value is WidgetSnapshot {
+  if (!value || typeof value !== 'object') {
+    return false;
+  }
+
+  const candidate = value as Partial<WidgetSnapshot>;
+  return typeof candidate.updatedAt === 'number' && 'data' in candidate;
+}
+
+function parseWidgetSnapshotMap(raw: string): WidgetSnapshotMap {
+  try {
+    const parsed = JSON.parse(raw) as WidgetSnapshotMap | WidgetSnapshot;
+
+    if (isWidgetSnapshot(parsed)) {
+      return { default: parsed };
+    }
+
+    if (!parsed || typeof parsed !== 'object') {
+      return {};
+    }
+
+    return Object.entries(parsed).reduce<WidgetSnapshotMap>((accumulator, [key, value]) => {
+      if (isWidgetSnapshot(value)) {
+        accumulator[key] = value;
+      }
+
+      return accumulator;
+    }, {});
+  } catch {
+    return {};
+  }
 }
 
 async function loadWidgetConfigMap(): Promise<WidgetConfigurationMap> {
@@ -38,25 +72,61 @@ async function loadWidgetConfigMap(): Promise<WidgetConfigurationMap> {
   }
 }
 
-export async function saveWidgetSnapshot(snapshot: WidgetSnapshot): Promise<void> {
-  await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(snapshot));
+export async function saveWidgetSnapshot(widgetKey: string, snapshot: WidgetSnapshot): Promise<void> {
+  const raw = await AsyncStorage.getItem(STORAGE_KEY);
+  const snapshots = raw ? parseWidgetSnapshotMap(raw) : {};
+  snapshots[widgetKey] = snapshot;
+  await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(snapshots));
 }
 
-export async function loadWidgetSnapshot(): Promise<WidgetSnapshot | null> {
+export async function loadWidgetSnapshot(widgetKey?: string): Promise<WidgetSnapshot | null> {
   const raw = await AsyncStorage.getItem(STORAGE_KEY);
   if (!raw) {
     return null;
   }
 
+  const snapshots = parseWidgetSnapshotMap(raw);
+  if (widgetKey && snapshots[widgetKey]) {
+    return snapshots[widgetKey];
+  }
+
+  if (snapshots.default) {
+    return snapshots.default;
+  }
+
+  const firstSnapshot = Object.values(snapshots)[0];
+  if (firstSnapshot) {
+    return firstSnapshot;
+  }
+
   try {
-    return JSON.parse(raw) as WidgetSnapshot;
+    const parsed = JSON.parse(raw) as WidgetSnapshot;
+    return isWidgetSnapshot(parsed) ? parsed : null;
   } catch {
     return null;
   }
 }
 
-export async function clearWidgetSnapshot(): Promise<void> {
-  await AsyncStorage.removeItem(STORAGE_KEY);
+export async function clearWidgetSnapshot(widgetKey?: string): Promise<void> {
+  if (!widgetKey) {
+    await AsyncStorage.removeItem(STORAGE_KEY);
+    return;
+  }
+
+  const raw = await AsyncStorage.getItem(STORAGE_KEY);
+  if (!raw) {
+    return;
+  }
+
+  const snapshots = parseWidgetSnapshotMap(raw);
+  delete snapshots[widgetKey];
+
+  if (Object.keys(snapshots).length === 0) {
+    await AsyncStorage.removeItem(STORAGE_KEY);
+    return;
+  }
+
+  await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(snapshots));
 }
 
 export async function saveWidgetConfiguration(

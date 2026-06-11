@@ -21,7 +21,7 @@ async function renderFromSnapshot(props: WidgetTaskHandlerProps) {
     return;
   }
 
-  const snapshot = await loadWidgetSnapshot();
+  const snapshot = await loadWidgetSnapshot(config.analyticsWidgetId);
   const fallbackMessage = `Configured: ${config.title}. Open app to sync data.`;
 
   props.renderWidget(
