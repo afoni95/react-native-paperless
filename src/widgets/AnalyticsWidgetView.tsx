@@ -1,6 +1,7 @@
 import React from 'react';
-import { FlexWidget, TextWidget } from 'react-native-android-widget';
+import { FlexWidget, SvgWidget, TextWidget } from 'react-native-android-widget';
 import type { AnalyticsWidgetResult } from '@/features/analytics/types';
+import { createLineChartSvg, createPieChartSvg, lineLegendColors, pieLegendColors } from './chartSvg';
 
 interface AnalyticsWidgetViewProps {
   data: AnalyticsWidgetResult | null;
@@ -28,6 +29,211 @@ function formatSummary(data: AnalyticsWidgetResult | null): string {
   return `Slices: ${data.slices.length} | Total: ${total}`;
 }
 
+function formatNumber(value: number): string {
+  if (!Number.isFinite(value)) {
+    return '0';
+  }
+
+  if (Number.isInteger(value)) {
+    return `${value}`;
+  }
+
+  if (Math.abs(value) >= 1000) {
+    return value.toFixed(0);
+  }
+
+  return value.toFixed(2);
+}
+
+function renderInfoTile(data: Extract<AnalyticsWidgetResult, { kind: 'infoTile' }>) {
+  const values = data.values.slice(0, 4);
+  const cardColors: Array<`#${string}`> = ['#eaf7f2', '#e9f2fb', '#fff5e9', '#f6eefc'];
+
+  if (values.length === 0) {
+    return (
+      <TextWidget
+        text='No metrics configured'
+        style={{ fontSize: 12, color: '#6b7280' }}
+        maxLines={2}
+        truncate='END'
+      />
+    );
+  }
+
+  return (
+    <FlexWidget style={{ width: 'match_parent', flexDirection: 'column' }}>
+      {values.map((value, index) => (
+        <FlexWidget
+          key={value.id}
+          style={{
+            width: 'match_parent',
+            marginBottom: index === values.length - 1 ? 0 : 5,
+            backgroundColor: cardColors[index % cardColors.length],
+            borderRadius: 8,
+            paddingHorizontal: 8,
+            paddingVertical: 6,
+          }}
+        >
+          <TextWidget
+            text={value.label}
+            style={{ fontSize: 10, color: '#4b5563' }}
+            maxLines={1}
+            truncate='END'
+          />
+          <TextWidget
+            text={formatNumber(value.value)}
+            style={{ fontSize: 16, color: '#111827', fontWeight: 'bold' }}
+            maxLines={1}
+            truncate='END'
+          />
+        </FlexWidget>
+      ))}
+    </FlexWidget>
+  );
+}
+
+function renderLineChart(data: Extract<AnalyticsWidgetResult, { kind: 'line' }>) {
+  const svg = createLineChartSvg(data);
+  const colors = lineLegendColors(Math.min(data.series.length, 4));
+
+  return (
+    <FlexWidget style={{ width: 'match_parent', flexDirection: 'column' }}>
+      {svg ? (
+        <SvgWidget
+          svg={svg}
+          style={{ width: 'match_parent', height: 98, borderRadius: 8, backgroundColor: '#ffffff' }}
+        />
+      ) : (
+        <TextWidget
+          text={formatSummary(data)}
+          style={{ fontSize: 12, color: '#374151' }}
+          maxLines={2}
+          truncate='END'
+        />
+      )}
+
+      <FlexWidget style={{ width: 'match_parent', marginTop: 6, flexDirection: 'column' }}>
+        {data.series.slice(0, 4).map((series, index) => (
+          <FlexWidget
+            key={series.key}
+            style={{ width: 'match_parent', flexDirection: 'row', alignItems: 'center', marginBottom: 2 }}
+          >
+            <FlexWidget
+              style={{
+                width: 8,
+                height: 8,
+                borderRadius: 4,
+                marginRight: 5,
+                backgroundColor: colors[index],
+              }}
+            />
+            <TextWidget
+              text={series.label}
+              style={{ fontSize: 10, color: '#4b5563' }}
+              maxLines={1}
+              truncate='END'
+            />
+          </FlexWidget>
+        ))}
+      </FlexWidget>
+    </FlexWidget>
+  );
+}
+
+function renderPieChart(data: Extract<AnalyticsWidgetResult, { kind: 'pie' }>) {
+  const sortedSlices = [...data.slices].sort((a, b) => b.value - a.value);
+  const legendSlices = sortedSlices.slice(0, 5);
+  const total = sortedSlices.reduce((acc, slice) => acc + slice.value, 0);
+  const colors = pieLegendColors(legendSlices.length);
+  const svg = createPieChartSvg({ kind: 'pie', slices: sortedSlices });
+
+  return (
+    <FlexWidget style={{ width: 'match_parent', flexDirection: 'column' }}>
+      {svg ? (
+        <FlexWidget style={{ width: 'match_parent', justifyContent: 'center', alignItems: 'center' }}>
+          <SvgWidget svg={svg} style={{ width: 120, height: 110, marginBottom: 2 }} />
+        </FlexWidget>
+      ) : (
+        <TextWidget
+          text={formatSummary(data)}
+          style={{ fontSize: 12, color: '#374151' }}
+          maxLines={2}
+          truncate='END'
+        />
+      )}
+
+      <FlexWidget style={{ width: 'match_parent', flexDirection: 'column' }}>
+        {legendSlices.map((slice, index) => {
+          const percentage = total > 0 ? ((slice.value / total) * 100).toFixed(1) : '0.0';
+
+          return (
+            <FlexWidget
+              key={slice.key}
+              style={{ width: 'match_parent', flexDirection: 'row', alignItems: 'center', marginBottom: 2 }}
+            >
+              <FlexWidget
+                style={{
+                  width: 8,
+                  height: 8,
+                  borderRadius: 4,
+                  marginRight: 5,
+                  backgroundColor: colors[index],
+                }}
+              />
+              <TextWidget
+                text={`${slice.label}: ${formatNumber(slice.value)} (${percentage}%)`}
+                style={{ fontSize: 10, color: '#4b5563' }}
+                maxLines={1}
+                truncate='END'
+              />
+            </FlexWidget>
+          );
+        })}
+      </FlexWidget>
+    </FlexWidget>
+  );
+}
+
+function renderContent(data: AnalyticsWidgetResult | null, error?: string) {
+  if (error) {
+    return (
+      <TextWidget
+        text={error}
+        style={{
+          fontSize: 12,
+          color: '#b91c1c',
+          marginBottom: 8,
+        }}
+        maxLines={4}
+        truncate='END'
+      />
+    );
+  }
+
+  if (!data) {
+    return (
+      <TextWidget
+        text='No data yet'
+        style={{
+          fontSize: 12,
+          color: '#374151',
+          marginBottom: 8,
+        }}
+      />
+    );
+  }
+
+  if (data.kind === 'infoTile') {
+    return renderInfoTile(data);
+  }
+
+  if (data.kind === 'line') {
+    return renderLineChart(data);
+  }
+
+  return renderPieChart(data);
+}
+
 function formatTimestamp(updatedAt?: number): string {
   if (!updatedAt) {
     return 'Never';
@@ -51,25 +257,16 @@ export function AnalyticsWidgetView({ data, error, updatedAt }: AnalyticsWidgetV
       <TextWidget
         text='Paperless Analytics'
         style={{
-          fontSize: 15,
+          fontSize: 14,
           fontWeight: 'bold',
           color: '#111827',
-          marginBottom: 6,
+          marginBottom: 5,
         }}
       />
 
-      <TextWidget
-        text={error ?? formatSummary(data)}
-        style={{
-          fontSize: 12,
-          color: error ? '#b91c1c' : '#374151',
-          marginBottom: 8,
-        }}
-        maxLines={3}
-        truncate='END'
-      />
+      {renderContent(data, error)}
 
-      <FlexWidget style={{ width: 'match_parent', marginTop: 8, flexDirection: 'row' }}>
+      <FlexWidget style={{ width: 'match_parent', marginTop: 6, flexDirection: 'row' }}>
         <TextWidget
           text={`Updated: ${formatTimestamp(updatedAt)}`}
           style={{
