@@ -72,7 +72,10 @@ async function loadWidgetConfigMap(): Promise<WidgetConfigurationMap> {
   }
 }
 
-export async function saveWidgetSnapshot(widgetKey: string, snapshot: WidgetSnapshot): Promise<void> {
+export async function saveWidgetSnapshot(
+  widgetKey: string,
+  snapshot: WidgetSnapshot,
+): Promise<void> {
   const raw = await AsyncStorage.getItem(STORAGE_KEY);
   const snapshots = raw ? parseWidgetSnapshotMap(raw) : {};
   snapshots[widgetKey] = snapshot;
@@ -138,7 +141,9 @@ export async function saveWidgetConfiguration(
   await AsyncStorage.setItem(CONFIG_STORAGE_KEY, JSON.stringify(map));
 }
 
-export async function loadWidgetConfiguration(widgetId: number): Promise<WidgetConfiguration | null> {
+export async function loadWidgetConfiguration(
+  widgetId: number,
+): Promise<WidgetConfiguration | null> {
   const map = await loadWidgetConfigMap();
   return map[toWidgetKey(widgetId)] ?? null;
 }

@@ -3,7 +3,15 @@ import type { AnalyticsLineResult, AnalyticsPieResult } from '@/features/analyti
 type HexColor = `#${string}`;
 
 const LINE_PALETTE: HexColor[] = ['#2a9d8f', '#e76f51', '#264653', '#f4a261', '#457b9d', '#e9c46a'];
-const PIE_PALETTE: HexColor[] = ['#1d3557', '#2a9d8f', '#e76f51', '#f4a261', '#6d597a', '#457b9d', '#e9c46a'];
+const PIE_PALETTE: HexColor[] = [
+  '#1d3557',
+  '#2a9d8f',
+  '#e76f51',
+  '#f4a261',
+  '#6d597a',
+  '#457b9d',
+  '#e9c46a',
+];
 
 const CHART_WIDTH = 220;
 const LINE_HEIGHT = 96;
@@ -117,10 +125,7 @@ export function createLineChartSvg(result: AnalyticsLineResult): string | null {
 
   const xLabelsLayer = xLabels
     .map((point, index, items) => {
-      const x =
-        items.length <= 1
-          ? margin
-          : margin + (usableWidth * index) / (items.length - 1);
+      const x = items.length <= 1 ? margin : margin + (usableWidth * index) / (items.length - 1);
       return `<text x="${x}" y="${LINE_HEIGHT - 3}" font-size="7" fill="#6b7280" text-anchor="${
         index === 0 ? 'start' : index === items.length - 1 ? 'end' : 'middle'
       }">${escapeXml(String(point.x).slice(0, 10))}</text>`;
@@ -146,7 +151,13 @@ function polarToCartesian(cx: number, cy: number, radius: number, angle: number)
   };
 }
 
-function arcPath(cx: number, cy: number, radius: number, startAngle: number, endAngle: number): string {
+function arcPath(
+  cx: number,
+  cy: number,
+  radius: number,
+  startAngle: number,
+  endAngle: number,
+): string {
   const startPoint = polarToCartesian(cx, cy, radius, endAngle);
   const endPoint = polarToCartesian(cx, cy, radius, startAngle);
   const largeArcFlag = endAngle - startAngle > 180 ? 1 : 0;

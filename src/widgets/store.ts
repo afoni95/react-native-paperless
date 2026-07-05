@@ -17,7 +17,7 @@ const STORAGE_KEY = 'widget_store';
 
 const defaultSyncConfig: WidgetSyncConfig = {
   enabled: true,
-  intervalMinutes: 30,
+  intervalMinutes: 15,
   wifiOnly: false,
 };
 
@@ -41,7 +41,7 @@ interface WidgetStoreActions {
   setWidgetSyncStatus: (
     widgetId: string,
     status: 'idle' | 'syncing' | 'error',
-    error?: string
+    error?: string,
   ) => void;
   setLastSyncTime: (timestamp: number) => void;
 
@@ -182,6 +182,6 @@ export const useWidgetStore = create<WidgetStoreState & WidgetStoreActions>()(
         syncConfig: state.syncConfig,
         dataCache: state.dataCache,
       }),
-    }
-  )
+    },
+  ),
 );

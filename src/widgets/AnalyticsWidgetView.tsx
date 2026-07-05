@@ -1,12 +1,18 @@
 import React from 'react';
 import { FlexWidget, SvgWidget, TextWidget } from 'react-native-android-widget';
 import type { AnalyticsWidgetResult } from '@/features/analytics/types';
-import { createLineChartSvg, createPieChartSvg, lineLegendColors, pieLegendColors } from './chartSvg';
+import {
+  createLineChartSvg,
+  createPieChartSvg,
+  lineLegendColors,
+  pieLegendColors,
+} from './chartSvg';
 
 interface AnalyticsWidgetViewProps {
   data: AnalyticsWidgetResult | null;
   error?: string;
   updatedAt?: number;
+  showFetchWarning?: boolean;
 }
 
 function formatSummary(data: AnalyticsWidgetResult | null): string {
@@ -47,15 +53,15 @@ function formatNumber(value: number): string {
 
 function renderInfoTile(data: Extract<AnalyticsWidgetResult, { kind: 'infoTile' }>) {
   const values = data.values.slice(0, 4);
-  const cardColors: Array<`#${string}`> = ['#eaf7f2', '#e9f2fb', '#fff5e9', '#f6eefc'];
+  const cardColors: `#${string}`[] = ['#eaf7f2', '#e9f2fb', '#fff5e9', '#f6eefc'];
 
   if (values.length === 0) {
     return (
       <TextWidget
-        text='No metrics configured'
+        text="No metrics configured"
         style={{ fontSize: 12, color: '#6b7280' }}
         maxLines={2}
-        truncate='END'
+        truncate="END"
       />
     );
   }
@@ -78,13 +84,13 @@ function renderInfoTile(data: Extract<AnalyticsWidgetResult, { kind: 'infoTile' 
             text={value.label}
             style={{ fontSize: 10, color: '#4b5563' }}
             maxLines={1}
-            truncate='END'
+            truncate="END"
           />
           <TextWidget
             text={formatNumber(value.value)}
             style={{ fontSize: 16, color: '#111827', fontWeight: 'bold' }}
             maxLines={1}
-            truncate='END'
+            truncate="END"
           />
         </FlexWidget>
       ))}
@@ -108,7 +114,7 @@ function renderLineChart(data: Extract<AnalyticsWidgetResult, { kind: 'line' }>)
           text={formatSummary(data)}
           style={{ fontSize: 12, color: '#374151' }}
           maxLines={2}
-          truncate='END'
+          truncate="END"
         />
       )}
 
@@ -116,7 +122,12 @@ function renderLineChart(data: Extract<AnalyticsWidgetResult, { kind: 'line' }>)
         {data.series.slice(0, 4).map((series, index) => (
           <FlexWidget
             key={series.key}
-            style={{ width: 'match_parent', flexDirection: 'row', alignItems: 'center', marginBottom: 2 }}
+            style={{
+              width: 'match_parent',
+              flexDirection: 'row',
+              alignItems: 'center',
+              marginBottom: 2,
+            }}
           >
             <FlexWidget
               style={{
@@ -131,7 +142,7 @@ function renderLineChart(data: Extract<AnalyticsWidgetResult, { kind: 'line' }>)
               text={series.label}
               style={{ fontSize: 10, color: '#4b5563' }}
               maxLines={1}
-              truncate='END'
+              truncate="END"
             />
           </FlexWidget>
         ))}
@@ -150,7 +161,9 @@ function renderPieChart(data: Extract<AnalyticsWidgetResult, { kind: 'pie' }>) {
   return (
     <FlexWidget style={{ width: 'match_parent', flexDirection: 'column' }}>
       {svg ? (
-        <FlexWidget style={{ width: 'match_parent', justifyContent: 'center', alignItems: 'center' }}>
+        <FlexWidget
+          style={{ width: 'match_parent', justifyContent: 'center', alignItems: 'center' }}
+        >
           <SvgWidget svg={svg} style={{ width: 120, height: 110, marginBottom: 2 }} />
         </FlexWidget>
       ) : (
@@ -158,7 +171,7 @@ function renderPieChart(data: Extract<AnalyticsWidgetResult, { kind: 'pie' }>) {
           text={formatSummary(data)}
           style={{ fontSize: 12, color: '#374151' }}
           maxLines={2}
-          truncate='END'
+          truncate="END"
         />
       )}
 
@@ -169,7 +182,12 @@ function renderPieChart(data: Extract<AnalyticsWidgetResult, { kind: 'pie' }>) {
           return (
             <FlexWidget
               key={slice.key}
-              style={{ width: 'match_parent', flexDirection: 'row', alignItems: 'center', marginBottom: 2 }}
+              style={{
+                width: 'match_parent',
+                flexDirection: 'row',
+                alignItems: 'center',
+                marginBottom: 2,
+              }}
             >
               <FlexWidget
                 style={{
@@ -184,7 +202,7 @@ function renderPieChart(data: Extract<AnalyticsWidgetResult, { kind: 'pie' }>) {
                 text={`${slice.label}: ${formatNumber(slice.value)} (${percentage}%)`}
                 style={{ fontSize: 10, color: '#4b5563' }}
                 maxLines={1}
-                truncate='END'
+                truncate="END"
               />
             </FlexWidget>
           );
@@ -195,30 +213,17 @@ function renderPieChart(data: Extract<AnalyticsWidgetResult, { kind: 'pie' }>) {
 }
 
 function renderContent(data: AnalyticsWidgetResult | null, error?: string) {
-  if (error) {
-    return (
-      <TextWidget
-        text={error}
-        style={{
-          fontSize: 12,
-          color: '#b91c1c',
-          marginBottom: 8,
-        }}
-        maxLines={4}
-        truncate='END'
-      />
-    );
-  }
-
   if (!data) {
     return (
       <TextWidget
-        text='No data yet'
+        text={error ? 'No data available yet' : 'No data yet'}
         style={{
           fontSize: 12,
           color: '#374151',
           marginBottom: 8,
         }}
+        maxLines={2}
+        truncate="END"
       />
     );
   }
@@ -242,25 +247,32 @@ function formatTimestamp(updatedAt?: number): string {
   return new Date(updatedAt).toLocaleString();
 }
 
-export function AnalyticsWidgetView({ data, error, updatedAt }: AnalyticsWidgetViewProps) {
+export function AnalyticsWidgetView({
+  data,
+  error,
+  updatedAt,
+  showFetchWarning,
+}: AnalyticsWidgetViewProps) {
   return (
     <FlexWidget
       style={{
         width: 'match_parent',
         height: 'match_parent',
         padding: 12,
-        backgroundColor: '#ffffff',
+        backgroundColor: '#f8fafc',
+        borderWidth: 1,
+        borderColor: '#e2e8f0',
         borderRadius: 14,
         flexDirection: 'column',
       }}
     >
       <TextWidget
-        text='Paperless Analytics'
+        text="Paperless Analytics"
         style={{
-          fontSize: 14,
+          fontSize: 15,
           fontWeight: 'bold',
           color: '#111827',
-          marginBottom: 5,
+          marginBottom: 6,
         }}
       />
 
@@ -270,26 +282,49 @@ export function AnalyticsWidgetView({ data, error, updatedAt }: AnalyticsWidgetV
         <TextWidget
           text={`Updated: ${formatTimestamp(updatedAt)}`}
           style={{
-            fontSize: 10,
+            fontSize: 9,
             color: '#6b7280',
           }}
           maxLines={1}
-          truncate='END'
+          truncate="END"
         />
       </FlexWidget>
 
-      <FlexWidget
-        clickAction='REFRESH'
-        style={{
-          marginTop: 6,
-          backgroundColor: '#e5f3ea',
-          borderRadius: 8,
-          paddingHorizontal: 8,
-          paddingVertical: 4,
-        }}
-      >
-        <TextWidget text='Refresh' style={{ fontSize: 11, color: '#166534', fontWeight: 'bold' }} />
-      </FlexWidget>
+      {showFetchWarning && error ? (
+        <FlexWidget
+          style={{
+            width: 'match_parent',
+            marginTop: 6,
+            flexDirection: 'row',
+            alignItems: 'center',
+            backgroundColor: '#fef2f2',
+            borderRadius: 8,
+            paddingHorizontal: 8,
+            paddingVertical: 6,
+            borderWidth: 1,
+            borderColor: '#fecaca',
+          }}
+        >
+          <TextWidget
+            text="⚠"
+            style={{
+              fontSize: 12,
+              color: '#b91c1c',
+              marginRight: 6,
+              fontWeight: 'bold',
+            }}
+          />
+          <TextWidget
+            text="Could not refresh data. Showing last cached values."
+            style={{
+              fontSize: 10,
+              color: '#991b1b',
+            }}
+            maxLines={2}
+            truncate="END"
+          />
+        </FlexWidget>
+      ) : null}
     </FlexWidget>
   );
 }

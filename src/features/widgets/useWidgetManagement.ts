@@ -90,7 +90,7 @@ export function useWidgetManagement() {
         throw error;
       }
     },
-    [queryClient, addWidget]
+    [queryClient, addWidget],
   );
 
   /**
@@ -110,7 +110,7 @@ export function useWidgetManagement() {
         removeWidgetMutation(widgetId);
       }
     },
-    [removeWidgetMutation]
+    [removeWidgetMutation],
   );
 
   /**
@@ -134,7 +134,7 @@ export function useWidgetManagement() {
         throw error;
       }
     },
-    [syncWidgetMutation, store]
+    [syncWidgetMutation, store],
   );
 
   /**
@@ -167,7 +167,7 @@ export function useWidgetManagement() {
     (updates: Partial<typeof syncConfig>) => {
       updateSyncConfig(updates);
     },
-    [updateSyncConfig]
+    [updateSyncConfig],
   );
 
   return {

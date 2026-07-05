@@ -95,7 +95,7 @@ export function WidgetConfigurationScreen({
     renderWidget(
       <AnalyticsWidgetView
         data={null}
-        error={`Configured: ${selectedItem.displayTitle}. Open app to refresh data.`}
+        error={`Configured: ${selectedItem.displayTitle}. Data will refresh automatically.`}
         updatedAt={Date.now()}
       />,
     );
@@ -182,6 +182,7 @@ const styles = StyleSheet.create({
     borderColor: '#cbd5e1',
     borderRadius: 14,
     padding: 14,
+    paddingTop: 20,
     paddingBottom: 26,
   },
   title: {

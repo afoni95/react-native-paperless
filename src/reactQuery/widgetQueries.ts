@@ -137,7 +137,7 @@ export function useAddWidget() {
     (widget: any) => {
       store.addWidget(widget);
     },
-    [store]
+    [store],
   );
 }
 
@@ -151,7 +151,7 @@ export function useRemoveWidget() {
     (widgetId: string) => {
       store.removeWidget(widgetId);
     },
-    [store]
+    [store],
   );
 }
 

@@ -15,21 +15,22 @@ async function renderFromSnapshot(props: WidgetTaskHandlerProps) {
     props.renderWidget(
       <AnalyticsWidgetView
         data={null}
-        error='Widget not configured. Long press and tap Configure to select an analytics widget.'
-      />
+        error="Widget not configured. Long press and tap Configure to select an analytics widget."
+      />,
     );
     return;
   }
 
   const snapshot = await loadWidgetSnapshot(config.analyticsWidgetId);
-  const fallbackMessage = `Configured: ${config.title}. Open app to sync data.`;
+  const fallbackMessage = `Configured: ${config.title}. Data will refresh automatically.`;
 
   props.renderWidget(
     <AnalyticsWidgetView
       data={snapshot?.data ?? null}
       error={snapshot?.error ?? (!snapshot?.data ? fallbackMessage : undefined)}
       updatedAt={snapshot?.updatedAt}
-    />
+      showFetchWarning={Boolean(snapshot?.error)}
+    />,
   );
 }
 
@@ -39,12 +40,6 @@ export async function widgetTaskHandler(props: WidgetTaskHandlerProps) {
     case 'WIDGET_UPDATE':
     case 'WIDGET_RESIZED':
       await renderFromSnapshot(props);
-      break;
-
-    case 'WIDGET_CLICK':
-      if (props.clickAction === 'REFRESH') {
-        await renderFromSnapshot(props);
-      }
       break;
 
     case 'WIDGET_DELETED':

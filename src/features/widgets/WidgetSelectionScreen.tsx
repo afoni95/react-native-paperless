@@ -26,9 +26,7 @@ export function WidgetSelectionScreen({ navigation }: Props) {
   const availableWidgets = useMemo(() => {
     if (!analyticsWidgets) return [];
 
-    const addedIds = new Set(
-      Object.values(widgets).map((w) => w.analyticsWidgetId)
-    );
+    const addedIds = new Set(Object.values(widgets).map((w) => w.analyticsWidgetId));
 
     return analyticsWidgets.filter((w) => !addedIds.has(w.id));
   }, [analyticsWidgets, widgets]);
@@ -77,7 +75,10 @@ export function WidgetSelectionScreen({ navigation }: Props) {
       style={[styles.container, { backgroundColor: theme.colors.background }]}
       contentContainerStyle={styles.content}
     >
-      <Text variant="bodyMedium" style={[styles.sectionTitle, { color: theme.colors.onBackground }]}>
+      <Text
+        variant="bodyMedium"
+        style={[styles.sectionTitle, { color: theme.colors.onBackground }]}
+      >
         Select a widget from your analytics dashboard:
       </Text>
 

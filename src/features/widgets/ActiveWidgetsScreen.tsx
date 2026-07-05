@@ -87,10 +87,7 @@ export function ActiveWidgetsScreen({ navigation }: Props) {
             </Paragraph>
           </Card.Content>
           <Card.Actions>
-            <Button
-              mode="contained"
-              onPress={() => navigation.navigate('WidgetSelection')}
-            >
+            <Button mode="contained" onPress={() => navigation.navigate('WidgetSelection')}>
               Add Widget
             </Button>
           </Card.Actions>
@@ -121,9 +118,7 @@ export function ActiveWidgetsScreen({ navigation }: Props) {
             style={{ backgroundColor: getStatusColor(syncStatus) }}
             textStyle={{ color: 'white' }}
             avatar={
-              syncStatus === 'syncing' ? (
-                <ActivityIndicator size={16} color="white" />
-              ) : undefined
+              syncStatus === 'syncing' ? <ActivityIndicator size={16} color="white" /> : undefined
             }
           >
             {syncStatus === 'syncing' && 'Syncing...'}
@@ -173,9 +168,7 @@ export function ActiveWidgetsScreen({ navigation }: Props) {
                       : theme.colors.primaryContainer,
                   }}
                   textStyle={{
-                    color: isStale
-                      ? theme.colors.errorContainer
-                      : theme.colors.onPrimaryContainer,
+                    color: isStale ? theme.colors.errorContainer : theme.colors.onPrimaryContainer,
                   }}
                 >
                   {isStale ? 'Stale' : 'Fresh'}
@@ -184,25 +177,20 @@ export function ActiveWidgetsScreen({ navigation }: Props) {
 
               {cachedData && (
                 <Text variant="labelSmall" style={styles.lastSyncTime}>
-                  Last updated:{' '}
-                  {new Date(cachedData.timestamp).toLocaleString()}
+                  Last updated: {new Date(cachedData.timestamp).toLocaleString()}
                 </Text>
               )}
             </Card.Content>
 
             <Card.Actions style={styles.cardActions}>
               <Button
-                
                 onPress={() => handleSyncWidget(widget.id)}
                 loading={widget.syncStatus === 'syncing'}
                 disabled={widget.syncStatus === 'syncing' || isSyncing}
               >
                 Refresh
               </Button>
-              <Button
-                textColor={theme.colors.error}
-                onPress={() => handleRemoveWidget(widget.id)}
-              >
+              <Button textColor={theme.colors.error} onPress={() => handleRemoveWidget(widget.id)}>
                 Remove
               </Button>
             </Card.Actions>

@@ -77,11 +77,7 @@ export async function requestWidgetRefresh(widgetId: string): Promise<void> {
  * Listen for widget-related events from native layer
  */
 export function setupWidgetEventListener(
-  callback: (event: {
-    type: 'refresh' | 'remove' | 'click';
-    widgetId: string;
-    data?: any;
-  }) => void
+  callback: (event: { type: 'refresh' | 'remove' | 'click'; widgetId: string; data?: any }) => void,
 ): () => void {
   void callback;
   return () => {};

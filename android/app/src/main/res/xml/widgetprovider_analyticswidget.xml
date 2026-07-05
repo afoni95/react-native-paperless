@@ -17,6 +17,6 @@
     android:configure="com.paperlessnative.mobile.WidgetConfigurationActivity"
     android:widgetFeatures="reconfigurable|configuration_optional"
 
-    android:updatePeriodMillis="1800000"
+    android:updatePeriodMillis="900000"
     android:widgetCategory="home_screen">
 </appwidget-provider>

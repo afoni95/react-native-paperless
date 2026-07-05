@@ -76,18 +76,18 @@ export function WidgetSettingsScreen({ navigation }: Props) {
               Refresh Interval
             </Text>
 
-            <RadioButton.Group value={selectedInterval.toString()} onValueChange={(val) => {
-              setSelectedInterval(parseInt(val, 10));
-            }}>
+            <RadioButton.Group
+              value={selectedInterval.toString()}
+              onValueChange={(val) => {
+                setSelectedInterval(parseInt(val, 10));
+              }}
+            >
               {intervals.map((interval, index) => (
                 <View key={interval.value}>
                   <List.Item
                     title={interval.label}
                     left={() => (
-                      <RadioButton
-                        value={interval.value.toString()}
-                        color={theme.colors.primary}
-                      />
+                      <RadioButton value={interval.value.toString()} color={theme.colors.primary} />
                     )}
                     style={styles.radioItem}
                     onPress={() => setSelectedInterval(interval.value)}
@@ -111,11 +111,7 @@ export function WidgetSettingsScreen({ navigation }: Props) {
                   Only sync when connected to WiFi to save cellular data
                 </Text>
               </View>
-              <Switch
-                value={wifiOnly}
-                onValueChange={setWifiOnly}
-                color={theme.colors.primary}
-              />
+              <Switch value={wifiOnly} onValueChange={setWifiOnly} color={theme.colors.primary} />
             </View>
           </Card.Content>
         </Card>
@@ -125,25 +121,17 @@ export function WidgetSettingsScreen({ navigation }: Props) {
       <Card style={[styles.card, styles.infoCard]}>
         <Card.Content>
           <Text variant="labelSmall" style={styles.infoText}>
-            💡 Tip: You can always manually refresh widgets from the Active Widgets screen.
+            Widgets refresh automatically based on the selected interval.
           </Text>
         </Card.Content>
       </Card>
 
       {/* Save Button */}
       <View style={styles.buttonContainer}>
-        <Button
-          mode="contained"
-          onPress={handleSave}
-          style={styles.saveButton}
-        >
+        <Button mode="contained" onPress={handleSave} style={styles.saveButton}>
           Save Settings
         </Button>
-        <Button
-          mode="outlined"
-          onPress={() => navigation.goBack()}
-          style={styles.cancelButton}
-        >
+        <Button mode="outlined" onPress={() => navigation.goBack()} style={styles.cancelButton}>
           Cancel
         </Button>
       </View>

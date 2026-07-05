@@ -5,33 +5,45 @@
 
 import { AppState, AppStateStatus } from 'react-native';
 import NetInfo from '@react-native-community/netinfo';
+import type { NetInfoSubscription } from '@react-native-community/netinfo';
 import type { QueryClient } from '@tanstack/react-query';
 import { useWidgetStore } from '@/widgets/store';
 import { syncAllWidgets, shouldSync, createSyncScheduler } from '@/widgets/sync';
 import { updateNativeWidget } from '@/widgets/nativeBridge';
 import type { AnalyticsWidget } from '@/features/analytics/types';
-import type { HomeScreenWidget } from '@/widgets/types';
 
 type WidgetSyncConfig = ReturnType<typeof useWidgetStore.getState>['syncConfig'];
 
 interface WidgetSyncServiceConfig {
   queryClient: QueryClient;
-  analyticsWidgets: Record<string, AnalyticsWidget>;
-  homeScreenWidgets: Record<string, HomeScreenWidget>;
 }
 
 class WidgetSyncService {
   private syncScheduler: ReturnType<typeof createSyncScheduler> | null = null;
-  private appStateSubscription: any = null;
-  private networkSubscription: any = null;
+  private appStateSubscription: { remove: () => void } | null = null;
+  private networkSubscription: NetInfoSubscription | null = null;
   private isActive = true;
   private isOnline = true;
   private config: WidgetSyncServiceConfig | null = null;
+
+  private getAnalyticsWidgets = (): Record<string, AnalyticsWidget> => {
+    if (!this.config) {
+      return {};
+    }
+
+    return (
+      this.config.queryClient.getQueryData<Record<string, AnalyticsWidget>>(['analyticsWidgets']) ??
+      {}
+    );
+  };
 
   /**
    * Initialize the sync service
    */
   initialize(config: WidgetSyncServiceConfig) {
+    // Prevent duplicate listeners/schedulers across auth/navigation transitions.
+    this.destroy();
+
     console.log('[WidgetSyncService] Initializing');
     this.config = config;
 
@@ -41,7 +53,10 @@ class WidgetSyncService {
     // Setup network listener
     this.networkSubscription = NetInfo.addEventListener((state) => {
       this.isOnline = !!state.isConnected;
-      console.log('[WidgetSyncService] Network status changed:', state.isConnected ? 'online' : 'offline');
+      console.log(
+        '[WidgetSyncService] Network status changed:',
+        state.isConnected ? 'online' : 'offline',
+      );
 
       if (this.isOnline && this.isActive) {
         this.performSync(true);
@@ -52,7 +67,7 @@ class WidgetSyncService {
     const store = useWidgetStore.getState();
     this.syncScheduler = createSyncScheduler({
       queryClient: config.queryClient,
-      widgets: config.analyticsWidgets,
+      widgets: this.getAnalyticsWidgets,
       intervalMs: store.syncConfig.intervalMinutes * 60 * 1000,
     });
 
@@ -107,9 +122,14 @@ class WidgetSyncService {
     console.log('[WidgetSyncService] Starting sync');
 
     try {
+      const analyticsWidgets = this.getAnalyticsWidgets();
+      if (Object.keys(analyticsWidgets).length === 0) {
+        return;
+      }
+
       const result = await syncAllWidgets({
         queryClient: this.config.queryClient,
-        widgets: this.config.analyticsWidgets,
+        widgets: analyticsWidgets,
         force,
         onProgress: (widgetId, status) => {
           // Send updates to native layer
@@ -134,7 +154,7 @@ class WidgetSyncService {
 
       console.log(
         '[WidgetSyncService] Sync complete:',
-        `${result.success} succeeded, ${result.failed} failed`
+        `${result.success} succeeded, ${result.failed} failed`,
       );
     } catch (error) {
       console.error('[WidgetSyncService] Sync error:', error);
@@ -157,15 +177,13 @@ class WidgetSyncService {
    */
   updateConfig = (updates: Partial<WidgetSyncConfig>) => {
     console.log('[WidgetSyncService] Updating config:', updates);
-    const store = useWidgetStore.getState();
-    store.updateSyncConfig(updates);
 
     // Restart scheduler with new interval if it changed
     if (updates.intervalMinutes && this.syncScheduler) {
       this.syncScheduler.stop();
       this.syncScheduler = createSyncScheduler({
         queryClient: this.config!.queryClient,
-        widgets: this.config!.analyticsWidgets,
+        widgets: this.getAnalyticsWidgets,
         intervalMs: updates.intervalMinutes * 60 * 1000,
       });
       if (this.isActive) {
@@ -188,7 +206,7 @@ class WidgetSyncService {
       this.appStateSubscription = null;
     }
     if (this.networkSubscription) {
-      this.networkSubscription.unsubscribe();
+      this.networkSubscription();
       this.networkSubscription = null;
     }
     this.config = null;

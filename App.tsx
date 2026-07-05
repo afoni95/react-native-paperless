@@ -15,6 +15,8 @@ import { useNetworkStore, NetworkStatus } from '@/store/networkStore';
 import { lightTheme, darkTheme } from '@/theme';
 import i18n from '@/i18n';
 import { WidgetSnapshotBootstrap } from '@/widgets/WidgetSnapshotBootstrap';
+import { initializeWidgetSync, cleanupWidgetSync } from '@/services/backgroundSync';
+import { useWidgetStore } from '@/widgets/store';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -96,6 +98,34 @@ export default function App() {
     });
     return () => unsubscribe();
   }, []);
+
+  useEffect(() => {
+    const canRunWidgetSync = isAuthenticated && !isLoading && !biometricLocked;
+    if (!canRunWidgetSync) {
+      cleanupWidgetSync();
+      return;
+    }
+
+    const service = initializeWidgetSync({ queryClient });
+
+    const unsubscribeStore = useWidgetStore.subscribe((state, prevState) => {
+      const prevConfig = prevState.syncConfig;
+      const nextConfig = state.syncConfig;
+
+      if (
+        prevConfig.enabled !== nextConfig.enabled ||
+        prevConfig.intervalMinutes !== nextConfig.intervalMinutes ||
+        prevConfig.wifiOnly !== nextConfig.wifiOnly
+      ) {
+        service.updateConfig(nextConfig);
+      }
+    });
+
+    return () => {
+      unsubscribeStore();
+      cleanupWidgetSync();
+    };
+  }, [isAuthenticated, isLoading, biometricLocked]);
 
   return (
     <ErrorBoundary>

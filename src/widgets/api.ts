@@ -14,7 +14,7 @@ import type { AnalyticsDataSource } from '@/features/analytics/types';
  */
 export async function fetchWidgetData(
   widget: AnalyticsWidget,
-  queryClient: QueryClient
+  queryClient: QueryClient,
 ): Promise<AnalyticsWidgetResult | null> {
   try {
     // Build analytics source from cached queries.
@@ -44,7 +44,10 @@ export async function fetchWidgetData(
  * Check if widget data is stale based on timestamp
  * Data older than 15 minutes is considered stale
  */
-export function isWidgetDataStale(lastSyncAt?: number, staleTimeMs: number = 15 * 60 * 1000): boolean {
+export function isWidgetDataStale(
+  lastSyncAt?: number,
+  staleTimeMs: number = 15 * 60 * 1000,
+): boolean {
   if (!lastSyncAt) return true;
 
   const age = Date.now() - lastSyncAt;
@@ -72,7 +75,7 @@ export function formatWidgetError(error: unknown): string {
  */
 export function validateWidgetConfig(
   widget: AnalyticsWidget,
-  customFieldIds: Set<number>
+  customFieldIds: Set<number>,
 ): { valid: boolean; error?: string } {
   const config = widget.config;
 

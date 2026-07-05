@@ -10,7 +10,7 @@ import type { AnalyticsWidget } from '@/features/analytics/types';
 
 export interface SyncOptions {
   queryClient: QueryClient;
-  widgets: Record<string, AnalyticsWidget>;
+  widgets: Record<string, AnalyticsWidget> | (() => Record<string, AnalyticsWidget>);
   force?: boolean;
   onProgress?: (widgetId: string, status: 'syncing' | 'done' | 'error') => void;
 }
@@ -22,7 +22,7 @@ export async function syncWidget(
   widgetId: string,
   analyticsWidget: AnalyticsWidget,
   queryClient: QueryClient,
-  onProgress?: (status: 'syncing' | 'done' | 'error') => void
+  onProgress?: (status: 'syncing' | 'done' | 'error') => void,
 ): Promise<boolean> {
   const store = useWidgetStore.getState();
 
@@ -58,10 +58,11 @@ export async function syncWidget(
  * Sync all widgets with error handling and retry logic
  */
 export async function syncAllWidgets(
-  options: SyncOptions
+  options: SyncOptions,
 ): Promise<{ success: number; failed: number }> {
   const store = useWidgetStore.getState();
-  const { queryClient, widgets, force = false, onProgress } = options;
+  const { queryClient, widgets: widgetsInput, force = false, onProgress } = options;
+  const widgets = typeof widgetsInput === 'function' ? widgetsInput() : widgetsInput;
 
   const widgetIds = Object.keys(store.widgets);
 
@@ -80,11 +81,7 @@ export async function syncAllWidgets(
 
     const analyticsWidget = widgets[widget.analyticsWidgetId];
     if (!analyticsWidget) {
-      store.setWidgetSyncStatus(
-        widgetId,
-        'error',
-        'Analytics widget configuration not found'
-      );
+      store.setWidgetSyncStatus(widgetId, 'error', 'Analytics widget configuration not found');
       failedCount++;
       continue;
     }
@@ -121,7 +118,9 @@ export async function syncAllWidgets(
 /**
  * Check if sync is needed based on configuration and time elapsed
  */
-export function shouldSync(config: ReturnType<typeof useWidgetStore.getState>['syncConfig']): boolean {
+export function shouldSync(
+  config: ReturnType<typeof useWidgetStore.getState>['syncConfig'],
+): boolean {
   if (!config.enabled) return false;
 
   const { lastSyncAt, intervalMinutes } = config;
@@ -134,11 +133,9 @@ export function shouldSync(config: ReturnType<typeof useWidgetStore.getState>['s
 /**
  * Create a sync job that respects rate limiting
  */
-export function createSyncScheduler(
-  options: Omit<SyncOptions, 'force'> & { intervalMs?: number }
-) {
+export function createSyncScheduler(options: Omit<SyncOptions, 'force'> & { intervalMs?: number }) {
   const { queryClient, widgets, intervalMs = 30 * 60 * 1000 } = options; // Default 30 min
-  let syncTimeout: NodeJS.Timeout | null = null;
+  let syncTimeout: ReturnType<typeof setTimeout> | null = null;
   let isSyncing = false;
 
   const performSync = async (force = false) => {

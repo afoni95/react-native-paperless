@@ -1,7 +1,7 @@
 import { registerRootComponent } from 'expo';
 import {
-	registerWidgetConfigurationScreen,
-	registerWidgetTaskHandler,
+  registerWidgetConfigurationScreen,
+  registerWidgetTaskHandler,
 } from 'react-native-android-widget';
 
 import App from './App';
