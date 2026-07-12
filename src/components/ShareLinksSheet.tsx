@@ -69,7 +69,10 @@ export const ShareLinksSheet: React.FC<ShareLinksSheetProps> = ({
 
   return (
     <Modal visible={visible} animationType="slide" transparent onRequestClose={onDismiss}>
-      <Pressable style={styles.overlay} onPress={onDismiss} />
+      <Pressable
+        style={[styles.overlay, { backgroundColor: theme.colors.backdrop }]}
+        onPress={onDismiss}
+      />
       <View style={[styles.sheet, { backgroundColor: theme.colors.surface }]}>
         {/* Header */}
         <View style={styles.header}>
@@ -147,7 +150,6 @@ export const ShareLinksSheet: React.FC<ShareLinksSheetProps> = ({
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.4)',
   },
   sheet: {
     maxHeight: '80%',

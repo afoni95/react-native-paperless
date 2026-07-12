@@ -312,7 +312,10 @@ export const DocumentDetailScreen: React.FC<Props> = ({ route, navigation }) => 
               {doc.notes &&
                 doc.notes.length > 0 &&
                 doc.notes.map((note) => (
-                  <View key={note.id} style={styles.noteItem}>
+                  <View
+                    key={note.id}
+                    style={[styles.noteItem, { borderBottomColor: theme.colors.outlineVariant }]}
+                  >
                     <Text variant="bodyMedium">{note.note}</Text>
                     <Text variant="labelSmall" style={{ color: theme.colors.onSurfaceVariant }}>
                       {formatDateTime(note.created)}
@@ -404,7 +407,6 @@ const styles = StyleSheet.create({
   noteItem: {
     paddingVertical: 8,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#e0e0e0',
   },
   addNoteRow: {
     flexDirection: 'row',

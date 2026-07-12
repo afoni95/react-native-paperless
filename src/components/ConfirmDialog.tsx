@@ -1,5 +1,5 @@
 import React from 'react';
-import { Portal, Dialog, Button, Text } from 'react-native-paper';
+import { Portal, Dialog, Button, Text, useTheme } from 'react-native-paper';
 import { useTranslation } from 'react-i18next';
 
 interface ConfirmDialogProps {
@@ -24,9 +24,10 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
   onCancel,
 }) => {
   const { t } = useTranslation();
+  const theme = useTheme();
   const cancelText = cancelLabel || t('common.cancel');
   const confirmText = confirmLabel || t('common.confirm');
-  const confirmColor = destructive ? '#d32f2f' : undefined;
+  const confirmColor = destructive ? theme.colors.error : undefined;
 
   return (
     <Portal>

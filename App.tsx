@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useColorScheme, View, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { StatusBar } from 'expo-status-bar';
 import { PaperProvider, Banner, Text } from 'react-native-paper';
@@ -12,7 +12,7 @@ import { AppNavigator } from '@/navigation/AppNavigator';
 import { useAuthStore } from '@/store/authStore';
 import { useSettingsStore } from '@/store/settingsStore';
 import { useNetworkStore, NetworkStatus } from '@/store/networkStore';
-import { lightTheme, darkTheme } from '@/theme';
+import { useAppTheme } from '@/theme';
 import i18n from '@/i18n';
 
 const queryClient = new QueryClient({
@@ -69,13 +69,11 @@ const boundaryStyles = StyleSheet.create({
 
 export default function App() {
   const { t } = useTranslation();
-  const systemScheme = useColorScheme();
   const { restoreSession } = useAuthStore();
-  const { theme: themeMode, loadSettings } = useSettingsStore();
+  const { loadSettings } = useSettingsStore();
   const [isOffline, setIsOffline] = useState(false);
 
-  const isDark = themeMode === 'dark' || (themeMode === 'auto' && systemScheme === 'dark');
-  const paperTheme = isDark ? darkTheme : lightTheme;
+  const appTheme = useAppTheme();
 
   useEffect(() => {
     restoreSession();
@@ -100,12 +98,12 @@ export default function App() {
     <ErrorBoundary>
       <SafeAreaProvider>
         <QueryClientProvider client={queryClient}>
-          <PaperProvider theme={paperTheme}>
+          <PaperProvider theme={appTheme.paper}>
             <Banner
               visible={isOffline}
               icon="wifi-off"
               actions={[]}
-              style={{ backgroundColor: paperTheme.colors.errorContainer }}
+              style={{ backgroundColor: appTheme.paper.colors.errorContainer }}
             >
               <View>
                 <Text>{t('common.offline')}</Text>
