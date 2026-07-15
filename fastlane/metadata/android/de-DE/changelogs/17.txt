@@ -1,0 +1,6 @@
+• Unterstuetzung fuer benutzerdefinierte Felder hinzugefuegt
+• Verwaltung von Freigabelinks hinzugefuegt
+• Mailkonten und Mailregeln hinzugefuegt
+• Ansicht fuer verarbeitete E-Mails hinzugefuegt
+• Workflow-Verwaltung hinzugefuegt
+• UI-Verbesserungen und Fehlerbehebungen

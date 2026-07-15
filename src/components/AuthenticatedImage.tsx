@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Image, ImageStyle, StyleProp, ActivityIndicator, View } from 'react-native';
+import { useTheme } from 'react-native-paper';
 import apiClient from '@/api/client';
 
 interface AuthenticatedImageProps {
@@ -13,6 +14,7 @@ export const AuthenticatedImage: React.FC<AuthenticatedImageProps> = ({
   style,
   resizeMode = 'cover',
 }) => {
+  const theme = useTheme();
   const [imageData, setImageData] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -60,16 +62,20 @@ export const AuthenticatedImage: React.FC<AuthenticatedImageProps> = ({
       <View
         style={[
           style,
-          { justifyContent: 'center', alignItems: 'center', backgroundColor: '#e0e0e0' },
+          {
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: theme.colors.surfaceVariant,
+          },
         ]}
       >
-        <ActivityIndicator size="small" color="#666" />
+        <ActivityIndicator size="small" color={theme.colors.onSurfaceVariant} />
       </View>
     );
   }
 
   if (error || !imageData) {
-    return <View style={[style, { backgroundColor: '#e0e0e0' }]} />;
+    return <View style={[style, { backgroundColor: theme.colors.surfaceVariant }]} />;
   }
 
   return <Image source={{ uri: imageData }} style={style} resizeMode={resizeMode} />;

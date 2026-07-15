@@ -1,7 +1,8 @@
 import { create } from 'zustand';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SETTINGS_KEY } from './constants';
-import type { ThemeMode, Language } from '@/types';
+import { THEME_NAMES } from '@/types';
+import type { ThemeMode, ThemeName, Language } from '@/types';
 
 interface SettingsState {
   theme: ThemeMode;
@@ -32,11 +33,14 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
       const stored = await AsyncStorage.getItem(SETTINGS_KEY);
       if (stored) {
         const parsed = JSON.parse(stored);
-        set({
-          theme: parsed.theme || 'auto',
-          language: parsed.language || 'en',
-          isLoaded: true,
-        });
+        const raw = parsed.theme === 'light' ? 'bright' : parsed.theme;
+        const theme: ThemeMode =
+          raw === 'auto' || THEME_NAMES.includes(raw as ThemeName) ? raw : 'auto';
+        const language: Language = parsed.language || 'en';
+        set({ theme, language, isLoaded: true });
+        if (raw !== parsed.theme) {
+          await persistSettings(get());
+        }
       } else {
         set({ isLoaded: true });
       }

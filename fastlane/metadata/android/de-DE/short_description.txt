@@ -1,0 +1,1 @@
+Mobiler Client fuer Ihren selbst gehosteten Paperless-ngx-Server

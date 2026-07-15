@@ -113,7 +113,7 @@ export const SettingsScreen: React.FC = () => {
               icon="logout"
               textColor={theme.colors.error}
               onPress={() => setShowLogoutDialog(true)}
-              style={styles.logoutButton}
+              style={[styles.logoutButton, { borderColor: theme.colors.error }]}
             >
               {t('auth.logout')}
             </Button>
@@ -162,7 +162,5 @@ const styles = StyleSheet.create({
   logoutSection: {
     padding: 16,
   },
-  logoutButton: {
-    borderColor: '#d32f2f',
-  },
+  logoutButton: {},
 });

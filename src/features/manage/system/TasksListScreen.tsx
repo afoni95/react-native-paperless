@@ -1,16 +1,17 @@
 import React, { useState } from 'react';
 import { View, FlatList, StyleSheet, RefreshControl } from 'react-native';
-import { List, useTheme, Snackbar, IconButton, Button } from 'react-native-paper';
+import { List, Snackbar, IconButton, Button } from 'react-native-paper';
 import { useTranslation } from 'react-i18next';
 
 import { TaskStatus } from '@/types';
+import { usePaperTheme } from '@/theme';
 import { LoadingScreen, EmptyState, ErrorBanner } from '@/components';
 import { useAllTasks, useAcknowledgeTasks } from '@/reactQuery';
 import { usePermissionContext } from '@/hooks/PermissionProvider';
 import { useOfflineNavigationTitle } from '@/hooks/useOfflineNavigationTitle';
 
 export const TasksListScreen: React.FC = () => {
-  const theme = useTheme();
+  const theme = usePaperTheme();
   const { t } = useTranslation();
   const { can } = usePermissionContext();
 
@@ -30,15 +31,15 @@ export const TasksListScreen: React.FC = () => {
   const getStatusColor = (status: TaskStatus['status']) => {
     switch (status) {
       case 'PENDING':
-        return '#FFC107';
+        return theme.statusColors.warning;
       case 'STARTED':
-        return '#2196F3';
+        return theme.statusColors.info;
       case 'SUCCESS':
-        return '#4CAF50';
+        return theme.statusColors.success;
       case 'FAILURE':
-        return '#F44336';
+        return theme.statusColors.error;
       default:
-        return '#9E9E9E';
+        return theme.statusColors.neutral;
     }
   };
 
@@ -86,7 +87,15 @@ export const TasksListScreen: React.FC = () => {
         data={tasks}
         keyExtractor={(item) => String(item.id)}
         renderItem={({ item }) => (
-          <View style={styles.taskCard}>
+          <View
+            style={[
+              styles.taskCard,
+              {
+                backgroundColor: theme.colors.elevation.level1,
+                borderColor: theme.colors.outlineVariant,
+              },
+            ]}
+          >
             <List.Item
               title={item.task_file_name}
               description={`${getStatusLabel(item.status)} • ${new Date(item.date_created).toLocaleDateString()}`}
@@ -110,7 +119,15 @@ export const TasksListScreen: React.FC = () => {
               style={styles.listItem}
             />
             {item.result ? (
-              <View style={styles.resultContainer}>
+              <View
+                style={[
+                  styles.resultContainer,
+                  {
+                    backgroundColor: theme.colors.surfaceVariant,
+                    borderTopColor: theme.colors.outlineVariant,
+                  },
+                ]}
+              >
                 <List.Item title={t('tasks.loaded')} description={item.result} />
               </View>
             ) : null}
@@ -171,10 +188,8 @@ const styles = StyleSheet.create({
     marginHorizontal: 12,
     marginVertical: 6,
     borderWidth: 1,
-    borderColor: '#E0E0E0',
     borderRadius: 8,
     overflow: 'hidden',
-    backgroundColor: '#FFFFFF',
     elevation: 2,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
@@ -198,8 +213,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingBottom: 8,
     borderTopWidth: 1,
-    borderTopColor: '#F0F0F0',
-    backgroundColor: '#FAFAFA',
   },
   emptyContainer: {
     flexGrow: 1,

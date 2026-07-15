@@ -21,9 +21,12 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup Node.js
+        # Pinned to Node 20 to match the F-Droid build environment
+        # (fdroid-metadata.yml installs nodejs via nodesource setup_20.x).
+        # Reproducible builds require both to produce an identical JS bundle.
         uses: actions/setup-node@v4
         with:
-          node-version: latest
+          node-version: "20"
           cache: npm
 
       - name: Setup Java

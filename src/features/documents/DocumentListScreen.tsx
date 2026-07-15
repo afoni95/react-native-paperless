@@ -192,7 +192,7 @@ export const DocumentListScreen: React.FC = () => {
               <View style={styles.cardContent}>
                 <AuthenticatedImage
                   uri={getThumbUri(item.id)}
-                  style={styles.thumbnail}
+                  style={[styles.thumbnail, { backgroundColor: theme.colors.surfaceVariant }]}
                   resizeMode="cover"
                 />
                 <View style={styles.cardInfo}>
@@ -505,7 +505,6 @@ const styles = StyleSheet.create({
     width: 60,
     height: 80,
     borderRadius: 6,
-    backgroundColor: '#e0e0e0',
   },
   cardInfo: {
     flex: 1,
