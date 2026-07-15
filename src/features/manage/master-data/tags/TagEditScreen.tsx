@@ -116,7 +116,7 @@ export const TagEditScreen: React.FC<Props> = ({ route, navigation }) => {
             style={[
               styles.colorSwatch,
               { backgroundColor: c },
-              color === c && styles.colorSwatchSelected,
+              color === c && [styles.colorSwatchSelected, { borderColor: theme.colors.onSurface }],
             ]}
             onTouchEnd={() => setColor(c)}
           />
@@ -249,6 +249,5 @@ const styles = StyleSheet.create({
   },
   colorSwatchSelected: {
     borderWidth: 3,
-    borderColor: '#000',
   },
 });

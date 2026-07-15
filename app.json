@@ -2,7 +2,7 @@
   "expo": {
     "name": "Paperless Native",
     "slug": "react-native-paperless",
-    "version": "1.3.12",
+    "version": "1.3.3",
     "orientation": "default",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
@@ -16,7 +16,7 @@
       "bundleIdentifier": "com.paperlessnative.mobile"
     },
     "android": {
-      "versionCode": 19,
+      "versionCode": 22,
       "adaptiveIcon": {
         "backgroundColor": "#62c1f0",
         "foregroundImage": "./assets/android-icon-foreground.png",

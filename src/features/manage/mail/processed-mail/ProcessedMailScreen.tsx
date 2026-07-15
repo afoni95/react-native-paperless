@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
 import { View, FlatList, StyleSheet, RefreshControl } from 'react-native';
-import { List, useTheme, Snackbar, IconButton, Text, Divider } from 'react-native-paper';
+import { List, Snackbar, IconButton, Text, Divider } from 'react-native-paper';
 import { useTranslation } from 'react-i18next';
+import { usePaperTheme } from '@/theme';
 import { LoadingScreen, EmptyState, ErrorBanner, ConfirmDialog } from '@/components';
 import { useProcessedMail, useDeleteProcessedMail } from '@/reactQuery';
 import { usePermissionContext } from '@/hooks/PermissionProvider';
 import { ProcessedMail } from '@/types';
 
 export const ProcessedMailScreen: React.FC = () => {
-  const theme = useTheme();
+  const theme = usePaperTheme();
   const { t, i18n } = useTranslation();
   const { can } = usePermissionContext();
 
@@ -37,9 +38,9 @@ export const ProcessedMailScreen: React.FC = () => {
   });
 
   const getStatusColor = (status: string) => {
-    if (status === 'success') return '#4CAF50';
-    if (status === 'error' || status === 'invalid_rule') return '#F44336';
-    return '#9E9E9E';
+    if (status === 'success') return theme.statusColors.success;
+    if (status === 'error' || status === 'invalid_rule') return theme.statusColors.error;
+    return theme.statusColors.neutral;
   };
 
   if (isLoading) {

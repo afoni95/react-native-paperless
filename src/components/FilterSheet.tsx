@@ -71,7 +71,10 @@ export const FilterSheet: React.FC<FilterSheetProps> = ({
 
   return (
     <Modal visible={visible} animationType="slide" transparent onRequestClose={onDismiss}>
-      <Pressable style={styles.overlay} onPress={onDismiss} />
+      <Pressable
+        style={[styles.overlay, { backgroundColor: theme.colors.backdrop }]}
+        onPress={onDismiss}
+      />
       <View style={[styles.sheet, { backgroundColor: theme.colors.surface }]}>
         {/* Header */}
 
@@ -188,7 +191,6 @@ export const FilterSheet: React.FC<FilterSheetProps> = ({
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.4)',
   },
   sheet: {
     maxHeight: '80%',
