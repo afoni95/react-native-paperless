@@ -2,7 +2,7 @@
 
 A React Native mobile application for [Paperless-ngx](https://docs.paperless-ngx.com/) document management system. Built with Expo, TypeScript, and React Navigation.
 
-[![Google Play: Coming Soon](https://img.shields.io/badge/Google%20Play-Coming%20Soon-34A853?style=for-the-badge&logo=googleplay&logoColor=white)]()
+[![Google Play](https://img.shields.io/badge/Google%20Play-Available%20Now-34A853?style=for-the-badge&logo=googleplay&logoColor=white)](https://play.google.com/store/apps/details?id=com.paperlessnative.mobile&pcampaignid=web_share)
 [![F-Droid: Coming Soon](https://img.shields.io/badge/F--Droid-Coming%20Soon-1DA462?style=for-the-badge&logo=fdroid&logoColor=white)]()
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://github.com/afoni95/react-native-paperless/blob/main/LICENCE)
@@ -19,7 +19,7 @@ A React Native mobile application for [Paperless-ngx](https://docs.paperless-ngx
 The app has the following SHA-256 signature:
 
 ```
-0E:A0:FA:08:1D:5B:81:41:66:9E:75:16:FA:CB:FE:72:B2:EC:02:E2:BA:33:54:9C:F4:85:8C:5B:7D:23:97
+85:0E:A0:FA:08:1D:5B:81:41:66:9E:75:16:FA:CB:FE:72:B2:EC:02:E2:BA:33:54:9C:F4:85:8C:5B:7D:23:97
 ```
 
 
