@@ -47,10 +47,12 @@ jobs:
           cache: npm
 
       - name: Setup Java
+        # Pinned to Java 21 to match the F-Droid and release-APK builds
+        # so all distribution channels are produced from identical tooling.
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 17
+          java-version: 21
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
@@ -89,6 +91,13 @@ jobs:
 
       - name: Generate native project
         run: npx expo prebuild --platform android --clean
+
+      - name: Align Java toolchain with F-Droid build
+        # Must stay identical to the sed commands in fdroid-metadata.yml.
+        run: |
+          sed -i '/jvmToolchain/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
+          sed -i -e 's/JavaVersion.VERSION_17/JavaVersion.VERSION_21/g' -e 's/jvmToolchain(17)/jvmToolchain(21)/g' node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
+          sed -i 's/jvmToolchain(17)/jvmToolchain(21)/' node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
 
       - name: Write release keystore
         env:
