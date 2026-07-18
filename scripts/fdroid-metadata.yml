@@ -24,14 +24,7 @@ Builds:
       - apt-get install -y nodejs
     gradle:
       - yes
-    prebuild:
-      - cd ..
-      - npm ci
-      - npx expo prebuild --platform android --clean --no-install
-      - sed -i '/jvmToolchain/s/17/21/' node_modules/@react-native/gradle-plugin/*/build.gradle.kts
-      - sed -i -e 's/JavaVersion.VERSION_17/JavaVersion.VERSION_21/g' -e 's/jvmToolchain(17)/jvmToolchain(21)/g'
-        node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/JdkConfiguratorUtils.kt
-      - sed -i 's/jvmToolchain(17)/jvmToolchain(21)/' node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle
+    prebuild: cd .. && npm ci && npx expo prebuild --platform android --clean --no-install
     scandelete:
       - node_modules
     scanignore:
