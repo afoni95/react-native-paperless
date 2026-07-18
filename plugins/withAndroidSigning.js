@@ -42,9 +42,12 @@ if (keystorePropertiesFile.exists()) {
       `$1${releaseSigningConfig}`,
     );
 
+    // Fall back to an unsigned build when key.properties is absent: the
+    // F-Droid buildserver has no keystore and expects an unsigned APK,
+    // onto which it copies the signature from the published release APK.
     contents = contents.replace(
       /(buildTypes\s*\{[\s\S]*?release\s*\{[\s\S]*?)signingConfig\s+signingConfigs\.debug/,
-      '$1signingConfig signingConfigs.release',
+      '$1signingConfig(keystorePropertiesFile.exists() ? signingConfigs.release : null)',
     );
 
     mod.modResults.contents = contents;

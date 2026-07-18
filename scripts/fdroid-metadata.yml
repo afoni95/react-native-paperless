@@ -8,9 +8,12 @@ SourceCode: https://github.com/afoni95/react-native-paperless
 IssueTracker: https://github.com/afoni95/react-native-paperless/issues
 Changelog: https://github.com/afoni95/react-native-paperless/releases
 
+AutoName: Paperless Native
+
 RepoType: git
 Repo: https://github.com/afoni95/react-native-paperless.git
-Binaries: https://github.com/afoni95/react-native-paperless/releases/download/%v/PaperlessNative-%v.apk
+Binaries: 
+  https://github.com/afoni95/react-native-paperless/releases/download/%v/PaperlessNative-%v.apk
 
 Builds:
   - versionName: 1.3.4
