@@ -30,10 +30,14 @@ jobs:
           cache: npm
 
       - name: Setup Java
+        # JDK 21 to match the F-Droid buildserver (Debian trixie ships only
+        # JDK 21). The toolchain in node_modules is patched to 21 by
+        # scripts/patch-jdk21.sh below — the F-Droid recipe runs the same
+        # script, so both builds produce byte-identical bytecode.
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 17
+          java-version: 21
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
@@ -44,7 +48,7 @@ jobs:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
-          key: gradle-${{ runner.os }}-${{ hashFiles('android/**/*.gradle*', 'android/gradle-wrapper.properties') }}
+          key: gradle-${{ runner.os }}-${{ hashFiles('android/**/*.gradle*', 'android/gradle/wrapper/gradle-wrapper.properties') }}
           restore-keys: |
             gradle-${{ runner.os }}-
 
@@ -55,7 +59,11 @@ jobs:
         run: npx tsc --noEmit
 
       - name: Generate native project
-        run: npx expo prebuild --platform android --clean
+        # --no-install matches the F-Droid prebuild invocation exactly.
+        run: npx expo prebuild --platform android --clean --no-install
+
+      - name: Align JVM toolchain with F-Droid buildserver
+        run: bash scripts/patch-jdk21.sh
 
       - name: Write release keystore
         run: |
@@ -108,14 +116,15 @@ jobs:
 
       - name: Read F-Droid changelogs
         run: |
-          BUILD_NUMBER="${{ steps.normalize-version.outputs.version }}"
+          # Changelog files are keyed by Android versionCode, not version name.
+          BUILD_NUMBER=$(jq -r '.expo.android.versionCode' app.json)
           if [ -f "fastlane/metadata/android/en-US/changelogs/${BUILD_NUMBER}.txt" ]; then
             CHANGELOG_CONTENT=$(cat "fastlane/metadata/android/en-US/changelogs/${BUILD_NUMBER}.txt")
             echo "CHANGELOG_EN<<GHADELIMITER" >> $GITHUB_ENV
             echo "$CHANGELOG_CONTENT" >> $GITHUB_ENV
             echo "GHADELIMITER" >> $GITHUB_ENV
           else
-            echo "CHANGELOG_EN=Release $BUILD_NUMBER" >> $GITHUB_ENV
+            echo "CHANGELOG_EN=Release ${{ steps.normalize-version.outputs.version }}" >> $GITHUB_ENV
           fi
 
       - name: Create and push version tag
