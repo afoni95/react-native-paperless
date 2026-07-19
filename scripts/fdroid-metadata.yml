@@ -19,7 +19,7 @@ Builds:
   - versionName: 1.3.4
     versionCode: 23
     commit: 1.3.4
-    subdir: android
+    subdir: android/app
     sudo:
       - apt-get update
       - apt-get install -y curl
@@ -28,7 +28,7 @@ Builds:
     gradle:
       - yes
     prebuild:
-      - cd ..
+      - cd ../..
       - npm ci
       - npx expo prebuild --platform android --clean --no-install
       - bash scripts/patch-jdk21.sh

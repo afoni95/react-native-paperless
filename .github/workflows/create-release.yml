@@ -16,9 +16,29 @@ jobs:
     name: Build Android APK
     runs-on: ubuntu-24.04
 
+    # The NDK-compiled libs (appmodules, expo-modules-core, codegen) embed
+    # absolute source and Gradle-cache paths into the .so files. The F-Droid
+    # buildserver builds as user "vagrant" in /home/vagrant/build/<appid>, so
+    # this build must run from the identical path with the identical
+    # GRADLE_USER_HOME or the native libs won't byte-match during
+    # reproducible-build verification.
+    env:
+      BUILD_DIR: /home/vagrant/build/com.paperlessnative.mobile
+      GRADLE_USER_HOME: /home/vagrant/.gradle
+    defaults:
+      run:
+        working-directory: /home/vagrant/build/com.paperlessnative.mobile
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Mirror checkout at F-Droid buildserver path
+        working-directory: ${{ github.workspace }}
+        run: |
+          sudo mkdir -p /home/vagrant/build
+          sudo chown -R "$(id -un)" /home/vagrant
+          cp -a "$GITHUB_WORKSPACE" "$BUILD_DIR"
 
       - name: Setup Node.js
         # Pinned to Node 20 to match the F-Droid build environment
@@ -46,8 +66,8 @@ jobs:
         uses: actions/cache@v4
         with:
           path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
+            /home/vagrant/.gradle/caches
+            /home/vagrant/.gradle/wrapper
           key: gradle-${{ runner.os }}-${{ hashFiles('android/**/*.gradle*', 'android/gradle/wrapper/gradle-wrapper.properties') }}
           restore-keys: |
             gradle-${{ runner.os }}-
@@ -74,14 +94,14 @@ jobs:
           echo "keyPassword=${{ secrets.KEY_PASSWORD }}"    >> android/key.properties
 
       - name: Build Release APK
-        working-directory: android
+        working-directory: /home/vagrant/build/com.paperlessnative.mobile/android
         run: ./gradlew assembleRelease --no-daemon --stacktrace
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
           name: android-apk
-          path: android/app/build/outputs/apk/release/*.apk
+          path: /home/vagrant/build/com.paperlessnative.mobile/android/app/build/outputs/apk/release/*.apk
 
   create-release:
     name: Create GitHub Release
