@@ -62,6 +62,18 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
+      - name: Mirror Android SDK at F-Droid buildserver path
+        # The NDK toolchain/sysroot paths land in the debug info that the
+        # linker hashes into each .so's GNU build-id. AGP strips the debug
+        # info afterwards but the build-id stays, so the SDK must appear at
+        # /opt/android-sdk exactly as on the buildserver. A bind mount (not
+        # a symlink) keeps realpath() results identical too.
+        run: |
+          sudo mkdir -p /opt/android-sdk
+          sudo mount --bind "$ANDROID_HOME" /opt/android-sdk
+          echo "ANDROID_HOME=/opt/android-sdk" >> "$GITHUB_ENV"
+          echo "ANDROID_SDK_ROOT=/opt/android-sdk" >> "$GITHUB_ENV"
+
       - name: Cache Gradle dependencies
         uses: actions/cache@v4
         with:
