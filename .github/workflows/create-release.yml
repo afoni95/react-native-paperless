@@ -13,8 +13,11 @@ permissions:
 
 jobs:
   build-android:
-    name: Build Android APK
+    name: Build Android APK (${{ matrix.abi }})
     runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        abi: [armeabi-v7a, arm64-v8a, x86, x86_64]
 
     # The NDK-compiled libs (appmodules, expo-modules-core, codegen) embed
     # absolute source and Gradle-cache paths into the .so files. The F-Droid
@@ -80,15 +83,28 @@ jobs:
           path: |
             /home/vagrant/.gradle/caches
             /home/vagrant/.gradle/wrapper
-          key: gradle-${{ runner.os }}-${{ hashFiles('android/**/*.gradle*', 'android/gradle/wrapper/gradle-wrapper.properties') }}
+          key: gradle-${{ runner.os }}-${{ matrix.abi }}-${{ hashFiles('android/**/*.gradle*', 'android/gradle/wrapper/gradle-wrapper.properties') }}
           restore-keys: |
-            gradle-${{ runner.os }}-
+            gradle-${{ runner.os }}-${{ matrix.abi }}-
 
       - name: Install dependencies
         run: npm ci
 
       - name: Run TypeScript check
         run: npx tsc --noEmit
+
+      - name: Patch ABI and versionCode for reproducible-build comparison
+        run: |
+          case "${{ matrix.abi }}" in
+            armeabi-v7a) OFFSET=1 ;;
+            arm64-v8a) OFFSET=2 ;;
+            x86) OFFSET=3 ;;
+            x86_64) OFFSET=4 ;;
+          esac
+          BASE=$(jq -r '.expo.android.versionCode' app.json)
+          VERCODE=$((10 * BASE + OFFSET))
+          sed -i "s/arm64-v8a/${{ matrix.abi }}/" app.json
+          sed -i "s/\(versionCode[^0-9]*\)[0-9]*/\1$VERCODE/" app.json
 
       - name: Generate native project
         # --no-install matches the F-Droid prebuild invocation exactly.
@@ -112,7 +128,7 @@ jobs:
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: android-apk
+          name: android-apk-${{ matrix.abi }}
           path: /home/vagrant/build/com.paperlessnative.mobile/android/app/build/outputs/apk/release/*.apk
 
   create-release:
@@ -124,10 +140,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Download APK artifact
+      - name: Download APK artifacts
         uses: actions/download-artifact@v4
         with:
-          name: android-apk
+          pattern: android-apk-*
           path: artifacts/android
 
       - name: Normalize release version
@@ -138,12 +154,14 @@ jobs:
           VERSION="${VERSION#v}"
           echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
 
-      - name: Rename APK with version
+      - name: Rename APKs with version and ABI
         run: |
           VERSION="${{ steps.normalize-version.outputs.version }}"
           cd artifacts/android
-          for file in *.apk; do
-            mv "$file" "PaperlessNative-${VERSION}.apk"
+          for dir in android-apk-*; do
+            ABI="${dir#android-apk-}"
+            mv "$dir"/*.apk "PaperlessNative-${VERSION}-${ABI}.apk"
+            rmdir "$dir"
           done
 
       - name: Read F-Droid changelogs
@@ -184,7 +202,12 @@ jobs:
 
             ## 📦 Download
 
-            `PaperlessNative-${{ steps.normalize-version.outputs.version }}.apk`
+            Pick the APK matching your device's CPU architecture (most modern phones are `arm64-v8a`):
+
+            - `PaperlessNative-${{ steps.normalize-version.outputs.version }}-arm64-v8a.apk`
+            - `PaperlessNative-${{ steps.normalize-version.outputs.version }}-armeabi-v7a.apk`
+            - `PaperlessNative-${{ steps.normalize-version.outputs.version }}-x86_64.apk`
+            - `PaperlessNative-${{ steps.normalize-version.outputs.version }}-x86.apk`
 
             ## 📊 Build Info
 
