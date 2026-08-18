@@ -1,7 +1,7 @@
 import React from 'react';
 import { useWindowDimensions, View } from 'react-native';
 import { Text } from 'react-native-paper';
-import Svg, { Path } from 'react-native-svg';
+import Svg, { Circle, Path } from 'react-native-svg';
 import type { AnalyticsPieResult } from './types';
 
 const PALETTE = ['#1d3557', '#2a9d8f', '#e76f51', '#f4a261', '#6d597a', '#457b9d', '#e9c46a'];
@@ -46,8 +46,17 @@ export const PieChartView: React.FC<PieChartViewProps> = ({ result }) => {
         {result.slices.map((slice, index) => {
           const startAngle = arcs.slice(0, index).reduce((sum, value) => sum + value, 0);
           const endAngle = startAngle + arcs[index];
-          const path = arcPath(center, center, radius, startAngle, endAngle);
-          return <Path key={slice.key} d={path} fill={PALETTE[index % PALETTE.length]} />;
+          const fill = PALETTE[index % PALETTE.length];
+
+          return arcs[index] >= 359.99 ? (
+            <Circle key={slice.key} cx={center} cy={center} r={radius} fill={fill} />
+          ) : (
+            <Path
+              key={slice.key}
+              d={arcPath(center, center, radius, startAngle, endAngle)}
+              fill={fill}
+            />
+          );
         })}
       </Svg>
 

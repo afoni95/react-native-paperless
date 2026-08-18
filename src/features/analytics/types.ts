@@ -134,7 +134,7 @@ export interface AnalyticsDashboardStateShape {
 
 export interface AnalyticsDataDocument {
   id: number;
-  date: string;
+  date: string | undefined;
   correspondentId: number | null;
   documentTypeId: number | null;
   tagIds: number[];

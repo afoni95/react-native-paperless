@@ -2,7 +2,7 @@
   "expo": {
     "name": "Paperless Native",
     "slug": "react-native-paperless",
-    "version": "1.3.4",
+    "version": "1.3.5",
     "orientation": "default",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
@@ -16,7 +16,7 @@
       "bundleIdentifier": "com.paperlessnative.mobile"
     },
     "android": {
-      "versionCode": 23,
+      "versionCode": 24,
       "adaptiveIcon": {
         "backgroundColor": "#62c1f0",
         "foregroundImage": "./assets/android-icon-foreground.png",
@@ -26,7 +26,10 @@
       "package": "com.paperlessnative.mobile",
       "predictiveBackGestureEnabled": false,
       "blockedPermissions": [
-        "android.permission.SYSTEM_ALERT_WINDOW"
+        "android.permission.SYSTEM_ALERT_WINDOW",
+        "android.permission.ACCESS_WIFI_STATE",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE"
       ]
     },
     "web": {
@@ -51,7 +54,10 @@
             "enableProguardInReleaseBuilds": true,
             "enableShrinkResourcesInReleaseBuilds": true,
             "buildArchs": [
-              "arm64-v8a"
+              "armeabi-v7a",
+              "arm64-v8a",
+              "x86",
+              "x86_64"
             ]
           }
         }
