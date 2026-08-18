@@ -42,7 +42,9 @@ export const AnalyticsWidgetCard: React.FC<AnalyticsWidgetCardProps> = ({
     <Card mode="contained" style={{ backgroundColor: theme.colors.elevation.level1 }}>
       <Card.Title
         title={widget.title || t(definition.titleKey)}
-        subtitle={`${t(`analytics.widgetKind.${widget.type}`)} · ${filtersSummary(widget.config)}`}
+        subtitle={[t(`analytics.widgetKind.${widget.type}`), filtersSummary(widget.config)]
+          .filter(Boolean)
+          .join(' · ')}
         right={() =>
           editMode ? (
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
