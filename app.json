@@ -3,6 +3,7 @@
     "name": "Paperless Native",
     "slug": "react-native-paperless",
     "version": "1.3.5",
+    "newArchEnabled": true,
     "orientation": "default",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
@@ -49,7 +50,6 @@
         "expo-build-properties",
         {
           "android": {
-            "newArchEnabled": true,
             "usesCleartextTraffic": true,
             "enableProguardInReleaseBuilds": true,
             "enableShrinkResourcesInReleaseBuilds": true,
