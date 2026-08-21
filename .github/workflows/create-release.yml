@@ -13,12 +13,35 @@ permissions:
 
 jobs:
   build-android:
-    name: Build Android APK
+    name: Build Android APK (${{ matrix.abi }})
     runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        abi: [armeabi-v7a, arm64-v8a, x86, x86_64]
+
+    # The NDK-compiled libs (appmodules, expo-modules-core, codegen) embed
+    # absolute source and Gradle-cache paths into the .so files. The F-Droid
+    # buildserver builds as user "vagrant" in /home/vagrant/build/<appid>, so
+    # this build must run from the identical path with the identical
+    # GRADLE_USER_HOME or the native libs won't byte-match during
+    # reproducible-build verification.
+    env:
+      BUILD_DIR: /home/vagrant/build/com.paperlessnative.mobile
+      GRADLE_USER_HOME: /home/vagrant/.gradle
+    defaults:
+      run:
+        working-directory: /home/vagrant/build/com.paperlessnative.mobile
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Mirror checkout at F-Droid buildserver path
+        working-directory: ${{ github.workspace }}
+        run: |
+          sudo mkdir -p /home/vagrant/build
+          sudo chown -R "$(id -un)" /home/vagrant
+          cp -a "$GITHUB_WORKSPACE" "$BUILD_DIR"
 
       - name: Setup Node.js
         # Pinned to Node 20 to match the F-Droid build environment
@@ -30,23 +53,39 @@ jobs:
           cache: npm
 
       - name: Setup Java
+        # JDK 21 to match the F-Droid buildserver (Debian trixie ships only
+        # JDK 21). The toolchain in node_modules is patched to 21 by
+        # scripts/patch-jdk21.sh below — the F-Droid recipe runs the same
+        # script, so both builds produce byte-identical bytecode.
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 17
+          java-version: 21
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
+
+      - name: Mirror Android SDK at F-Droid buildserver path
+        # The NDK toolchain/sysroot paths land in the debug info that the
+        # linker hashes into each .so's GNU build-id. AGP strips the debug
+        # info afterwards but the build-id stays, so the SDK must appear at
+        # /opt/android-sdk exactly as on the buildserver. A bind mount (not
+        # a symlink) keeps realpath() results identical too.
+        run: |
+          sudo mkdir -p /opt/android-sdk
+          sudo mount --bind "$ANDROID_HOME" /opt/android-sdk
+          echo "ANDROID_HOME=/opt/android-sdk" >> "$GITHUB_ENV"
+          echo "ANDROID_SDK_ROOT=/opt/android-sdk" >> "$GITHUB_ENV"
 
       - name: Cache Gradle dependencies
         uses: actions/cache@v4
         with:
           path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: gradle-${{ runner.os }}-${{ hashFiles('android/**/*.gradle*', 'android/gradle-wrapper.properties') }}
+            /home/vagrant/.gradle/caches
+            /home/vagrant/.gradle/wrapper
+          key: gradle-${{ runner.os }}-${{ matrix.abi }}-${{ hashFiles('android/**/*.gradle*', 'android/gradle/wrapper/gradle-wrapper.properties') }}
           restore-keys: |
-            gradle-${{ runner.os }}-
+            gradle-${{ runner.os }}-${{ matrix.abi }}-
 
       - name: Install dependencies
         run: npm ci
@@ -54,8 +93,30 @@ jobs:
       - name: Run TypeScript check
         run: npx tsc --noEmit
 
+      - name: Patch ABI and versionCode for reproducible-build comparison
+        run: |
+          case "${{ matrix.abi }}" in
+            armeabi-v7a) OFFSET=1 ;;
+            arm64-v8a) OFFSET=2 ;;
+            x86) OFFSET=3 ;;
+            x86_64) OFFSET=4 ;;
+          esac
+          BASE=$(jq -r '.expo.android.versionCode' app.json)
+          VERCODE=$((10 * BASE + OFFSET))
+          jq --argjson vc "$VERCODE" --arg abi "${{ matrix.abi }}" '
+            .expo.android.versionCode = $vc
+            | (.expo.plugins[]
+               | select(type == "array" and .[0] == "expo-build-properties")
+               | .[1].android.buildArchs) = [$abi]
+          ' app.json > app.json.tmp && mv app.json.tmp app.json
+          jq -r '.expo.android.versionCode, (.expo.plugins[] | select(type == "array" and .[0] == "expo-build-properties") | .[1].android.buildArchs | join(","))' app.json
+
       - name: Generate native project
-        run: npx expo prebuild --platform android --clean
+        # --no-install matches the F-Droid prebuild invocation exactly.
+        run: npx expo prebuild --platform android --clean --no-install
+
+      - name: Align JVM toolchain with F-Droid buildserver
+        run: bash scripts/patch-jdk21.sh
 
       - name: Write release keystore
         run: |
@@ -66,14 +127,14 @@ jobs:
           echo "keyPassword=${{ secrets.KEY_PASSWORD }}"    >> android/key.properties
 
       - name: Build Release APK
-        working-directory: android
+        working-directory: /home/vagrant/build/com.paperlessnative.mobile/android
         run: ./gradlew assembleRelease --no-daemon --stacktrace
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: android-apk
-          path: android/app/build/outputs/apk/release/*.apk
+          name: android-apk-${{ matrix.abi }}
+          path: /home/vagrant/build/com.paperlessnative.mobile/android/app/build/outputs/apk/release/*.apk
 
   create-release:
     name: Create GitHub Release
@@ -84,10 +145,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Download APK artifact
+      - name: Download APK artifacts
         uses: actions/download-artifact@v4
         with:
-          name: android-apk
+          pattern: android-apk-*
           path: artifacts/android
 
       - name: Normalize release version
@@ -98,24 +159,27 @@ jobs:
           VERSION="${VERSION#v}"
           echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
 
-      - name: Rename APK with version
+      - name: Rename APKs with version and ABI
         run: |
           VERSION="${{ steps.normalize-version.outputs.version }}"
           cd artifacts/android
-          for file in *.apk; do
-            mv "$file" "PaperlessNative-${VERSION}.apk"
+          for dir in android-apk-*; do
+            ABI="${dir#android-apk-}"
+            mv "$dir"/*.apk "PaperlessNative-${VERSION}-${ABI}.apk"
+            rmdir "$dir"
           done
 
       - name: Read F-Droid changelogs
         run: |
-          BUILD_NUMBER="${{ steps.normalize-version.outputs.version }}"
+          # Changelog files are keyed by Android versionCode, not version name.
+          BUILD_NUMBER=$(jq -r '.expo.android.versionCode' app.json)
           if [ -f "fastlane/metadata/android/en-US/changelogs/${BUILD_NUMBER}.txt" ]; then
             CHANGELOG_CONTENT=$(cat "fastlane/metadata/android/en-US/changelogs/${BUILD_NUMBER}.txt")
             echo "CHANGELOG_EN<<GHADELIMITER" >> $GITHUB_ENV
             echo "$CHANGELOG_CONTENT" >> $GITHUB_ENV
             echo "GHADELIMITER" >> $GITHUB_ENV
           else
-            echo "CHANGELOG_EN=Release $BUILD_NUMBER" >> $GITHUB_ENV
+            echo "CHANGELOG_EN=Release ${{ steps.normalize-version.outputs.version }}" >> $GITHUB_ENV
           fi
 
       - name: Create and push version tag
@@ -143,7 +207,12 @@ jobs:
 
             ## 📦 Download
 
-            `PaperlessNative-${{ steps.normalize-version.outputs.version }}.apk`
+            Pick the APK matching your device's CPU architecture (most modern phones are `arm64-v8a`):
+
+            - `PaperlessNative-${{ steps.normalize-version.outputs.version }}-arm64-v8a.apk`
+            - `PaperlessNative-${{ steps.normalize-version.outputs.version }}-armeabi-v7a.apk`
+            - `PaperlessNative-${{ steps.normalize-version.outputs.version }}-x86_64.apk`
+            - `PaperlessNative-${{ steps.normalize-version.outputs.version }}-x86.apk`
 
             ## 📊 Build Info
 
