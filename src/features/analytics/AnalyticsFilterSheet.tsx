@@ -3,6 +3,7 @@ import { Modal, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { Button, Divider, IconButton, Text, TextInput, useTheme } from 'react-native-paper';
 import { useTranslation } from 'react-i18next';
 import type { AnalyticsFilter } from './types';
+import { defaultFilter } from './utils';
 import { MultiSelectChips, SearchableDropdown } from '@/components';
 import type { Correspondent, DocumentType, Tag } from '@/types';
 
@@ -147,7 +148,7 @@ export const AnalyticsFilterSheet: React.FC<AnalyticsFilterSheetProps> = ({
         <Divider />
 
         <View style={styles.actions}>
-          <Button mode="outlined" onPress={() => onApply({ timeRange: 'last90d' })}>
+          <Button mode="outlined" onPress={() => onApply(defaultFilter())}>
             {t('documents.clearFilters')}
           </Button>
           <Button mode="contained" onPress={() => onApply(localValue)}>

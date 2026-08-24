@@ -397,6 +397,12 @@
       "dateMonth": "Datum (Monat)",
       "dateYear": "Datum (Jahr)"
     },
+    "unknown": {
+      "correspondent": "Unbekannter Korrespondent",
+      "documentType": "Unbekannter Dokumenttyp",
+      "tag": "Unbekannter Tag"
+    },
+    "other": "Sonstige",
     "bucket": {
       "day": "Tag",
       "week": "Woche",

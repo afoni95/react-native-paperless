@@ -103,8 +103,13 @@ jobs:
           esac
           BASE=$(jq -r '.expo.android.versionCode' app.json)
           VERCODE=$((10 * BASE + OFFSET))
-          sed -i "s/arm64-v8a/${{ matrix.abi }}/" app.json
-          sed -i "s/\(versionCode[^0-9]*\)[0-9]*/\1$VERCODE/" app.json
+          jq --argjson vc "$VERCODE" --arg abi "${{ matrix.abi }}" '
+            .expo.android.versionCode = $vc
+            | (.expo.plugins[]
+               | select(type == "array" and .[0] == "expo-build-properties")
+               | .[1].android.buildArchs) = [$abi]
+          ' app.json > app.json.tmp && mv app.json.tmp app.json
+          jq -r '.expo.android.versionCode, (.expo.plugins[] | select(type == "array" and .[0] == "expo-build-properties") | .[1].android.buildArchs | join(","))' app.json
 
       - name: Generate native project
         # --no-install matches the F-Droid prebuild invocation exactly.

@@ -26,6 +26,7 @@ import type {
   AnalyticsWidgetType,
 } from './types';
 import { useAnalyticsSource } from './useAnalyticsSource';
+import { defaultFilter } from './utils';
 import { AnalyticsFilterSheet } from './AnalyticsFilterSheet';
 
 type Route = RouteProp<AnalyticsStackParamList, 'AnalyticsWidgetEditor'>;
@@ -96,7 +97,7 @@ export const AnalyticsWidgetEditorScreen: React.FC = () => {
       const first = metrics[0] ?? {
         id: 'metric-1',
         label: 'KPI 1',
-        filters: { timeRange: 'last90d' as const },
+        filters: defaultFilter(),
         metric: { mode: 'count' as const, aggregation: 'count' as const },
       };
       metrics[0] = { ...first, metric: { ...first.metric, ...next } };
@@ -338,8 +339,8 @@ export const AnalyticsWidgetEditorScreen: React.FC = () => {
           activeFilterEditor?.kind === 'widget' && (config.type === 'line' || config.type === 'pie')
             ? config.filters
             : activeFilterEditor?.kind === 'metric' && config.type === 'infoTile'
-              ? (config.metrics[activeFilterEditor.index]?.filters ?? { timeRange: 'last90d' })
-              : { timeRange: 'last90d' }
+              ? (config.metrics[activeFilterEditor.index]?.filters ?? defaultFilter())
+              : defaultFilter()
         }
         onApply={updateFilter}
         correspondents={metadata.allCorrespondents ?? []}
@@ -454,7 +455,7 @@ const InfoTileConfigSection: React.FC<InfoTileConfigSectionProps> = ({
                   id: `metric-${Date.now()}`,
                   label: `KPI ${metrics.length + 1}`,
                   metric: { mode: 'count', aggregation: 'count' },
-                  filters: { timeRange: 'last90d' },
+                  filters: defaultFilter(),
                 },
               ],
             });

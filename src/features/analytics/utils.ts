@@ -1,3 +1,4 @@
+import { t } from 'i18next';
 import {
   AnalyticsAggregation,
   AnalyticsDataDocument,
@@ -5,11 +6,19 @@ import {
   AnalyticsDateBucket,
   AnalyticsDimension,
   AnalyticsFilter,
+  AnalyticsWidgetConfig,
 } from './types';
 
 const HIGH_CARDINALITY_LIMIT = 12;
 
-function toDateSafe(value: string): Date | null {
+export const NONE_KEY = -1;
+
+export function defaultFilter(): AnalyticsFilter {
+  return { timeRange: 'all' };
+}
+
+function toDateSafe(value: string | undefined): Date | null {
+  if (!value) return null;
   const parsed = new Date(value);
   if (Number.isNaN(parsed.getTime())) return null;
   return parsed;
@@ -72,21 +81,24 @@ export function applyFilters(
   const { start, end } = rangeBounds(filter);
   return documents.filter((doc) => {
     const date = toDateSafe(doc.date);
-    if (!date) return false;
-    const time = date.getTime();
-    if (start !== undefined && time < start) return false;
-    if (end !== undefined && time > end) return false;
+    if (date) {
+      const time = date.getTime();
+      if (start !== undefined && time < start) return false;
+      if (end !== undefined && time > end) return false;
+    } else if (start !== undefined || end !== undefined) {
+      return false;
+    }
 
     if (
       filter.correspondentIds?.length &&
-      !filter.correspondentIds.includes(doc.correspondentId ?? -1)
+      !filter.correspondentIds.includes(doc.correspondentId ?? NONE_KEY)
     ) {
       return false;
     }
 
     if (
       filter.documentTypeIds?.length &&
-      !filter.documentTypeIds.includes(doc.documentTypeId ?? -1)
+      !filter.documentTypeIds.includes(doc.documentTypeId ?? NONE_KEY)
     ) {
       return false;
     }
@@ -115,13 +127,18 @@ export function labelForDimensionValue(
   source: AnalyticsDataSource,
 ): string {
   if (dimension === 'correspondent') {
-    return source.correspondentsMap.get(Number(value))?.name ?? 'Unknown Correspondent';
+    if (Number(value) === NONE_KEY) return t('documents.noCorrespondent');
+    return (
+      source.correspondentsMap.get(Number(value))?.name ?? t('analytics.unknown.correspondent')
+    );
   }
   if (dimension === 'documentType') {
-    return source.docTypesMap.get(Number(value))?.name ?? 'Unknown Document Type';
+    if (Number(value) === NONE_KEY) return t('documents.noDocumentType');
+    return source.docTypesMap.get(Number(value))?.name ?? t('analytics.unknown.documentType');
   }
   if (dimension === 'tag') {
-    return source.tagsMap.get(Number(value))?.name ?? 'Unknown Tag';
+    if (Number(value) === NONE_KEY) return t('documents.noTags');
+    return source.tagsMap.get(Number(value))?.name ?? t('analytics.unknown.tag');
   }
   if (dimension === 'dateQuarter' || dimension === 'dateMonth' || dimension === 'dateYear') {
     return String(value);
@@ -134,9 +151,9 @@ export function groupKeyForDocument(
   dimension: AnalyticsDimension,
   customFieldId?: number,
 ): (number | string)[] {
-  if (dimension === 'correspondent') return [doc.correspondentId ?? -1];
-  if (dimension === 'documentType') return [doc.documentTypeId ?? -1];
-  if (dimension === 'tag') return doc.tagIds.length ? doc.tagIds : [-1];
+  if (dimension === 'correspondent') return [doc.correspondentId ?? NONE_KEY];
+  if (dimension === 'documentType') return [doc.documentTypeId ?? NONE_KEY];
+  if (dimension === 'tag') return doc.tagIds.length ? doc.tagIds : [NONE_KEY];
   if (dimension === 'dateQuarter') return [bucketLabel(doc.date, 'quarter')];
   if (dimension === 'dateMonth') return [bucketLabel(doc.date, 'month')];
   if (dimension === 'dateYear') return [bucketLabel(doc.date, 'year')];
@@ -144,10 +161,10 @@ export function groupKeyForDocument(
     if (!customFieldId) return ['unknown'];
     return [doc.customFieldStrings[customFieldId] ?? 'unknown'];
   }
-  return [doc.date];
+  return [doc.date ?? 'unknown'];
 }
 
-export function bucketLabel(date: string, bucket: AnalyticsDateBucket): string {
+export function bucketLabel(date: string | undefined, bucket: AnalyticsDateBucket): string {
   const parsed = toDateSafe(date);
   if (!parsed) return 'unknown';
   return bucketDate(parsed, bucket);
@@ -162,5 +179,16 @@ export function topNWithOther<T extends { value: number; label: string; key: str
   const otherValue = sorted
     .slice(HIGH_CARDINALITY_LIMIT - 1)
     .reduce((sum, item) => sum + item.value, 0);
-  return [...top, { key: 'other', label: 'Other', value: otherValue } as T];
+  return [...top, { key: 'other', label: t('analytics.other'), value: otherValue } as T];
+}
+
+export function filtersSummary(config: AnalyticsWidgetConfig): string {
+  const ranges =
+    config.type === 'infoTile'
+      ? config.metrics.map((metric) => metric.filters.timeRange)
+      : [config.filters.timeRange];
+
+  return Array.from(new Set(ranges))
+    .map((range) => t(`analytics.timeRange.${range}`))
+    .join(' · ');
 }

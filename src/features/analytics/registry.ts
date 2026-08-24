@@ -12,14 +12,11 @@ import {
   aggregate,
   applyFilters,
   bucketLabel,
+  defaultFilter,
   groupKeyForDocument,
   labelForDimensionValue,
   topNWithOther,
 } from './utils';
-
-function defaultFilter() {
-  return { timeRange: 'last90d' as const };
-}
 
 const lineWidget: AnalyticsWidgetDefinition<AnalyticsLineWidgetConfig> = {
   type: 'line',
@@ -54,6 +51,10 @@ const lineWidget: AnalyticsWidgetDefinition<AnalyticsLineWidgetConfig> = {
   transform: (config, source) => {
     const docs = applyFilters(source.documents, config.filters);
     const bySeries = new Map<string, Map<string, number[]>>();
+    const selectedTagIds =
+      config.groupBy === 'tag' && config.filters.tagIds?.length
+        ? new Set(config.filters.tagIds)
+        : null;
 
     docs.forEach((doc) => {
       const x = bucketLabel(doc.date, config.dateBucket);
@@ -65,6 +66,7 @@ const lineWidget: AnalyticsWidgetDefinition<AnalyticsLineWidgetConfig> = {
 
       const groupValues = groupKeyForDocument(doc, config.groupBy, config.groupByCustomFieldId);
       groupValues.forEach((groupValue) => {
+        if (selectedTagIds && !selectedTagIds.has(Number(groupValue))) return;
         const groupKey = String(groupValue);
         if (!bySeries.has(groupKey)) bySeries.set(groupKey, new Map());
         const bucket = bySeries.get(groupKey)!;
@@ -126,6 +128,10 @@ const pieWidget: AnalyticsWidgetDefinition<AnalyticsPieWidgetConfig> = {
   transform: (config, source) => {
     const docs = applyFilters(source.documents, config.filters);
     const buckets = new Map<string, number[]>();
+    const selectedTagIds =
+      config.dimension === 'tag' && config.filters.tagIds?.length
+        ? new Set(config.filters.tagIds)
+        : null;
 
     docs.forEach((doc) => {
       const metricValue =
@@ -136,6 +142,7 @@ const pieWidget: AnalyticsWidgetDefinition<AnalyticsPieWidgetConfig> = {
 
       const groupValues = groupKeyForDocument(doc, config.dimension, config.dimensionCustomFieldId);
       groupValues.forEach((groupValue) => {
+        if (selectedTagIds && !selectedTagIds.has(Number(groupValue))) return;
         const key = String(groupValue);
         if (!buckets.has(key)) buckets.set(key, []);
         buckets.get(key)!.push(Number(metricValue));
