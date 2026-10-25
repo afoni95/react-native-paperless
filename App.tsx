@@ -9,6 +9,7 @@ import NetInfo from '@react-native-community/netinfo';
 
 import { useTranslation } from 'react-i18next';
 import { AppNavigator } from '@/navigation/AppNavigator';
+import { ShareIntentHandler } from '@/components/ShareIntentHandler';
 import { useAuthStore } from '@/store/authStore';
 import { useSettingsStore } from '@/store/settingsStore';
 import { useNetworkStore, NetworkStatus } from '@/store/networkStore';
@@ -111,6 +112,7 @@ export default function App() {
               </View>
             </Banner>
             <AppNavigator />
+            <ShareIntentHandler />
             <StatusBar hidden />
           </PaperProvider>
         </QueryClientProvider>

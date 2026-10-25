@@ -70,7 +70,21 @@
           "microphonePermission": false
         }
       ],
-      "expo-secure-store"
+      "expo-secure-store",
+      [
+        "expo-share-intent",
+        {
+          "androidIntentFilters": [
+            "application/pdf",
+            "image/*"
+          ],
+          "androidMultiIntentFilters": [
+            "application/pdf",
+            "image/*"
+          ],
+          "disableIOS": true
+        }
+      ]
     ]
   }
 }
