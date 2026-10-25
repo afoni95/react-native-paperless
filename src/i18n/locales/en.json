@@ -615,5 +615,20 @@
     "discardConfirm": "Remove this pending item? It will not be synced to the server.",
     "alreadyQueued": "Already in your offline queue",
     "noCachedItems": "No items available offline"
+  },
+  "shareIntent": {
+    "title": "Send to Paperless",
+    "body_one": "{{count}} file ready to send:",
+    "body_other": "{{count}} files ready to send:",
+    "more": "… and {{count}} more",
+    "offlineHint": "No connection to the server right now – the files will be sent automatically when it is back.",
+    "send": "Send",
+    "sendLater": "Send later",
+    "sent_one": "{{count}} document sent – it appears in Paperless once processed.",
+    "sent_other": "{{count}} documents sent – they appear in Paperless once processed.",
+    "queued_one": "{{count}} document saved, it will be sent when the server is reachable.",
+    "queued_other": "{{count}} documents saved, they will be sent when the server is reachable.",
+    "failed_one": "{{count}} file could not be sent.",
+    "failed_other": "{{count}} files could not be sent."
   }
 }
