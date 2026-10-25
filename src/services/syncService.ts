@@ -4,6 +4,7 @@ import { documentTypesApi } from '@/api/documentTypes';
 import { documentsApi } from '@/api/documents';
 import { useOfflineQueueStore, OfflineQueueItem } from '@/store/offlineQueueStore';
 import { Alert } from 'react-native';
+import * as FileSystem from 'expo-file-system/legacy';
 
 type NameIdMap = Map<string, number>;
 
@@ -149,6 +150,10 @@ const syncDocuments = async (
         document_type: validDocumentTypeId,
       });
 
+      // copies kept by the share feature for later sending are not needed once uploaded
+      if (data.fileUri.startsWith(`${FileSystem.documentDirectory}shared/`)) {
+        FileSystem.deleteAsync(data.fileUri, { idempotent: true }).catch(() => undefined);
+      }
       removeItem(item.id);
     } catch (err) {
       updateItemStatus(item.id, 'failed', err instanceof Error ? err.message : 'Unknown error');
