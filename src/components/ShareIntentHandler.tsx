@@ -18,6 +18,8 @@ const toUri = (path: string) =>
 const inCache = (path: string) =>
   !!FileSystem.cacheDirectory && toUri(path).startsWith(FileSystem.cacheDirectory);
 const nameOf = (f: ShareIntentFile) => f.fileName || f.path.split('/').pop() || 'document';
+const handled = new Set<string>();
+const keyOf = (f: ShareIntentFile) => f.contentUri || f.path;
 
 /** Shared files live in the app cache: copy them somewhere permanent before queueing them for later. */
 const keepCopy = async (f: ShareIntentFile): Promise<string> => {
@@ -47,7 +49,13 @@ export const ShareIntentHandler: React.FC = () => {
   const [progress, setProgress] = useState(0);
   const [message, setMessage] = useState('');
 
-  const files = (shareIntent.files ?? []).filter((f) => !!f.path);
+  const [, setClosed] = useState(0);
+  const files = (shareIntent.files ?? []).filter((f) => !!f.path && !handled.has(keyOf(f)));
+  const close = () => {
+    files.forEach((f) => handled.add(keyOf(f)));
+    setClosed((n) => n + 1);
+    resetShareIntent();
+  };
   const online = status === NetworkStatus.Online && !!token;
   const visible = hasShareIntent && files.length > 0 && isAuthenticated && !biometricLocked;
 
@@ -119,14 +127,14 @@ export const ShareIntentHandler: React.FC = () => {
     setMessage(parts.join(' '));
     setBusy(false);
     setProgress(0);
-    resetShareIntent();
+    close();
   };
 
   const shown = files.slice(0, 5).map(nameOf);
   return (
     <>
       <Portal>
-        <Dialog visible={visible} onDismiss={busy ? undefined : () => resetShareIntent()}>
+        <Dialog visible={visible} onDismiss={busy ? undefined : close}>
           <Dialog.Title>{t('shareIntent.title')}</Dialog.Title>
           <Dialog.Content>
             <Text variant="bodyMedium">{t('shareIntent.body', { count: files.length })}</Text>
@@ -148,7 +156,7 @@ export const ShareIntentHandler: React.FC = () => {
             {busy ? <ProgressBar progress={progress} style={styles.progress} /> : null}
           </Dialog.Content>
           <Dialog.Actions>
-            <Button disabled={busy} onPress={() => resetShareIntent()}>
+            <Button disabled={busy} onPress={close}>
               {t('common.cancel')}
             </Button>
             <Button mode="contained" loading={busy} disabled={busy} onPress={send}>
