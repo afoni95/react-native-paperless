@@ -19,7 +19,8 @@ const inCache = (path: string) =>
   !!FileSystem.cacheDirectory && toUri(path).startsWith(FileSystem.cacheDirectory);
 const nameOf = (f: ShareIntentFile) => f.fileName || f.path.split('/').pop() || 'document';
 const handled = new Set<string>();
-const keyOf = (f: ShareIntentFile) => f.contentUri || f.path;
+// ponytail: path is cacheDir/<display name>, so re-sharing a same-named file is ignored until the app restarts
+const keyOf = (f: ShareIntentFile) => f.path;
 
 /** Shared files live in the app cache: copy them somewhere permanent before queueing them for later. */
 const keepCopy = async (f: ShareIntentFile): Promise<string> => {
