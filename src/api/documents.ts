@@ -112,6 +112,8 @@ export const documentsApi = {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
+      // a large scan on a slow connection needs longer than the client's default 30 s
+      timeout: 10 * 60 * 1000,
     });
     return data;
   },

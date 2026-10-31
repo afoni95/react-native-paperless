@@ -187,7 +187,9 @@ export const PendingSyncScreen: React.FC = () => {
             compact
             onPress={handleSync}
             loading={syncing}
-            disabled={syncing || items.filter((i) => i.status === 'pending').length === 0}
+            disabled={
+              syncing || !items.some((i) => i.status === 'pending' || i.status === 'failed')
+            }
             style={styles.actionBtn}
             icon="sync"
           >

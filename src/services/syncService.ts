@@ -7,6 +7,9 @@ import { Alert } from 'react-native';
 
 type NameIdMap = Map<string, number>;
 
+/** Set when the server did not answer during a sync (the remaining items stay pending). */
+let unreachable = false;
+
 const syncTags = async (items: OfflineQueueItem[], tagMap: NameIdMap): Promise<void> => {
   for (const item of items) {
     const { updateItemStatus, removeItem } = useOfflineQueueStore.getState();
@@ -149,16 +152,57 @@ const syncDocuments = async (
         document_type: validDocumentTypeId,
       });
 
-      removeItem(item.id);
+      await removeItem(item.id);
     } catch (err) {
+      // No answer from the server (offline, timeout) or an expired login is not the document's fault: keep it pending
+      // and stop - the rest would fail the same way. Only a real refusal (HTTP error) marks it failed.
+      const status = (err as { response?: { status?: number } })?.response?.status;
+      if (status === undefined || status === 401) {
+        updateItemStatus(item.id, 'pending');
+        unreachable = true;
+        return;
+      }
       updateItemStatus(item.id, 'failed', err instanceof Error ? err.message : 'Unknown error');
     }
   }
 };
 
-export const syncAll = async (): Promise<void> => {
+let running: Promise<void> | null = null;
+let again: { includeFailed: boolean } | null = null;
+
+/**
+ * Uploads the queue. One sync at a time: a call while one is running is not dropped - one more pass runs after it
+ * (for items added meanwhile, or to include failed items). `includeFailed: false` (the automatic sync) leaves items
+ * the server refused alone; "Sync now" retries them.
+ */
+export const syncAll = (opts: { includeFailed?: boolean } = {}): Promise<void> => {
+  const includeFailed = opts.includeFailed ?? true;
+  if (running) {
+    again = { includeFailed: includeFailed || !!again?.includeFailed };
+    return running;
+  }
+  running = (async () => {
+    let next: { includeFailed: boolean } | null = { includeFailed };
+    try {
+      while (next) {
+        again = null;
+        unreachable = false;
+        await syncAllOnce(next.includeFailed);
+        next = unreachable ? null : again;
+      }
+    } finally {
+      running = null;
+      again = null;
+    }
+  })();
+  return running;
+};
+
+const syncAllOnce = async (includeFailed: boolean): Promise<void> => {
   const { items } = useOfflineQueueStore.getState();
-  const pending = items.filter((i) => i.status === 'pending' || i.status === 'failed');
+  const pending = items.filter(
+    (i) => i.status === 'pending' || (includeFailed && i.status === 'failed'),
+  );
 
   if (pending.length === 0) return;
 
