@@ -4,11 +4,37 @@ import { documentTypesApi } from '@/api/documentTypes';
 import { documentsApi } from '@/api/documents';
 import { useOfflineQueueStore, OfflineQueueItem } from '@/store/offlineQueueStore';
 import { Alert } from 'react-native';
+import * as FileSystem from 'expo-file-system/legacy';
 
 type NameIdMap = Map<string, number>;
 
 /** Set when the server did not answer during a sync (the remaining items stay pending). */
 let unreachable = false;
+
+/**
+ * True when an error says nothing about the item itself: no answer from the server (offline, timeout), an expired
+ * login (401), or the server being busy or restarting (408, 429, 5xx). Such items stay pending and are retried
+ * automatically; anything else (a refusal, a missing local file, a missing tag...) marks the item failed.
+ */
+const isTransient = (err: unknown): boolean => {
+  const e = err as { isAxiosError?: boolean; response?: { status?: number }; code?: string };
+  if (!e?.isAxiosError) return false;
+  const status = e.response?.status;
+  if (status === undefined) return true;
+  return status === 401 || status === 408 || status === 429 || status >= 500;
+};
+
+/** Marks the item for a retry (transient) or failed; returns true when the pass should stop. */
+const settle = (id: string, err: unknown): boolean => {
+  const { updateItemStatus } = useOfflineQueueStore.getState();
+  if (isTransient(err)) {
+    updateItemStatus(id, 'pending');
+    unreachable = true;
+    return true;
+  }
+  updateItemStatus(id, 'failed', err instanceof Error ? err.message : 'Unknown error');
+  return false;
+};
 
 const syncTags = async (items: OfflineQueueItem[], tagMap: NameIdMap): Promise<void> => {
   for (const item of items) {
@@ -29,7 +55,7 @@ const syncTags = async (items: OfflineQueueItem[], tagMap: NameIdMap): Promise<v
       }
       removeItem(item.id);
     } catch (err) {
-      updateItemStatus(item.id, 'failed', err instanceof Error ? err.message : 'Unknown error');
+      if (settle(item.id, err)) return;
     }
   }
 };
@@ -50,7 +76,7 @@ const syncCorrespondents = async (items: OfflineQueueItem[], corrMap: NameIdMap)
       }
       removeItem(item.id);
     } catch (err) {
-      updateItemStatus(item.id, 'failed', err instanceof Error ? err.message : 'Unknown error');
+      if (settle(item.id, err)) return;
     }
   }
 };
@@ -71,7 +97,7 @@ const syncDocumentTypes = async (items: OfflineQueueItem[], dtMap: NameIdMap): P
       }
       removeItem(item.id);
     } catch (err) {
-      updateItemStatus(item.id, 'failed', err instanceof Error ? err.message : 'Unknown error');
+      if (settle(item.id, err)) return;
     }
   }
 };
@@ -91,6 +117,10 @@ const syncDocuments = async (
 
       if (!data.fileUri || !data.fileName) {
         throw new Error('Missing file information');
+      }
+      // a file that is gone would otherwise fail like a network error and be retried forever
+      if (!(await FileSystem.getInfoAsync(data.fileUri)).exists) {
+        throw new Error('File not found on this device');
       }
 
       const unresolvedEntities: string[] = [];
@@ -154,15 +184,7 @@ const syncDocuments = async (
 
       await removeItem(item.id);
     } catch (err) {
-      // No answer from the server (offline, timeout) or an expired login is not the document's fault: keep it pending
-      // and stop - the rest would fail the same way. Only a real refusal (HTTP error) marks it failed.
-      const status = (err as { response?: { status?: number } })?.response?.status;
-      if (status === undefined || status === 401) {
-        updateItemStatus(item.id, 'pending');
-        unreachable = true;
-        return;
-      }
-      updateItemStatus(item.id, 'failed', err instanceof Error ? err.message : 'Unknown error');
+      if (settle(item.id, err)) return;
     }
   }
 };
@@ -225,8 +247,8 @@ const syncAllOnce = async (includeFailed: boolean): Promise<void> => {
   const docItems = pending.filter((i) => i.type === 'document');
 
   if (docTypeItems.length > 0) await syncDocumentTypes(docTypeItems, dtMap);
-  if (corrItems.length > 0) await syncCorrespondents(corrItems, corrMap);
-  if (tagItems.length > 0) await syncTags(tagItems, tagMap);
+  if (!unreachable && corrItems.length > 0) await syncCorrespondents(corrItems, corrMap);
+  if (!unreachable && tagItems.length > 0) await syncTags(tagItems, tagMap);
 
-  if (docItems.length > 0) await syncDocuments(docItems, tagMap, corrMap, dtMap);
+  if (!unreachable && docItems.length > 0) await syncDocuments(docItems, tagMap, corrMap, dtMap);
 };

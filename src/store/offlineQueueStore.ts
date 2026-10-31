@@ -113,21 +113,33 @@ export const useOfflineQueueStore = create<OfflineQueueState>((set, get) => ({
     if (!hydrating) {
       hydrating = (async () => {
         let stored: OfflineQueueItem[] = [];
-        try {
-          const raw = await AsyncStorage.getItem(OFFLINE_QUEUE_KEY);
-          if (raw) {
-            try {
-              stored = JSON.parse(raw) as OfflineQueueItem[];
-            } catch (error) {
-              // keep the unreadable value instead of overwriting it with an empty queue
-              console.error('Offline queue in storage is unreadable, kept a copy', error);
-              await AsyncStorage.setItem(`${OFFLINE_QUEUE_KEY}.unreadable`, raw).catch(
-                () => undefined,
-              );
+        let readOk = false;
+        // a failed read is retried; it must never be taken for "the stored queue is empty"
+        for (let attempt = 0; attempt < 3 && !readOk; attempt++) {
+          try {
+            const raw = await AsyncStorage.getItem(OFFLINE_QUEUE_KEY);
+            readOk = true;
+            if (raw) {
+              let parsed: unknown = null;
+              try {
+                parsed = JSON.parse(raw);
+              } catch {
+                parsed = null;
+              }
+              if (Array.isArray(parsed)) {
+                stored = parsed as OfflineQueueItem[];
+              } else {
+                // keep the unreadable value instead of overwriting it with an empty queue
+                console.error('Offline queue in storage is unreadable, kept a copy');
+                await AsyncStorage.setItem(`${OFFLINE_QUEUE_KEY}.unreadable`, raw).catch(
+                  () => undefined,
+                );
+              }
             }
+          } catch (error) {
+            console.error('Failed to read the offline queue from storage', error);
+            await new Promise((r) => setTimeout(r, 1000));
           }
-        } catch (error) {
-          console.error('Failed to hydrate offline queue from storage', error);
         }
         const reset = stored.map((item) =>
           item.status === 'syncing' ? { ...item, status: 'pending' as OfflineItemStatus } : item,
@@ -135,7 +147,8 @@ export const useOfflineQueueStore = create<OfflineQueueState>((set, get) => ({
         const known = new Set(reset.map((i) => i.id));
         const merged = [...reset, ...get().items.filter((i) => !known.has(i.id))];
         set({ items: merged, hydrated: true });
-        await get()._persist(merged);
+        // only write after a successful read: an unread queue must not replace the stored one
+        if (readOk) await get()._persist(merged);
       })();
     }
     return hydrating;
