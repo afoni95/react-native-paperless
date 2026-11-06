@@ -32,12 +32,15 @@ interface OfflineQueueState {
   addItem: (item: Omit<OfflineQueueItem, 'id' | 'status' | 'createdAt'>) => void;
   updateItemStatus: (id: string, status: OfflineItemStatus, error?: string) => void;
   updateItemData: (id: string, data: Partial<OfflineQueueItem['data']>) => void;
-  removeItem: (id: string) => void;
+  removeItem: (id: string) => Promise<void>;
   clearFailed: () => void;
   pendingCount: () => number;
+  hydrated: boolean;
   _hydrate: () => Promise<void>;
   _persist: (items: OfflineQueueItem[]) => Promise<void>;
 }
+
+let hydrating: Promise<void> | null = null;
 
 let idCounter = 0;
 const generateId = (): string => {
@@ -87,10 +90,10 @@ export const useOfflineQueueStore = create<OfflineQueueState>((set, get) => ({
     get()._persist(updated);
   },
 
-  removeItem: (id) => {
+  removeItem: async (id) => {
     const updated = get().items.filter((item) => item.id !== id);
     set({ items: updated });
-    get()._persist(updated);
+    await get()._persist(updated);
   },
 
   clearFailed: () => {
@@ -102,22 +105,51 @@ export const useOfflineQueueStore = create<OfflineQueueState>((set, get) => ({
   pendingCount: () =>
     get().items.filter((i) => i.status === 'pending' || i.status === 'failed').length,
 
-  _hydrate: async () => {
-    try {
-      const raw = await AsyncStorage.getItem(OFFLINE_QUEUE_KEY);
-      if (raw) {
-        const parsed = JSON.parse(raw) as OfflineQueueItem[];
-        const reset = parsed.map((item) =>
+  hydrated: false,
+  _hydrate: () => {
+    if (!hydrating) {
+      hydrating = (async () => {
+        let stored: OfflineQueueItem[] = [];
+        let readOk = false;
+        for (let attempt = 0; attempt < 3 && !readOk; attempt++) {
+          try {
+            const raw = await AsyncStorage.getItem(OFFLINE_QUEUE_KEY);
+            readOk = true;
+            if (raw) {
+              let parsed: unknown = null;
+              try {
+                parsed = JSON.parse(raw);
+              } catch {
+                // handled below
+              }
+              if (Array.isArray(parsed)) {
+                stored = parsed as OfflineQueueItem[];
+              } else {
+                console.error('Offline queue in storage is unreadable, kept a copy');
+                await AsyncStorage.setItem(`${OFFLINE_QUEUE_KEY}.unreadable`, raw).catch(
+                  () => undefined,
+                );
+              }
+            }
+          } catch (error) {
+            console.error('Failed to read the offline queue from storage', error);
+            await new Promise((r) => setTimeout(r, 1000));
+          }
+        }
+        const reset = stored.map((item) =>
           item.status === 'syncing' ? { ...item, status: 'pending' as OfflineItemStatus } : item,
         );
-        set({ items: reset });
-      }
-    } catch (error) {
-      console.error('Failed to hydrate offline queue from storage', error);
+        const known = new Set(reset.map((i) => i.id));
+        const merged = [...reset, ...get().items.filter((i) => !known.has(i.id))];
+        set({ items: merged, hydrated: true });
+        if (readOk) await get()._persist(merged);
+      })();
     }
+    return hydrating;
   },
 
   _persist: async (items: OfflineQueueItem[]) => {
+    if (!get().hydrated) return;
     try {
       await AsyncStorage.setItem(OFFLINE_QUEUE_KEY, JSON.stringify(items));
     } catch (error) {
