@@ -85,9 +85,12 @@ export const PendingSyncScreen: React.FC = () => {
         queryClient.invalidateQueries({ queryKey: documentTypeQueryKeys.all }),
         queryClient.invalidateQueries({ queryKey: documentQueryKeys.all() }),
       ]);
-      const remaining = items.filter((i) => i.status === 'failed').length;
-      if (remaining > 0) {
-        setSnackbar(t('offline.syncPartial', { count: remaining }));
+      const now = useOfflineQueueStore.getState().items;
+      const failed = now.filter((i) => i.status === 'failed').length;
+      if (now.some((i) => i.status === 'pending')) {
+        setSnackbar(t('offline.syncFailed'));
+      } else if (failed > 0) {
+        setSnackbar(t('offline.syncPartial', { count: failed }));
       } else {
         setSnackbar(t('offline.syncSuccess'));
       }
@@ -187,7 +190,9 @@ export const PendingSyncScreen: React.FC = () => {
             compact
             onPress={handleSync}
             loading={syncing}
-            disabled={syncing || items.filter((i) => i.status === 'pending').length === 0}
+            disabled={
+              syncing || !items.some((i) => i.status === 'pending' || i.status === 'failed')
+            }
             style={styles.actionBtn}
             icon="sync"
           >
