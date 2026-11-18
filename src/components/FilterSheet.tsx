@@ -2,6 +2,7 @@ import React from 'react';
 import { View, ScrollView, StyleSheet, Modal, Pressable } from 'react-native';
 import { Text, Button, Chip, Divider, useTheme, IconButton } from 'react-native-paper';
 import { useTranslation } from 'react-i18next';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { SearchableDropdown } from './SearchableDropdown';
 import { MultiSelectChips } from './MultiSelectChips';
@@ -35,6 +36,7 @@ export const FilterSheet: React.FC<FilterSheetProps> = ({
 }) => {
   const theme = useTheme();
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
 
   const [localFilters, setLocalFilters] = React.useState<FilterState>(filters);
 
@@ -70,7 +72,14 @@ export const FilterSheet: React.FC<FilterSheetProps> = ({
   ].filter(Boolean).length;
 
   return (
-    <Modal visible={visible} animationType="slide" transparent onRequestClose={onDismiss}>
+    <Modal
+      visible={visible}
+      animationType="slide"
+      transparent
+      statusBarTranslucent
+      navigationBarTranslucent
+      onRequestClose={onDismiss}
+    >
       <Pressable
         style={[styles.overlay, { backgroundColor: theme.colors.backdrop }]}
         onPress={onDismiss}
@@ -86,6 +95,7 @@ export const FilterSheet: React.FC<FilterSheetProps> = ({
         <Divider />
 
         <ScrollView
+          style={styles.scroll}
           contentContainerStyle={styles.content}
           keyboardShouldPersistTaps="handled"
           nestedScrollEnabled
@@ -174,7 +184,7 @@ export const FilterSheet: React.FC<FilterSheetProps> = ({
 
         {/* Actions */}
 
-        <View style={styles.actions}>
+        <View style={[styles.actions, { paddingBottom: 16 + insets.bottom }]}>
           <Button mode="outlined" onPress={handleReset}>
             {t('documents.clearFilters')}
           </Button>
@@ -212,6 +222,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 16,
     paddingVertical: 8,
+  },
+  scroll: {
+    flexGrow: 0,
+    flexShrink: 1,
   },
   content: {
     padding: 16,

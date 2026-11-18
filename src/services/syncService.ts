@@ -4,8 +4,31 @@ import { documentTypesApi } from '@/api/documentTypes';
 import { documentsApi } from '@/api/documents';
 import { useOfflineQueueStore, OfflineQueueItem } from '@/store/offlineQueueStore';
 import { Alert } from 'react-native';
+import * as FileSystem from 'expo-file-system/legacy';
 
 type NameIdMap = Map<string, number>;
+
+let unreachable = false;
+
+// No response, expired login or server busy: keep the item pending and stop the pass.
+const isTransient = (err: unknown): boolean => {
+  const e = err as { isAxiosError?: boolean; response?: { status?: number }; code?: string };
+  if (!e?.isAxiosError) return false;
+  const status = e.response?.status;
+  if (status === undefined) return true;
+  return status === 401 || status === 408 || status === 429 || status >= 500;
+};
+
+const settle = (id: string, err: unknown): boolean => {
+  const { updateItemStatus } = useOfflineQueueStore.getState();
+  if (isTransient(err)) {
+    updateItemStatus(id, 'pending');
+    unreachable = true;
+    return true;
+  }
+  updateItemStatus(id, 'failed', err instanceof Error ? err.message : 'Unknown error');
+  return false;
+};
 
 const syncTags = async (items: OfflineQueueItem[], tagMap: NameIdMap): Promise<void> => {
   for (const item of items) {
@@ -26,7 +49,7 @@ const syncTags = async (items: OfflineQueueItem[], tagMap: NameIdMap): Promise<v
       }
       removeItem(item.id);
     } catch (err) {
-      updateItemStatus(item.id, 'failed', err instanceof Error ? err.message : 'Unknown error');
+      if (settle(item.id, err)) return;
     }
   }
 };
@@ -47,7 +70,7 @@ const syncCorrespondents = async (items: OfflineQueueItem[], corrMap: NameIdMap)
       }
       removeItem(item.id);
     } catch (err) {
-      updateItemStatus(item.id, 'failed', err instanceof Error ? err.message : 'Unknown error');
+      if (settle(item.id, err)) return;
     }
   }
 };
@@ -68,7 +91,7 @@ const syncDocumentTypes = async (items: OfflineQueueItem[], dtMap: NameIdMap): P
       }
       removeItem(item.id);
     } catch (err) {
-      updateItemStatus(item.id, 'failed', err instanceof Error ? err.message : 'Unknown error');
+      if (settle(item.id, err)) return;
     }
   }
 };
@@ -88,6 +111,9 @@ const syncDocuments = async (
 
       if (!data.fileUri || !data.fileName) {
         throw new Error('Missing file information');
+      }
+      if (!(await FileSystem.getInfoAsync(data.fileUri)).exists) {
+        throw new Error('File not found on this device');
       }
 
       const unresolvedEntities: string[] = [];
@@ -149,16 +175,49 @@ const syncDocuments = async (
         document_type: validDocumentTypeId,
       });
 
-      removeItem(item.id);
+      // copies kept by the share feature for later sending are not needed once uploaded
+      if (data.fileUri.startsWith(`${FileSystem.documentDirectory}shared/`)) {
+        FileSystem.deleteAsync(data.fileUri, { idempotent: true }).catch(() => undefined);
+      }
+      await removeItem(item.id);
     } catch (err) {
-      updateItemStatus(item.id, 'failed', err instanceof Error ? err.message : 'Unknown error');
+      if (settle(item.id, err)) return;
     }
   }
 };
 
-export const syncAll = async (): Promise<void> => {
+let running: Promise<void> | null = null;
+let again: { includeFailed: boolean } | null = null;
+
+// Single-flight: a call during a running sync schedules one more pass afterwards.
+export const syncAll = (opts: { includeFailed?: boolean } = {}): Promise<void> => {
+  const includeFailed = opts.includeFailed ?? true;
+  if (running) {
+    again = { includeFailed: includeFailed || !!again?.includeFailed };
+    return running;
+  }
+  running = (async () => {
+    let next: { includeFailed: boolean } | null = { includeFailed };
+    try {
+      while (next) {
+        again = null;
+        unreachable = false;
+        await syncAllOnce(next.includeFailed);
+        next = unreachable ? null : again;
+      }
+    } finally {
+      running = null;
+      again = null;
+    }
+  })();
+  return running;
+};
+
+const syncAllOnce = async (includeFailed: boolean): Promise<void> => {
   const { items } = useOfflineQueueStore.getState();
-  const pending = items.filter((i) => i.status === 'pending' || i.status === 'failed');
+  const pending = items.filter(
+    (i) => i.status === 'pending' || (includeFailed && i.status === 'failed'),
+  );
 
   if (pending.length === 0) return;
 
@@ -181,8 +240,8 @@ export const syncAll = async (): Promise<void> => {
   const docItems = pending.filter((i) => i.type === 'document');
 
   if (docTypeItems.length > 0) await syncDocumentTypes(docTypeItems, dtMap);
-  if (corrItems.length > 0) await syncCorrespondents(corrItems, corrMap);
-  if (tagItems.length > 0) await syncTags(tagItems, tagMap);
+  if (!unreachable && corrItems.length > 0) await syncCorrespondents(corrItems, corrMap);
+  if (!unreachable && tagItems.length > 0) await syncTags(tagItems, tagMap);
 
-  if (docItems.length > 0) await syncDocuments(docItems, tagMap, corrMap, dtMap);
+  if (!unreachable && docItems.length > 0) await syncDocuments(docItems, tagMap, corrMap, dtMap);
 };

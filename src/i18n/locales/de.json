@@ -615,5 +615,20 @@
     "discardConfirm": "Dieses ausstehende Element entfernen? Es wird nicht mit dem Server synchronisiert.",
     "alreadyQueued": "Bereits in der Offline-Warteschlange",
     "noCachedItems": "Keine Elemente offline verfügbar"
+  },
+  "shareIntent": {
+    "title": "An Paperless senden",
+    "body_one": "{{count}} Datei bereit zum Senden:",
+    "body_other": "{{count}} Dateien bereit zum Senden:",
+    "more": "… und {{count}} weitere",
+    "offlineHint": "Derzeit keine Verbindung zum Server – die Dateien werden automatisch gesendet, sobald er wieder erreichbar ist.",
+    "send": "Senden",
+    "sendLater": "Später senden",
+    "sent_one": "{{count}} Dokument gesendet – es erscheint in Paperless, sobald es verarbeitet wurde.",
+    "sent_other": "{{count}} Dokumente gesendet – sie erscheinen in Paperless, sobald sie verarbeitet wurden.",
+    "queued_one": "{{count}} Dokument gespeichert, es wird gesendet, sobald der Server erreichbar ist.",
+    "queued_other": "{{count}} Dokumente gespeichert, sie werden gesendet, sobald der Server erreichbar ist.",
+    "failed_one": "{{count}} Datei konnte nicht gesendet werden.",
+    "failed_other": "{{count}} Dateien konnten nicht gesendet werden."
   }
 }
