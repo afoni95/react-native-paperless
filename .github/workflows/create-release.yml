@@ -64,6 +64,8 @@ jobs:
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
 
       - name: Mirror Android SDK at F-Droid buildserver path
         # The NDK toolchain/sysroot paths land in the debug info that the
